@@ -1,0 +1,43 @@
+{
+  "name": "diabetic-utils",
+  "version": "1.0.0",
+  "description": "Modern TypeScript utility library for diabetes-related calculations and conversions.",
+  "main": "dist/index.js",
+  "module": "dist/index.mjs",
+  "types": "dist/index.d.ts",
+  "exports": {
+    ".": {
+      "import": "./dist/index.mjs",
+      "require": "./dist/index.js",
+      "types": "./dist/index.d.ts"
+    }
+  },
+  "scripts": {
+    "dev": "tsup src/index.ts --watch",
+    "build": "tsup",
+    "test": "vitest run",
+    "test:ui": "vitest --ui",
+    "clean": "rm -rf dist"
+  },
+  "keywords": [
+    "diabetes",
+    "glucose",
+    "a1c",
+    "health",
+    "typescript",
+    "utilities",
+    "mgdl",
+    "mmol",
+    "time-in-range",
+    "medical"
+  ],
+  "author": "Mark Learst",
+  "license": "MIT",
+  "packageManager": "pnpm@10.10.0",
+  "devDependencies": {
+    "@vitest/ui": "^3.1.2",
+    "tsup": "^8.4.0",
+    "typescript": "^5.8.3",
+    "vitest": "^3.1.2"
+  }
+}
