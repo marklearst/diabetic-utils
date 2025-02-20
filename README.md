@@ -44,4 +44,5 @@ const a1c = estimateA1CFromAverage(100); // returns ~5.1
 ✍️ Author
 
 Built by @marklearst
+
 Pushing pixels with purpose. Tools for humans.
