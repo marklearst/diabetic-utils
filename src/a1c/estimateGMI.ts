@@ -1,26 +1,27 @@
+import { parseGlucoseString } from '@src/utils/parseGlucoseString'
+import { isEstimateGMIOptions } from '@src/utils/guards/isEstimateGMIOptions'
+import type { EstimateGMIOptions, GlucoseUnit } from '@src/a1c/types'
+
 /**
  * Estimate Glucose Management Indicator (GMI) from average glucose.
  *
- * GMI is calculated from CGM data and provides an estimated A1C-like percentage.
- * It is not a replacement for lab-tested A1C, but offers a useful projection.
+ * GMI provides an estimated A1C-like percentage based on average glucose (from CGM data).
+ * It is useful for observing trends but is not a clinical A1C replacement.
  *
  * @see https://diatribe.org/diabetes-technology/using-gmi-estimate-your-a1c-how-accurate-it
  *
- * @param valueOrOptions - Glucose value as a number, string (e.g. "100 mg/dL"), or object { value, unit }
- * @param unit - Unit of the glucose value, either 'mg/dL' or 'mmol/L' (required if first param is a number)
- * @returns Estimated GMI percentage as a number (e.g. 5.4)
+ * @param valueOrOptions - Glucose input as:
+ *   - number with unit
+ *   - string in format "100 mg/dL" or "5.5 mmol/L"
+ *   - object: { value, unit }
+ * @param unit - Required if first param is number. Must be 'mg/dL' or 'mmol/L'.
+ * @returns Estimated GMI as a number (e.g. 5.4)
  *
  * @example
- * estimateGMI(100, 'mg/dL');   // 5.4
- * estimateGMI('5.5 mmol/L');   // ~12.1
- * estimateGMI({ value: 100, unit: 'mg/dL' }); // 5.4
+ * estimateGMI(100, 'mg/dL') // 5.4
+ * estimateGMI('5.5 mmol/L') // ~12.1
+ * estimateGMI({ value: 100, unit: 'mg/dL' }) // 5.4
  */
-export type GlucoseUnit = 'mg/dL' | 'mmol/L'
-export interface EstimateGMIOptions {
-  value: number
-  unit: GlucoseUnit
-}
-
 export function estimateGMI(
   valueOrOptions: number | string | EstimateGMIOptions,
   unit?: GlucoseUnit
@@ -28,25 +29,21 @@ export function estimateGMI(
   let value: number
   let resolvedUnit: GlucoseUnit
 
-  if (typeof valueOrOptions === 'object') {
+  if (isEstimateGMIOptions(valueOrOptions)) {
     value = valueOrOptions.value
     resolvedUnit = valueOrOptions.unit
   } else if (typeof valueOrOptions === 'string') {
-    const match = valueOrOptions.match(/^([\d.]+)\s*(mg\/dL|mmol\/L)$/i)
-    if (!match)
-      throw new Error(
-        'Invalid glucose string format. Use e.g. "100 mg/dL" or "5.5 mmol/L"'
-      )
-    value = parseFloat(match[1])
-    resolvedUnit = match[2] as GlucoseUnit
+    const parsed = parseGlucoseString(valueOrOptions)
+    value = parsed.value
+    resolvedUnit = parsed.unit
   } else {
-    if (!unit) throw new Error('Unit must be provided if input is a number')
+    if (!unit) throw new Error('Unit is required when input is a number.')
     value = valueOrOptions
     resolvedUnit = unit
   }
 
   if (value <= 0 || !Number.isFinite(value)) {
-    throw new Error('Glucose value must be a positive number')
+    throw new Error('Glucose value must be a positive number.')
   }
 
   const gmi =
