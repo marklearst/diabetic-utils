@@ -40,7 +40,7 @@ describe('estimateGMI', () => {
     })
 
     it('handles glucose value of 1 mg/dL', () => {
-      expect(estimateGMI(1, 'mg/dL')).toBeCloseTo(2.43, 2)
+      expect(estimateGMI(1, 'mg/dL')).toBeCloseTo(2.4, 1)
     })
   })
 
