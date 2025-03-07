@@ -1,4 +1,6 @@
-# 🩸 diabetic-utils
+# Diabetic Utils
+
+![Diabetic Utils Logo](https://raw.githubusercontent.com/marklearst/diabetic-utils/main/assets/diabetic-utils-logo-light.png)
 
 A modern TypeScript utility library for glucose, A1C, and diabetic health data. Designed for developers building health apps CGM dashboards, and wellness tools that demand clinical-grade accuracy with clean, modern code.
 
