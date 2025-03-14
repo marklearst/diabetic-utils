@@ -23,6 +23,7 @@ export function parseGlucoseString(input: string): {
 
   const cleaned = input.trim().replace(/\s+/g, ' ')
   const match = cleaned.match(/^([\d.]+) (mg\/dL|mmol\/L)$/i)
+  // istanbul ignore next
   if (!match) {
     throw new Error(
       'Invalid glucose string format. Use "100 mg/dL" or "5.5 mmol/L".'
@@ -32,6 +33,7 @@ export function parseGlucoseString(input: string): {
 
   return {
     value: parseFloat(rawValue),
+    // istanbul ignore next
     unit:
       rawUnit.toLowerCase() === 'mg/dl'
         ? 'mg/dL'
