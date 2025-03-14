@@ -1,5 +1,5 @@
 import { describe, it, expect } from 'vitest'
-import { labelGlucoseStatus } from '@src/formatters/labelGlucoseStatus'
+import { labelGlucoseStatus } from '@src/glucose/labelGlucoseStatus'
 
 // These should match your GLUCOSE_RANGES
 const LOW = 70

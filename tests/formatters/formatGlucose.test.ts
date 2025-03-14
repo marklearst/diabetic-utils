@@ -1,5 +1,5 @@
 import { describe, it, expect } from 'vitest'
-import { formatGlucose } from '@src/formatters/formatGlucose'
+import { formatGlucose } from '@src/glucose/formatGlucose'
 
 describe('formatGlucose', () => {
   describe('valid inputs', () => {
