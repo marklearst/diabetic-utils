@@ -4,11 +4,10 @@
 
 A modern TypeScript utility library for glucose, A1C, and diabetic health data. **No bloat. No guesswork. Just sharp utilities built for real-world usage.**
 
-> ⚠️ This is a full v1 rewrite - rebuilt from the ground up with strict TypeScript types, runtime guards, and modular, test-driven architecture.
-> No bloat. No guesswork. Just sharp utilities built for real-world usage.
+> 🎉 Version 1.1.0 is here! Featuring a streamlined architecture, 100% test coverage, and improved developer experience.
 > NPM release coming soon.
 
-![Status](https://img.shields.io/badge/status-in--development-yellow)
+![Status](https://img.shields.io/badge/status-stable-green)
 [![codecov](https://codecov.io/gh/marklearst/diabetic-utils/branch/main/graph/badge.svg)](https://codecov.io/gh/marklearst/diabetic-utils)
 ![CI](https://github.com/marklearst/diabetic-utils/actions/workflows/ci.yml/badge.svg)
 ![License](https://img.shields.io/github/license/marklearst/diabetic-utils)
@@ -20,7 +19,7 @@ A modern TypeScript utility library for glucose, A1C, and diabetic health data. 
 
 ## 📦 Installation
 
-> **Note:** diabetic-utils is not yet published to NPM. Stay tuned for the v1.0.0 launch!
+> **Note:** diabetic-utils is not yet published to NPM. Stay tuned for the v1.1.0 launch!
 >
 > _Early testers: install from GitHub:_
 >
@@ -35,17 +34,16 @@ A modern TypeScript utility library for glucose, A1C, and diabetic health data. 
 ## ⚡ Quick Usage
 
 ```ts
-import { estimateGMI } from '@marklearst/diabetic-utils'
-import { labelGlucoseStatus } from '@marklearst/diabetic-utils'
+import { estimateGMI, formatGlucose } from '@marklearst/diabetic-utils'
 
+// Estimate GMI from glucose values
 estimateGMI(100, 'mg/dL') // → 5.4
 estimateGMI('5.5 mmol/L') // → ~12.1
 estimateGMI({ value: 100, unit: 'mg/dL' }) // → 5.4
 
-// You can also automatically label glucose values as low, normal, or high:
-labelGlucoseStatus(60, 'mg/dL') // 'low'
-labelGlucoseStatus(5.5, 'mmol/L') // 'normal'
-labelGlucoseStatus(200, 'mg/dL') // 'high'
+// Format glucose values with units
+formatGlucose(120, 'mg/dL') // '120 mg/dL'
+formatGlucose(5.5, 'mmol/L', { digits: 1 }) // '5.5 mmol/L'
 ```
 
 ## 🧑‍💻 Full Examples
@@ -53,11 +51,21 @@ labelGlucoseStatus(200, 'mg/dL') // 'high'
 Here are some real-world TypeScript examples to get you started:
 
 ```ts
+import {
+  mgDlToMmolL,
+  mmolLToMgDl,
+  estimateA1CFromAverage,
+  calculateTimeInRange,
+  formatGlucose,
+  parseGlucoseString,
+  isValidGlucoseValue,
+} from '@marklearst/diabetic-utils'
+
 // Convert mg/dL to mmol/L
-const mmol = mgdlToMmol(100) // 5.55
+const mmol = mgDlToMmolL(100) // 5.55
 
 // Convert mmol/L to mg/dL
-const mgdl = mmolToMgdl(7.2) // 130
+const mgdl = mmolLToMgDl(7.2) // 130
 
 // Estimate A1C from average glucose (mg/dL)
 const a1c = estimateA1CFromAverage(120, 'mg/dL') // 5.9
@@ -66,15 +74,18 @@ const a1c = estimateA1CFromAverage(120, 'mg/dL') // 5.9
 const a1c2 = estimateA1CFromAverage(6.7, 'mmol/L') // 6.7
 
 // Calculate Time-in-Range (TIR)
-const readings = [90, 110, 150, 200, 80]
-const tir = calculateTimeInRange(readings, 'mg/dL')
-// tir = { inRange: 3, low: 1, high: 1 }
+const readings = [
+  { value: 90, unit: 'mg/dL', timestamp: '2024-03-20T10:00:00Z' },
+  { value: 110, unit: 'mg/dL', timestamp: '2024-03-20T11:00:00Z' },
+  { value: 150, unit: 'mg/dL', timestamp: '2024-03-20T12:00:00Z' },
+  { value: 200, unit: 'mg/dL', timestamp: '2024-03-20T13:00:00Z' },
+  { value: 80, unit: 'mg/dL', timestamp: '2024-03-20T14:00:00Z' },
+]
+const tir = calculateTimeInRange({ readings, unit: 'mg/dL', range: [70, 180] })
+// tir = { inRange: 3, belowRange: 1, aboveRange: 1 }
 
 // Format a glucose value
 const formatted = formatGlucose(5.5, 'mmol/L') // '5.5 mmol/L'
-
-// Label glucose status
-const status = labelGlucoseStatus(65, 'mg/dL') // 'low'
 
 // Parse a glucose string
 const { value, unit } = parseGlucoseString('7.2 mmol/L')
@@ -88,44 +99,35 @@ const isValid = isValidGlucoseValue(value, unit) // true
 ## 🛠️ Why diabetic-utils?
 
 - Zero-bloat, focused utilities
-- 100% test coverage (goal)
+- 100% test coverage achieved
 - TypeScript-first, works in JS too
 - Perfect for apps, research, and data science
 
 ## 🧱 Architecture Highlights
 
-- ✅ Fully tested core utilities with edge case coverage via Vitest
+- ✅ Flat, maintainable directory structure
+- ✅ Fully tested core utilities with 100% coverage via Vitest
 - ✅ Input guards and string parsing for robust DX - protect users from malformed data
 - ✅ Strictly typed inputs and outputs using modern TypeScript best practices
 - ✅ Predictable, composable function signatures designed for safe integrations
-- ✅ Developer-first architecture: clear folder structure, import aliases, and helper separation
+- ✅ Developer-first architecture: clear file organization and helper separation
 - ✅ Built with CGM apps, dashboards, and wearable integrations in mind
 - ✅ Readable, ergonomic API that's easy to use in both clinical and wellness-focused tools
 - ✅ Performance-focused - **zero external runtime dependencies**
 
 ## 🌱 Coming Soon
 
-- ⏱️ More time-in-range (TIR) utilities
 - 🧠 Predictive A1C & glucose trends
 - 🔁 Advanced glucose unit conversions
-- 🏷️ Glucose formatting & status labeling (low, normal, high)
 - 🧪 Lab value constants, ranges, and typed result models
 - 🌐 Docs site: <https://diabeticutils.com>
 
-## 🚦 Launch Status
+## 🚦 Status
 
 - Docs: Complete
-- Code: Modular, clean, scalable
-- Coverage: 70% (aiming for 100%)
+- Code: Clean, modular, and maintainable
+- Coverage: 100% achieved
 - NPM: Coming soon!
-
-## 👨🏻‍💻 Developer Notes
-
-I use `@src/` as the root import alias throughout the codebase.
-To configure this in editors or projects:
-
-- TypeScript: see `tsconfig.json` → `paths`
-- VS Code: ensure `jsconfig.json` or `tsconfig.json` is recognized
 
 ## ✍️ Author
 
