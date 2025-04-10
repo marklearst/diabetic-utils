@@ -17,21 +17,26 @@
 - [x] Centralized constants and types
 - [x] 100% test coverage
 
-## 🛠️ Planned / v1.x
+## 🛠️ Planned / v1.5+
 
-- [ ] CSV import/export helpers
-- [ ] CLI tool for batch conversions
-- [ ] More flexible glucose range configuration
-- [ ] API docs site (TypeDoc or similar)
-- [ ] Playground/demo site
+- Polish and document all core utilities
+- 100% test coverage and robust error handling
+- Add CSV import/export helpers
+- CLI tool for batch conversions
+- Flexible glucose range configuration
+- API docs site (TypeDoc or similar)
+- Playground/demo site for live examples
 
-## 🚫 Out of Scope (for v1)
+## 🚫 Out of Scope (v2.0+ and v3.x+)
 
-- Real-time CGM monitoring
-- Database or server components
-- Web dashboards or UIs
-- Device integrations
-- Proprietary algorithms
+- Adapters for popular data sources (optional, opt-in)
+- Property-based and fuzz testing
+- More advanced analytics (e.g., trend analysis, variability)
+- Internationalization/localization support
+- Optional web UI playground
+- Visualization helpers (charts, graphs)
+- Community-driven feature modules
+- Open source marketing and outreach
 
 ---
 
