@@ -1,7 +1,5 @@
 // @file src/a1c.ts
 
-import { GlucoseUnit } from './types'
-
 /**
  * Formats an A1C value with % sign.
  * @param val - A1C number

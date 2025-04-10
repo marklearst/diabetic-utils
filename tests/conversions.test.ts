@@ -97,10 +97,22 @@ describe('Conversions', () => {
       expect(mgDlToMmolL(54)).toBeCloseTo(3.0, 1)
     })
 
+    it('throws on invalid mgDlToMmolL input', () => {
+      expect(() => mgDlToMmolL(-1)).toThrow('Invalid glucose value')
+      expect(() => mgDlToMmolL(0)).toThrow('Invalid glucose value')
+      expect(() => mgDlToMmolL(NaN)).toThrow('Invalid glucose value')
+    })
+
     it('converts mmol/L to mg/dL', () => {
       expect(mmolLToMgDl(10)).toBe(180)
       expect(mmolLToMgDl(5.6)).toBe(101)
       expect(mmolLToMgDl(3.0)).toBe(54)
+    })
+
+    it('throws on invalid mmolLToMgDl input', () => {
+      expect(() => mmolLToMgDl(-1)).toThrow('Invalid glucose value')
+      expect(() => mmolLToMgDl(0)).toThrow('Invalid glucose value')
+      expect(() => mmolLToMgDl(NaN)).toThrow('Invalid glucose value')
     })
 
     it('converts glucose units bidirectionally', () => {

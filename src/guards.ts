@@ -2,9 +2,8 @@ import type { EstimateGMIOptions } from './types'
 
 /**
  * Type guard to check if a value is a valid EstimateGMIOptions object.
- *
- * @param input - The input to check
- * @returns True if input is a valid EstimateGMIOptions shape
+ * @param input - The value to check for EstimateGMIOptions shape.
+ * @returns True if the input is an object with numeric 'value' and string 'unit' properties, otherwise false.
  */
 export function isEstimateGMIOptions(
   input: unknown
@@ -20,10 +19,10 @@ export function isEstimateGMIOptions(
 }
 
 /**
- * Checks if a glucose string is in the format "100 mg/dL" or "5.5 mmol/L".
- *
- * @param input - The string to validate
- * @returns True if it matches a valid glucose format
+ * Checks if a string is in the format "100 mg/dL" or "5.5 mmol/L".
+ * @param input - The value to validate as a glucose string.
+ * @returns True if the input is a string matching the glucose value and unit format, otherwise false.
+ * @see https://www.diabetes.co.uk/diabetes_care/blood-sugar-conversion.html
  */
 export function isValidGlucoseString(input: unknown): input is string {
   if (typeof input !== 'string') return false
