@@ -1,5 +1,4 @@
 // @file src/types.ts
-// Unused interfaces (A1CReading, TIROptions, A1CResult, GMIResult, GlucoseStatsOptions, GlucoseStats) were removed in v1.1.0 cleanup. Restore from v1.1.0 if needed in the future.
 
 import { MG_DL, MMOL_L } from './constants'
 
@@ -42,4 +41,41 @@ export interface TIRResult {
 export interface EstimateGMIOptions {
   value: number
   unit: GlucoseUnit
+}
+
+/**
+ * Options for Time-in-Range (TIR) calculations.
+ */
+export interface TIROptions {
+  readings: GlucoseReading[]
+  unit: GlucoseUnit
+  range: [number, number]
+}
+
+/**
+ * Represents a single A1C reading with value and date.
+ */
+export interface A1CReading {
+  value: number
+  date: string // ISO 8601 date string
+}
+
+/**
+ * Options for calculating glucose statistics.
+ */
+export interface GlucoseStatsOptions {
+  readings: GlucoseReading[]
+  unit: GlucoseUnit
+  range: [number, number]
+  gmi?: boolean
+  a1c?: boolean
+  tir?: boolean
+  tirRange?: [number, number]
+  tirPercent?: boolean
+  tirPercentBelow?: boolean
+  tirPercentAbove?: boolean
+  tirPercentInRange?: boolean
+  tirPercentBelowRounded?: boolean
+  tirPercentAboveRounded?: boolean
+  tirPercentInRangeRounded?: boolean
 }
