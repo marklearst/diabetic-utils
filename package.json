@@ -26,7 +26,8 @@
     "test": "vitest run",
     "test:ui": "vitest --ui",
     "test:coverage": "vitest run --coverage",
-    "clean": "rm -rf dist"
+    "clean": "rm -rf dist",
+    "docs:api": "typedoc"
   },
   "keywords": [
     "diabetes",
@@ -48,6 +49,8 @@
     "@vitest/coverage-v8": "^3.1.2",
     "@vitest/ui": "^3.1.2",
     "tsup": "^8.4.0",
+    "typedoc": "0.28.4",
+    "typedoc-plugin-markdown": "^4.6.3",
     "typescript": "^5.8.3",
     "vitest": "^3.1.2"
   },
