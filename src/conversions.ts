@@ -58,7 +58,8 @@ export function estimateA1CFromAverage(
   avgGlucose: number,
   unit: GlucoseUnit = MG_DL
 ): number {
-  const glucoseMgdl = unit === MMOL_L ? avgGlucose * 18 : avgGlucose
+  const glucoseMgdl =
+    unit === MMOL_L ? avgGlucose * MGDL_MMOLL_CONVERSION : avgGlucose
   return +((glucoseMgdl + 46.7) / 28.7).toFixed(2)
 }
 
