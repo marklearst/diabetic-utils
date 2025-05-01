@@ -29,4 +29,9 @@ describe('Formatters', () => {
     const tzFormatted = formatDate(iso, 'America/New_York')
     expect(tzFormatted).toMatch(/Mar 15, 2024/)
   })
+
+  it('throws on invalid ISO timestamps', () => {
+    expect(() => formatDate('not-a-date')).toThrow(RangeError)
+    expect(() => formatDate('')).toThrow('Invalid ISO timestamp')
+  })
 })
