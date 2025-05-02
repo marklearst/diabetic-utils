@@ -28,8 +28,8 @@ Welcome to the **diabetic-utils** API Reference. All functions are fully type-sa
 
 | Function               | Signature                                                          | Description                           |
 | ---------------------- | ------------------------------------------------------------------ | ------------------------------------- |
-| `calculateTimeInRange` | `({ readings, unit, range }: TIROptions) => TIRResult`             | Calculate time in range, below, above |
-| `getTIRSummary`        | `(results: TIRResult[]) => TIRResult`                              | Summarize multiple TIR results        |
+| `calculateTimeInRange` | `(readings: number[], lower: number, upper: number) => number` | Percentage of readings within range  |
+| `getTIRSummary`        | `(result: TIRResult) => string` | Summarize a TIR result as a string |
 | `groupByDay`           | `(readings: GlucoseReading[]) => Record<string, GlucoseReading[]>` | Group readings by day                 |
 
 ---

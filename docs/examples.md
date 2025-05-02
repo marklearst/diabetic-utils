@@ -34,7 +34,7 @@ const a1c = estimateA1CFromAverage(avgGlucose, 'mg/dL') // 5.9
 ## Calculate Time-in-Range (TIR)
 
 ```ts
-import { calculateTimeInRange } from 'diabetic-utils'
+import { calculateTIR } from 'diabetic-utils'
 
 const readings = [
   { value: 90, unit: 'mg/dL', timestamp: '2024-03-20T10:00:00Z' },
@@ -43,7 +43,7 @@ const readings = [
   { value: 200, unit: 'mg/dL', timestamp: '2024-03-20T13:00:00Z' },
   { value: 80, unit: 'mg/dL', timestamp: '2024-03-20T14:00:00Z' },
 ]
-const tir = calculateTimeInRange({ readings, unit: 'mg/dL', range: [70, 180] })
+const tir = calculateTIR(readings, { min: 70, max: 180 })
 // tir = { inRange: 3, belowRange: 1, aboveRange: 1 }
 ```
 
