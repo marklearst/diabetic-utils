@@ -9,17 +9,19 @@ Built for developers, health apps, and next-gen CGM integrations.
 
 ## 📦 Installation
 
-````bash
+```bash
 pnpm add @marklearst/diabetic-utils
 # or
 npm install @marklearst/diabetic-utils
+```
 
 ## 🧪 Quick Start
 
 ```ts
-import { estimateA1CFromAverage } from '@marklearst/diabetic-utils';
+import { estimateA1CFromAverage } from '@marklearst/diabetic-utils'
 
-const a1c = estimateA1CFromAverage(100); // returns ~5.1
+const a1c = estimateA1CFromAverage(100) // returns ~5.1
+```
 
 ⚙️ Recommended package.json Scripts
 
@@ -30,7 +32,7 @@ const a1c = estimateA1CFromAverage(100); // returns ~5.1
   "test:coverage": "vitest run --coverage",
   "build": "tsup src/index.ts --dts --format esm,cjs"
 }
-````
+```
 
 💡 Coming Soon
 
