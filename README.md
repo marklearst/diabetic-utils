@@ -23,7 +23,7 @@ import { estimateA1CFromAverage } from '@marklearst/diabetic-utils'
 const a1c = estimateA1CFromAverage(100) // returns ~5.1
 ```
 
-⚙️ Recommended package.json Scripts
+## ⚙️ Recommended package.json Scripts
 
 ```json
 "scripts": {
@@ -34,7 +34,15 @@ const a1c = estimateA1CFromAverage(100) // returns ~5.1
 }
 ```
 
-💡 Coming Soon
+## 👨🏻‍💻 Developer Notes
+
+We use `@src/` as the root import alias throughout the codebase.
+To configure this in editors or projects:
+
+- TypeScript: see `tsconfig.json` → `paths`
+- VS Code: ensure `jsconfig.json` or `tsconfig.json` is recognized
+
+## 💡 Coming Soon
 
 - 📈 Predictive A1C & glucose trends
 - ⏱️ Time-in-range utils
@@ -43,7 +51,7 @@ const a1c = estimateA1CFromAverage(100) // returns ~5.1
 - 📝 Typed result models & constants
 - 📚 Docs site: diabeticutils.com
 
-✍️ Author
+## ✍️ Author
 
 Built by @marklearst
 
