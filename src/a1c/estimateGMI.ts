@@ -26,6 +26,8 @@ export function estimateGMI(
   valueOrOptions: number | string | EstimateGMIOptions,
   unit?: GlucoseUnit
 ): number {
+  const allowedUnits: GlucoseUnit[] = ['mg/dL', 'mmol/L']
+
   let value: number
   let resolvedUnit: GlucoseUnit
 
@@ -40,6 +42,10 @@ export function estimateGMI(
     if (!unit) throw new Error('Unit is required when input is a number.')
     value = valueOrOptions
     resolvedUnit = unit
+  }
+
+  if (!allowedUnits.includes(resolvedUnit)) {
+    throw new Error(`Unsupported glucose unit: ${resolvedUnit}`)
   }
 
   if (value <= 0 || !Number.isFinite(value)) {
