@@ -21,10 +21,22 @@ export function parseGlucoseString(input: string): {
     )
   }
 
-  const [_, rawValue, rawUnit] = input.match(/^([\d.]+)\s*(mg\/dL|mmol\/L)$/i)! // safe due to guard
+  const cleaned = input.trim().replace(/\s+/g, ' ')
+  const match = cleaned.match(/^([\d.]+) (mg\/dL|mmol\/L)$/i)
+  if (!match) {
+    throw new Error(
+      'Invalid glucose string format. Use "100 mg/dL" or "5.5 mmol/L".'
+    )
+  }
+  const [_, rawValue, rawUnit] = match // safe due to guard
 
   return {
     value: parseFloat(rawValue),
-    unit: rawUnit as GlucoseUnit,
+    unit:
+      rawUnit.toLowerCase() === 'mg/dl'
+        ? 'mg/dL'
+        : rawUnit.toLowerCase() === 'mmol/l'
+        ? 'mmol/L'
+        : (rawUnit as GlucoseUnit),
   }
 }
