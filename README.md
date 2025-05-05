@@ -2,8 +2,6 @@
 
 ![Diabetic Utils Logo](https://raw.githubusercontent.com/marklearst/diabetic-utils/refs/heads/main/assets/dujs.png)
 
-
-
 A modern TypeScript utility library for glucose, A1C, and diabetic health data. Designed for developers building health apps CGM dashboards, and wellness tools that demand clinical-grade accuracy with clean, modern code.
 
 > ⚠️ This is a full v2 rewrite - rebuilt from the ground up with strict TypeScript types, runtime guards, and modular, test-driven architecture.
@@ -26,10 +24,16 @@ npm install @marklearst/diabetic-utils
 
 ```ts
 import { estimateGMI } from '@marklearst/diabetic-utils'
+import { labelGlucoseStatus } from '@marklearst/diabetic-utils'
 
 estimateGMI(100, 'mg/dL') // → 5.4
 estimateGMI('5.5 mmol/L') // → ~12.1
 estimateGMI({ value: 100, unit: 'mg/dL' }) // → 5.4
+
+// You can also automatically label glucose values as low, normal, or high:
+labelGlucoseStatus(60, 'mg/dL') // 'low'
+labelGlucoseStatus(5.5, 'mmol/L') // 'normal'
+labelGlucoseStatus(200, 'mg/dL') // 'high'
 ```
 
 ## ⚙️ Recommended Scripts
