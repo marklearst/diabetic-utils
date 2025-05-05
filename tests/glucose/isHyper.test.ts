@@ -26,4 +26,16 @@ describe('isHyper', () => {
     // @ts-expect-error
     expect(() => isHyper(100, 'foo')).toThrow()
   })
+  it('throws on undefined or null value', () => {
+    // @ts-expect-error
+    expect(() => isHyper(undefined, 'mg/dL')).toThrow()
+    // @ts-expect-error
+    expect(() => isHyper(null, 'mg/dL')).toThrow()
+  })
+  it('throws on undefined or null unit', () => {
+    // @ts-expect-error
+    expect(() => isHyper(100, undefined)).toThrow()
+    // @ts-expect-error
+    expect(() => isHyper(100, null)).toThrow()
+  })
 })

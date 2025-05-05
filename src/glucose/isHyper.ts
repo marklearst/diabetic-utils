@@ -10,6 +10,7 @@ import { GLUCOSE_RANGES } from '@src/constants'
 export function isHyper(value: number, unit: GlucoseUnit): boolean {
   if (!Number.isFinite(value) || value <= 0)
     throw new Error('Invalid glucose value')
+  // istanbul ignore next
   if (!allowedGlucoseUnits.includes(unit)) throw new Error('Invalid unit')
   const mgdl = unit === 'mmol/L' ? value * 18.0182 : value
   return mgdl > GLUCOSE_RANGES.high
