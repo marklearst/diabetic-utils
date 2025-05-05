@@ -19,4 +19,12 @@ describe('isValidGlucoseString', () => {
     expect(isValidGlucoseString('')).toBe(false)
     expect(isValidGlucoseString('123 xyz')).toBe(false)
   })
+
+  it('returns false for non-string input', () => {
+    expect(isValidGlucoseString(123)).toBe(false)
+    expect(isValidGlucoseString(null)).toBe(false)
+    expect(isValidGlucoseString(undefined)).toBe(false)
+    expect(isValidGlucoseString({})).toBe(false)
+    expect(isValidGlucoseString([])).toBe(false)
+  })
 })
