@@ -127,11 +127,13 @@ To configure this in editors or projects:
 - TypeScript: see `tsconfig.json` → `paths`
 - VS Code: ensure `jsconfig.json` or `tsconfig.json` is recognized
 
-## ✍️ Author & 🚀 Connect & Community
+## ✍️ Author
 
 Built by [@marklearst](https://x.com/marklearst)
 
-Pushing pixels with purpose. Tools for humans.
+_Pushing pixels with purpose. Tools for humans._
+
+## 🌐 Connect
 
 - X (Twitter): [@marklearst](https://x.com/marklearst)
 - LinkedIn: [Mark Learst](https://linkedin.com/in/marklearst)
