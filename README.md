@@ -126,7 +126,4 @@ const isValid = isValidGlucoseValue(value, unit) // true
 
 ## 👨🏻‍💻 Developer Notes
 
-I use `@src/` as the root import alias throughout the codebase.
-To configure this in editors or projects:
-
-- TypeScript: see `tsconfig.json`
+Check back!
