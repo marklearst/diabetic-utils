@@ -1,17 +1,25 @@
 import { defineConfig } from 'vitest/config'
-import path from 'path'
 
 export default defineConfig({
   resolve: {
     alias: {
-      '@src': path.resolve(__dirname, 'src'),
+      '@': './src',
     },
   },
   test: {
+    globals: true,
     coverage: {
       provider: 'v8',
       reporter: ['text', 'lcov'],
-      exclude: ['node_modules', 'tests/helpers/**'],
+      exclude: ['node_modules'],
+      all: true,
+      include: ['src/**/*.ts'],
+      thresholds: {
+        lines: 100,
+        functions: 100,
+        branches: 100,
+        statements: 100,
+      },
     },
   },
 })
