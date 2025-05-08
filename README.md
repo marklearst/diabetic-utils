@@ -115,7 +115,7 @@ const isValid = isValidGlucoseValue(value, unit) // true
 - 🔁 Advanced glucose unit conversions
 - 🏷️ Glucose formatting & status labeling (low, normal, high)
 - 🧪 Lab value constants, ranges, and typed result models
-- 🌐 Docs site: <https://diabeticutils.com>
+- 🌐 Docs site: [diabeticutils.com](https://diabeticutils.com)
 
 ## 🚦 Launch Status
 
@@ -123,6 +123,24 @@ const isValid = isValidGlucoseValue(value, unit) // true
 - Code: Modular, clean, scalable
 - Coverage: 100%
 - NPM: Live!
+
+## ✍️ Author
+
+Built by [@marklearst](https://x.com/marklearst)
+
+_Pushing pixels with purpose. Tools for humans._
+
+## 🌐 Connect
+
+- X (Twitter): [@marklearst](https://x.com/marklearst)
+- LinkedIn: [Mark Learst](https://linkedin.com/in/marklearst)
+- GitHub: [marklearst](https://github.com/marklearst)
+- Portfolio: [marklearst.com](https://marklearst.com)
+- Website: [diabeticutils.com](https://diabeticutils.com) _(coming soon)_
+
+> 💬 Mention or DM me if you use diabetic-utils in your project—I'd love to feature your work!
+>
+> ⭐ Star the repo, share on socials, and help us build the best diabetes data toolkit together!
 
 ## 👨🏻‍💻 Developer Notes
 
