@@ -1,7 +1,7 @@
 {
   "name": "diabetic-utils",
   "version": "1.1.2",
-  "description": "Modern TypeScript utility library for diabetes-related calculations and conversions.",
+  "description": "Zero-bloat TypeScript utilities for diabetes data: glucose, A1C, conversions, time-in-range, and more.",
   "main": "dist/index.js",
   "module": "dist/index.mjs",
   "types": "dist/index.d.ts",
@@ -56,5 +56,12 @@
     "package.json",
     "README.md",
     "LICENSE"
-  ]
+  ],
+  "sideEffects": false,
+  "publishConfig": {
+    "access": "public"
+  },
+  "engines": {
+    "node": ">=18"
+  }
 }
