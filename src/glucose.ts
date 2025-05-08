@@ -13,20 +13,22 @@ import {
 import { isValidGlucoseString } from './guards'
 
 /**
- * Checks if a glucose value is below hypoglycemia threshold.
- * @param val - Glucose value
- * @param unit - Unit of measurement
- * @returns true if hypo
+ * Determines if a glucose value is below the hypoglycemia threshold for the given unit.
+ * @param val - Glucose value to check.
+ * @param unit - Unit of measurement (mg/dL or mmol/L). Defaults to mg/dL.
+ * @returns True if the value is below the hypoglycemia threshold, otherwise false.
+ * @see https://www.diabetes.co.uk/diabetes_care/blood-sugar-level-ranges.html
  */
 export function isHypo(val: number, unit: GlucoseUnit = MG_DL): boolean {
   return unit === MG_DL ? val < HYPO_THRESHOLD_MGDL : val < HYPO_THRESHOLD_MMOLL
 }
 
 /**
- * Checks if a glucose value is above hyperglycemia threshold.
- * @param val - Glucose value
- * @param unit - Unit of measurement
- * @returns true if hyper
+ * Determines if a glucose value is above the hyperglycemia threshold for the given unit.
+ * @param val - Glucose value to check.
+ * @param unit - Unit of measurement (mg/dL or mmol/L). Defaults to mg/dL.
+ * @returns True if the value is above the hyperglycemia threshold, otherwise false.
+ * @see https://www.diabetes.co.uk/diabetes_care/blood-sugar-level-ranges.html
  */
 export function isHyper(val: number, unit: GlucoseUnit = MG_DL): boolean {
   return unit === MG_DL
@@ -35,10 +37,11 @@ export function isHyper(val: number, unit: GlucoseUnit = MG_DL): boolean {
 }
 
 /**
- * Returns a glucose status label.
- * @param val - Glucose value
- * @param unit - Unit of measurement
- * @returns 'low' | 'normal' | 'high'
+ * Returns a glucose status label ('low', 'normal', or 'high') based on thresholds for the given unit.
+ * @param val - Glucose value to label.
+ * @param unit - Unit of measurement (mg/dL or mmol/L). Defaults to mg/dL.
+ * @returns 'low' if below hypo threshold, 'high' if above hyper threshold, otherwise 'normal'.
+ * @see https://www.diabetes.co.uk/diabetes_care/blood-sugar-level-ranges.html
  */
 export function getGlucoseLabel(
   val: number,
@@ -51,14 +54,11 @@ export function getGlucoseLabel(
 
 /**
  * Parses a glucose string like "100 mg/dL" or "5.5 mmol/L" into a value and unit.
- *
- * @param input - A string in the format "value unit"
- * @returns An object with numeric `value` and validated `unit`
- * @throws If the input string is invalid or not in the expected format
- *
+ * @param input - A string in the format "value unit" (e.g., "100 mg/dL").
+ * @returns An object with numeric `value` and validated `unit`.
+ * @throws {Error} If the input string is invalid or not in the expected format.
  * @example
- * parseGlucoseString("100 mg/dL") → { value: 100, unit: "mg/dL" }
- *
+ * parseGlucoseString("100 mg/dL") // { value: 100, unit: "mg/dL" }
  * @see https://www.diabetes.co.uk/diabetes_care/blood-sugar-conversion.html
  */
 export function parseGlucoseString(input: string): {
@@ -83,9 +83,9 @@ export function parseGlucoseString(input: string): {
 
 /**
  * Checks if a glucose value and unit are valid.
- * @param value - Glucose value
- * @param unit - Glucose unit
- * @returns boolean
+ * @param value - Glucose value to validate.
+ * @param unit - Glucose unit to validate.
+ * @returns True if the value is a positive finite number and the unit is supported, otherwise false.
  */
 export function isValidGlucoseValue(value: unknown, unit: unknown): boolean {
   return (
