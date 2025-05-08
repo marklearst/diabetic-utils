@@ -1,11 +1,13 @@
 // @file src/glucose.ts
 
-import { GlucoseUnit, AllowedGlucoseUnits } from './types'
+import { GlucoseUnit } from './types'
 import {
   HYPO_THRESHOLD_MGDL,
   HYPO_THRESHOLD_MMOLL,
   HYPER_THRESHOLD_MGDL,
   HYPER_THRESHOLD_MMOLL,
+  MG_DL,
+  MMOL_L,
 } from './constants'
 
 import { isValidGlucoseString } from './guards'
@@ -16,10 +18,8 @@ import { isValidGlucoseString } from './guards'
  * @param unit - Unit of measurement
  * @returns true if hypo
  */
-export function isHypo(val: number, unit: GlucoseUnit = 'mg/dL'): boolean {
-  return unit === 'mg/dL'
-    ? val < HYPO_THRESHOLD_MGDL
-    : val < HYPO_THRESHOLD_MMOLL
+export function isHypo(val: number, unit: GlucoseUnit = MG_DL): boolean {
+  return unit === MG_DL ? val < HYPO_THRESHOLD_MGDL : val < HYPO_THRESHOLD_MMOLL
 }
 
 /**
@@ -28,8 +28,8 @@ export function isHypo(val: number, unit: GlucoseUnit = 'mg/dL'): boolean {
  * @param unit - Unit of measurement
  * @returns true if hyper
  */
-export function isHyper(val: number, unit: GlucoseUnit = 'mg/dL'): boolean {
-  return unit === 'mg/dL'
+export function isHyper(val: number, unit: GlucoseUnit = MG_DL): boolean {
+  return unit === MG_DL
     ? val > HYPER_THRESHOLD_MGDL
     : val > HYPER_THRESHOLD_MMOLL
 }
@@ -42,7 +42,7 @@ export function isHyper(val: number, unit: GlucoseUnit = 'mg/dL'): boolean {
  */
 export function getGlucoseLabel(
   val: number,
-  unit: GlucoseUnit = 'mg/dL'
+  unit: GlucoseUnit = MG_DL
 ): 'low' | 'normal' | 'high' {
   if (isHypo(val, unit)) return 'low'
   if (isHyper(val, unit)) return 'high'
@@ -73,23 +73,11 @@ export function parseGlucoseString(input: string): {
 
   const cleaned = input.trim().replace(/\s+/g, ' ')
   const match = cleaned.match(/^([\d.]+) (mg\/dL|mmol\/L)$/i)
-
-  if (!match) {
-    throw new Error(
-      'Invalid glucose string format. Use "100 mg/dL" or "5.5 mmol/L".'
-    )
-  }
-
-  const [, rawValue, rawUnit] = match
+  const [, rawValue, rawUnit] = match!
 
   return {
     value: parseFloat(rawValue),
-    unit:
-      rawUnit.toLowerCase() === 'mg/dl'
-        ? 'mg/dL'
-        : rawUnit.toLowerCase() === 'mmol/l'
-        ? 'mmol/L'
-        : (rawUnit as GlucoseUnit),
+    unit: rawUnit.toLowerCase() === 'mg/dl' ? MG_DL : MMOL_L,
   }
 }
 
@@ -104,6 +92,6 @@ export function isValidGlucoseValue(value: unknown, unit: unknown): boolean {
     typeof value === 'number' &&
     Number.isFinite(value) &&
     value > 0 &&
-    AllowedGlucoseUnits.includes(unit as GlucoseUnit)
+    (unit === MG_DL || unit === MMOL_L)
   )
 }
