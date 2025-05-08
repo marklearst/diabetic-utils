@@ -1,7 +1,14 @@
 // @file src/conversions.ts
 
-import { A1C_TO_EAG_MULTIPLIER, A1C_TO_EAG_CONSTANT } from './constants'
-import type { EstimateGMIOptions, GlucoseUnit } from './types'
+import {
+  A1C_TO_EAG_MULTIPLIER,
+  A1C_TO_EAG_CONSTANT,
+  MGDL_MMOLL_CONVERSION,
+  MG_DL,
+  MMOL_L,
+} from './constants'
+import { GlucoseUnit } from './types'
+import type { EstimateGMIOptions } from './types'
 import { isEstimateGMIOptions } from './guards'
 import { parseGlucoseString } from './glucose'
 
@@ -20,10 +27,14 @@ export function estimateAvgGlucoseFromA1C(a1c: number): number {
 }
 
 /**
- * Converts A1C to Glycemia Management Indicator (GMI).
+ * Estimates eAG (estimated average glucose) from A1C.
  */
-export function a1cToGMI(a1c: number): number {
-  return +(3.31 + 0.02392 * a1c).toFixed(2)
+export function estimateEAG(a1c: number): number {
+  if (a1c < 0) throw new Error('A1C must be positive')
+  const eAG = Number(
+    (a1c * A1C_TO_EAG_MULTIPLIER - A1C_TO_EAG_CONSTANT).toFixed(10)
+  )
+  return Math.round(eAG)
 }
 
 /**
@@ -31,21 +42,17 @@ export function a1cToGMI(a1c: number): number {
  */
 export function estimateA1CFromAverage(
   avgGlucose: number,
-  unit: GlucoseUnit = 'mg/dL'
+  unit: GlucoseUnit = MG_DL
 ): number {
-  const glucoseMgdl = unit === 'mmol/L' ? avgGlucose * 18 : avgGlucose
+  const glucoseMgdl = unit === MMOL_L ? avgGlucose * 18 : avgGlucose
   return +((glucoseMgdl + 46.7) / 28.7).toFixed(2)
 }
 
 /**
- * Estimates the average glucose (eAG) from A1C using the ADA/ADAG standard formula.
+ * Converts A1C to GMI.
  */
-export function estimateEAG(a1c: number): number {
-  if (typeof a1c !== 'number' || !Number.isFinite(a1c) || a1c <= 0) {
-    throw new Error('A1C must be a positive, finite number')
-  }
-  const eAG = Number((28.7 * a1c - 46.7).toFixed(10))
-  return Math.round(eAG)
+export function a1cToGMI(a1c: number): number {
+  return +(3.31 + 0.02392 * a1c).toFixed(2)
 }
 
 /**
@@ -55,8 +62,6 @@ export function estimateGMI(
   valueOrOptions: number | string | EstimateGMIOptions,
   unit?: GlucoseUnit
 ): number {
-  const allowedUnits: GlucoseUnit[] = ['mg/dL', 'mmol/L']
-
   let value: number
   let resolvedUnit: GlucoseUnit
 
@@ -73,7 +78,7 @@ export function estimateGMI(
     resolvedUnit = unit
   }
 
-  if (!allowedUnits.includes(resolvedUnit)) {
+  if (![MG_DL, MMOL_L].includes(resolvedUnit)) {
     throw new Error(`Unsupported glucose unit: ${resolvedUnit}`)
   }
 
@@ -81,8 +86,7 @@ export function estimateGMI(
     throw new Error('Glucose value must be a positive number.')
   }
 
-  const gmi =
-    resolvedUnit === 'mmol/L' ? 1.57 * value + 3.5 : 0.03 * value + 2.4
+  const gmi = resolvedUnit === MMOL_L ? 1.57 * value + 3.5 : 0.03 * value + 2.4
 
   return parseFloat(gmi.toFixed(1))
 }
@@ -91,14 +95,14 @@ export function estimateGMI(
  * Converts mg/dL to mmol/L.
  */
 export function mgDlToMmolL(val: number): number {
-  return +(val / 18).toFixed(1)
+  return +(val / MGDL_MMOLL_CONVERSION).toFixed(1)
 }
 
 /**
  * Converts mmol/L to mg/dL.
  */
 export function mmolLToMgDl(val: number): number {
-  return Math.round(val * 18)
+  return Math.round(val * MGDL_MMOLL_CONVERSION)
 }
 
 /**
@@ -113,8 +117,14 @@ export function convertGlucoseUnit({
 }): { value: number; unit: GlucoseUnit } {
   if (!Number.isFinite(value) || value <= 0)
     throw new Error('Invalid glucose value')
-  if (!['mg/dL', 'mmol/L'].includes(unit)) throw new Error('Invalid unit')
-  if (unit === 'mg/dL')
-    return { value: +(value / 18.0182).toFixed(2), unit: 'mmol/L' }
-  return { value: +(value * 18.0182).toFixed(0), unit: 'mg/dL' }
+  if (![MG_DL, MMOL_L].includes(unit)) throw new Error('Invalid unit')
+  if (unit === MG_DL)
+    return {
+      value: Math.round((value / MGDL_MMOLL_CONVERSION) * 10) / 10,
+      unit: MMOL_L,
+    }
+  return {
+    value: Math.round(value * MGDL_MMOLL_CONVERSION),
+    unit: MG_DL,
+  }
 }
