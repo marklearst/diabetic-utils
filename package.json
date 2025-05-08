@@ -12,6 +12,14 @@
       "types": "./dist/index.d.ts"
     }
   },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/marklearst/diabetic-utils.git"
+  },
+  "homepage": "https://github.com/marklearst/diabetic-utils#readme",
+  "bugs": {
+    "url": "https://github.com/marklearst/diabetic-utils/issues"
+  },
   "scripts": {
     "dev": "tsup src/index.ts --watch",
     "build": "tsup",
@@ -42,5 +50,11 @@
     "tsup": "^8.4.0",
     "typescript": "^5.8.3",
     "vitest": "^3.1.2"
-  }
+  },
+  "files": [
+    "dist/",
+    "package.json",
+    "README.md",
+    "LICENSE"
+  ]
 }

@@ -4,7 +4,7 @@
 
 ---
 
-## v1.x (Current & Near-Term)
+## v1.5+ (Current & Near-Term)
 
 - Polish and document all core utilities
 - 100% test coverage and robust error handling
@@ -16,13 +16,12 @@
 
 ---
 
-## v2.x (Mid-Term)
+## v2.0+ (Mid-Term)
 
 - Adapters for popular data sources (optional, opt-in)
 - Property-based and fuzz testing
 - More advanced analytics (e.g., trend analysis, variability)
 - Internationalization/localization support
-- More integrations (e.g., FHIR, HL7)
 
 ---
 
