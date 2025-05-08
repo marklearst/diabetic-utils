@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest'
-import { MG_DL, MMOL_L } from './constants'
+import { MG_DL, MMOL_L } from '../src/constants'
 import {
   AllowedGlucoseUnits,
   GlucoseUnit,
@@ -8,7 +8,7 @@ import {
   GlucoseStatsOptions,
   EstimateGMIOptions,
   A1CReading,
-} from './types'
+} from '../src/types'
 
 describe('types', () => {
   describe('AllowedGlucoseUnits', () => {
