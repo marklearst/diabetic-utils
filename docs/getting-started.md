@@ -21,7 +21,7 @@ import {
   mgDlToMmolL,
   mmolLToMgDl,
   estimateA1CFromAverage,
-  calculateTimeInRange,
+  calculateTIR,
   formatGlucose,
   parseGlucoseString,
   isValidGlucoseValue,
@@ -49,8 +49,7 @@ const readings = [
   { value: 200, unit: 'mg/dL', timestamp: '2024-03-20T13:00:00Z' },
   { value: 80, unit: 'mg/dL', timestamp: '2024-03-20T14:00:00Z' },
 ]
-const tir = calculateTimeInRange({ readings, unit: 'mg/dL', range: [70, 180] }) // { inRange: 3, belowRange: 1, aboveRange: 1 }
-
+const tir = calculateTIR(readings, { min: 70, max: 180 }) // { inRange: 3, belowRange: 1, aboveRange: 1 }
 // Format glucose value
 const formatted = formatGlucose(5.5, 'mmol/L') // '5.5 mmol/L'
 
