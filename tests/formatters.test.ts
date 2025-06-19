@@ -29,4 +29,8 @@ describe('Formatters', () => {
     const tzFormatted = formatDate(iso, 'America/New_York')
     expect(tzFormatted).toMatch(/Mar 15, 2024/)
   })
+
+  it('throws RangeError for invalid dates', () => {
+    expect(() => formatDate('invalid')).toThrow(RangeError)
+  })
 })

@@ -42,7 +42,11 @@ export function formatPercentage(val: number, digits = 1): string {
  * @see https://en.wikipedia.org/wiki/ISO_8601
  */
 export function formatDate(iso: string, timeZone?: string): string {
-  return new Date(iso).toLocaleString('en-US', {
+  const date = new Date(iso)
+  if (Number.isNaN(date.getTime())) {
+    throw new RangeError('Invalid ISO date string')
+  }
+  return date.toLocaleString('en-US', {
     timeZone,
     year: 'numeric',
     month: 'short',
