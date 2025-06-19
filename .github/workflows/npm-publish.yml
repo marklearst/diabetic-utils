@@ -5,6 +5,9 @@ on:
     branches:
       - main
 
+permissions:
+  contents: write
+
 jobs:
   publish:
     runs-on: ubuntu-latest
@@ -38,6 +41,7 @@ jobs:
         run: |
           PUBLISHED_VERSION=$(npm view diabetic-utils version 2>/dev/null || echo "0.0.0")
           PACKAGE_VERSION=$(node -p "require('./package.json').version")
+          echo "version=$PACKAGE_VERSION" >> $GITHUB_OUTPUT
           if [ "$PUBLISHED_VERSION" = "$PACKAGE_VERSION" ]; then
             echo "Version $PACKAGE_VERSION already published, skipping..."
             echo "skip=true" >> $GITHUB_OUTPUT
