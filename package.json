@@ -1,6 +1,6 @@
 {
   "name": "diabetic-utils",
-  "version": "1.1.6",
+  "version": "1.1.7",
   "description": "Zero-bloat TypeScript utilities for diabetes data: glucose, A1C, conversions, time-in-range, and more.",
   "main": "dist/index.js",
   "module": "dist/index.mjs",
