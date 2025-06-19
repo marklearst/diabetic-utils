@@ -1,0 +1,64 @@
+name: NPM Publish
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  publish:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          registry-url: 'https://registry.npmjs.org/'
+
+      - name: Install pnpm
+        uses: pnpm/action-setup@v2
+        with:
+          version: 8
+
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile
+
+      - name: Run tests
+        run: pnpm test
+
+      - name: Build
+        run: pnpm build
+
+      - name: Check version
+        id: check
+        run: |
+          PUBLISHED_VERSION=$(npm view diabetic-utils version 2>/dev/null || echo "0.0.0")
+          PACKAGE_VERSION=$(node -p "require('./package.json').version")
+          if [ "$PUBLISHED_VERSION" = "$PACKAGE_VERSION" ]; then
+            echo "Version $PACKAGE_VERSION already published, skipping..."
+            echo "skip=true" >> $GITHUB_OUTPUT
+          else
+            echo "Publishing version $PACKAGE_VERSION..."
+            echo "skip=false" >> $GITHUB_OUTPUT
+          fi
+
+      - name: Publish to npm
+        if: steps.check.outputs.skip != 'true'
+        run: pnpm publish --no-git-checks
+        env:
+          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
+
+      - name: Create Release
+        if: steps.check.outputs.skip != 'true'
+        uses: actions/create-release@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          tag_name: v${{ steps.check.outputs.version }}
+          release_name: Release v${{ steps.check.outputs.version }}
+          body: |
+            Release of version ${{ steps.check.outputs.version }}
+
+            Please refer to [CHANGELOG.md](./CHANGELOG.md) for details.
