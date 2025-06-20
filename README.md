@@ -14,6 +14,8 @@ A modern TypeScript utility library for glucose, A1C, and diabetic health data. 
 ![GitHub last commit](https://img.shields.io/github/last-commit/marklearst/diabetic-utils)
 ![GitHub code size](https://img.shields.io/github/languages/code-size/marklearst/diabetic-utils)
 ![TypeScript](https://img.shields.io/badge/TypeScript-Strict-blue?logo=typescript)
+![npm](https://img.shields.io/npm/v/diabetic-utils)
+![npm downloads](https://img.shields.io/npm/dm/diabetic-utils)
 
 ---
 
