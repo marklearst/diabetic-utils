@@ -138,3 +138,6 @@ coverage/
 
 # npmrc file
 .npmrc
+
+# Assets
+assets/v*.*
