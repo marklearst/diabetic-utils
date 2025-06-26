@@ -1,49 +1,57 @@
 // @file src/constants.ts
 
 /**
- * Hypoglycemia threshold in mg/dL.
+ * Clinical hypoglycemia threshold (mg/dL).
+ * Used for detecting low glucose events in analytics and reporting.
  * @see https://www.diabetes.co.uk/diabetes_care/blood-sugar-level-ranges.html
  */
 export const HYPO_THRESHOLD_MGDL = 70
 
 /**
- * Hyperglycemia threshold in mg/dL.
+ * Clinical hyperglycemia threshold (mg/dL).
+ * Used for detecting high glucose events in clinical analytics.
  * @see https://www.diabetes.co.uk/diabetes_care/blood-sugar-level-ranges.html
  */
 export const HYPER_THRESHOLD_MGDL = 180
 
 /**
- * Hypoglycemia threshold in mmol/L.
+ * Clinical hypoglycemia threshold (mmol/L).
+ * Used for low glucose detection in international/metric contexts.
  * @see https://www.diabetes.co.uk/diabetes_care/blood-sugar-level-ranges.html
  */
 export const HYPO_THRESHOLD_MMOLL = 3.9
 
 /**
- * Hyperglycemia threshold in mmol/L.
+ * Clinical hyperglycemia threshold (mmol/L).
+ * Used for high glucose detection in international/metric contexts.
  * @see https://www.diabetes.co.uk/diabetes_care/blood-sugar-level-ranges.html
  */
 export const HYPER_THRESHOLD_MMOLL = 10
 
 /**
- * Multiplier for converting A1C to estimated average glucose (eAG).
+ * Clinical multiplier for converting A1C to estimated average glucose (eAG).
+ * Used in eAG calculation per CDC/ADA guidelines.
  * @see https://www.cdc.gov/diabetes/managing/managing-blood-sugar/a1c.html
  */
 export const A1C_TO_EAG_MULTIPLIER = 28.7
 
 /**
- * Constant for converting A1C to estimated average glucose (eAG).
+ * Clinical constant for converting A1C to estimated average glucose (eAG).
+ * Used in eAG calculation per CDC/ADA guidelines.
  * @see https://www.cdc.gov/diabetes/managing/managing-blood-sugar/a1c.html
  */
 export const A1C_TO_EAG_CONSTANT = 46.7
 
 /**
- * Conversion factor between mg/dL and mmol/L.
+ * Clinical conversion factor between mg/dL and mmol/L.
+ * Used for unit conversion in all clinical analytics.
  * @see https://www.diabetes.co.uk/diabetes_care/blood-sugar-conversion.html
  */
 export const MGDL_MMOLL_CONVERSION = 18.0182
 
 /**
- * String literal for mg/dL unit.
+ * Clinical string literal for mg/dL glucose unit.
+ * Used for clinical data interoperability and formatting.
  * @see https://www.diabetes.co.uk/diabetes_care/blood-sugar-conversion.html
  */
 export const MG_DL = 'mg/dL' as const
