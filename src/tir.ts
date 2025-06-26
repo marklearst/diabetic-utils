@@ -3,10 +3,11 @@
 import { GlucoseReading, TIRResult } from './types'
 
 /**
- * Calculates the percentage of time glucose readings are in, below, and above a target range.
- * @param readings - Array of glucose readings to analyze.
- * @param target - Object specifying the target range with { min, max } values.
- * @returns An object with the percentage of readings in range, below range, and above range.
+ * Calculates clinical Time in Range (TIR) metrics for glucose readings.
+ * Returns the percentage of readings in, below, and above the specified clinical target range.
+ * @param readings - Array of glucose readings to analyze
+ * @param target - Object specifying the target range ({ min, max })
+ * @returns Object with in-range, below-range, and above-range percentages
  * @see https://care.diabetesjournals.org/content/42/8/1593
  */
 export function calculateTIR(
@@ -40,9 +41,10 @@ export function calculateTIR(
 }
 
 /**
- * Generates a human-readable summary string from a TIRResult object.
- * @param result - The TIR result breakdown to summarize.
- * @returns A string summarizing the in-range, below-range, and above-range percentages (e.g., 'In Range: 70%, Below: 10%, Above: 20%').
+ * Generates a clinical summary string from a TIRResult object.
+ * Used for reporting and visualization of TIR analytics.
+ * @param result - TIR result breakdown to summarize
+ * @returns String summarizing in-range, below-range, and above-range percentages (e.g., 'In Range: 70%, Below: 10%, Above: 20%')
  */
 export function getTIRSummary(result: TIRResult): string {
   return `In Range: ${result.inRange}%, Below: ${result.belowRange}%, Above: ${result.aboveRange}%`
@@ -65,11 +67,12 @@ export function groupByDay(
 }
 
 /**
- * Calculates the percentage of readings within a specified numeric range.
- * @param readings - Array of glucose values (numbers) to analyze.
- * @param lower - Lower bound of the target range (inclusive).
- * @param upper - Upper bound of the target range (inclusive).
- * @returns The percentage of readings within the specified range (0-100).
+ * Calculates the percentage of glucose readings within a specified numeric range.
+ * Used for clinical TIR analytics and custom range assessments.
+ * @param readings - Array of glucose values (numbers) to analyze
+ * @param lower - Lower bound of the target range (inclusive)
+ * @param upper - Upper bound of the target range (inclusive)
+ * @returns Percentage of readings within the specified range (0-100)
  */
 export function calculateTimeInRange(
   readings: number[],
