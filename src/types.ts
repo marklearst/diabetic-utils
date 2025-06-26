@@ -3,19 +3,22 @@
 import { MG_DL, MMOL_L } from './constants'
 
 /**
- * Supported glucose units.
+ * Supported clinical glucose units.
+ * Used for all clinical analytics and conversions.
  * @see https://www.diabetes.co.uk/diabetes_care/blood-sugar-conversion.html
  */
 export type GlucoseUnit = typeof MG_DL | typeof MMOL_L
 
 /**
- * All allowed glucose units.
+ * List of allowed clinical glucose units.
+ * Used for input validation and unit conversion.
  * @see https://www.diabetes.co.uk/diabetes_care/blood-sugar-conversion.html
  */
 export const AllowedGlucoseUnits: GlucoseUnit[] = [MG_DL, MMOL_L]
 
 /**
- * Represents a single glucose reading with value, unit, and timestamp.
+ * Single clinical glucose reading.
+ * Includes value, unit, and ISO 8601 timestamp for clinical analytics.
  * @see https://www.ncbi.nlm.nih.gov/pmc/articles/PMC7445493/
  */
 export interface GlucoseReading {
@@ -25,7 +28,8 @@ export interface GlucoseReading {
 }
 
 /**
- * Result of a Time-in-Range (TIR) calculation.
+ * Result object for clinical Time-in-Range (TIR) analytics.
+ * Percentages for in-range, below-range, and above-range readings.
  * @see https://care.diabetesjournals.org/content/42/8/1593
  */
 export interface TIRResult {
@@ -35,7 +39,8 @@ export interface TIRResult {
 }
 
 /**
- * Options for estimating GMI (Glucose Management Indicator).
+ * Options for clinical GMI (Glucose Management Indicator) estimation.
+ * Used to standardize GMI calculation input.
  * @see https://diatribe.org/glucose-management-indicator-gmi
  */
 export interface EstimateGMIOptions {
@@ -44,7 +49,7 @@ export interface EstimateGMIOptions {
 }
 
 /**
- * Options for Time-in-Range (TIR) calculations.
+ * Options for clinical Time-in-Range (TIR) analytics.
  */
 export interface TIROptions {
   readings: GlucoseReading[]
@@ -53,7 +58,7 @@ export interface TIROptions {
 }
 
 /**
- * Represents a single A1C reading with value and date.
+ * Single clinical A1C reading (value and ISO date).
  */
 export interface A1CReading {
   value: number
@@ -61,7 +66,8 @@ export interface A1CReading {
 }
 
 /**
- * Options for calculating glucose statistics.
+ * Options for clinical glucose statistics analytics.
+ * Controls which metrics are calculated and reported.
  */
 export interface GlucoseStatsOptions {
   readings: GlucoseReading[]
