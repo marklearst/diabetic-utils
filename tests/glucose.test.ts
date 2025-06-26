@@ -24,6 +24,15 @@ describe('Glucose utilities', () => {
       expect(isHypo(5.5, MMOL_L)).toBe(false)
     })
 
+    it('supports custom hypo thresholds', () => {
+      // mg/dL
+      expect(isHypo(75, MG_DL, { mgdl: 80 })).toBe(true)
+      expect(isHypo(85, MG_DL, { mgdl: 80 })).toBe(false)
+      // mmol/L
+      expect(isHypo(4.0, MMOL_L, { mmoll: 4.5 })).toBe(true)
+      expect(isHypo(4.6, MMOL_L, { mmoll: 4.5 })).toBe(false)
+    })
+
     it('uses mg/dL as default unit', () => {
       expect(isHypo(65)).toBe(true)
       expect(isHypo(100)).toBe(false)
@@ -45,6 +54,15 @@ describe('Glucose utilities', () => {
       expect(isHyper(7.8, MMOL_L)).toBe(false)
     })
 
+    it('supports custom hyper thresholds', () => {
+      // mg/dL
+      expect(isHyper(170, MG_DL, { mgdl: 160 })).toBe(true)
+      expect(isHyper(150, MG_DL, { mgdl: 160 })).toBe(false)
+      // mmol/L
+      expect(isHyper(9.0, MMOL_L, { mmoll: 8.5 })).toBe(true)
+      expect(isHyper(8.0, MMOL_L, { mmoll: 8.5 })).toBe(false)
+    })
+
     it('uses mg/dL as default unit', () => {
       expect(isHyper(200)).toBe(true)
       expect(isHyper(150)).toBe(false)
@@ -56,6 +74,24 @@ describe('Glucose utilities', () => {
       expect(getGlucoseLabel(65, MG_DL)).toBe('low')
       expect(getGlucoseLabel(100, MG_DL)).toBe('normal')
       expect(getGlucoseLabel(200, MG_DL)).toBe('high')
+    })
+
+    it('returns correct labels with custom thresholds', () => {
+      // Custom hypo only
+      expect(getGlucoseLabel(75, MG_DL, { hypo: { mgdl: 80 } })).toBe('low')
+      expect(getGlucoseLabel(85, MG_DL, { hypo: { mgdl: 80 } })).toBe('normal')
+      // Custom hyper only
+      expect(getGlucoseLabel(170, MG_DL, { hyper: { mgdl: 160 } })).toBe('high')
+      expect(getGlucoseLabel(150, MG_DL, { hyper: { mgdl: 160 } })).toBe('normal')
+      // Both custom
+      expect(getGlucoseLabel(75, MG_DL, { hypo: { mgdl: 80 }, hyper: { mgdl: 160 } })).toBe('low')
+      expect(getGlucoseLabel(170, MG_DL, { hypo: { mgdl: 80 }, hyper: { mgdl: 160 } })).toBe('high')
+      expect(getGlucoseLabel(100, MG_DL, { hypo: { mgdl: 80 }, hyper: { mgdl: 160 } })).toBe('normal')
+      // mmol/L
+      expect(getGlucoseLabel(4.0, MMOL_L, { hypo: { mmoll: 4.5 } })).toBe('low')
+      expect(getGlucoseLabel(4.6, MMOL_L, { hypo: { mmoll: 4.5 } })).toBe('normal')
+      expect(getGlucoseLabel(9.0, MMOL_L, { hyper: { mmoll: 8.5 } })).toBe('high')
+      expect(getGlucoseLabel(8.0, MMOL_L, { hyper: { mmoll: 8.5 } })).toBe('normal')
     })
 
     it('returns correct labels for mmol/L values', () => {
