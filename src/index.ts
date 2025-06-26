@@ -21,3 +21,12 @@ export * from './glucose'
 export * from './guards'
 export * from './tir'
 export * from './types'
+export {
+  glucoseStandardDeviation,
+  glucoseCoefficientOfVariation,
+  glucosePercentiles,
+  glucoseMAGE
+} from './variability';
+
+// Export clinical-grade MAGE implementation and types
+export { glucoseMAGE as clinicalMAGE, type MAGEOptions } from './mage';
