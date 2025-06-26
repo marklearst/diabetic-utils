@@ -31,7 +31,7 @@ yarn add diabetic-utils
 
 ## ⚡ Quick Usage
 
-```ts
+```typescript
 import {
   estimateGMI,
   estimateA1CFromAverage,
@@ -42,6 +42,10 @@ import {
   parseGlucoseString,
   isValidGlucoseValue,
   getGlucoseLabel,
+  isHypo,
+  isHyper,
+  getA1CCategory,
+  isA1CInTarget,
 } from 'diabetic-utils'
 
 estimateGMI(100, 'mg/dL') // → 5.4
@@ -52,13 +56,88 @@ estimateGMI({ value: 100, unit: 'mg/dL' }) // → 5.4
 getGlucoseLabel(60, 'mg/dL') // 'low'
 getGlucoseLabel(5.5, 'mmol/L') // 'normal'
 getGlucoseLabel(200, 'mg/dL') // 'high'
+
+// ---
+// Configurable clinical thresholds (NEW!)
+// ---
+
+// Custom hypo threshold (mg/dL)
+isHypo(75, 'mg/dL', { mgdl: 80 }) // true
+isHypo(85, 'mg/dL', { mgdl: 80 }) // false
+
+// Custom hyper threshold (mmol/L)
+isHyper(9.0, 'mmol/L', { mmoll: 8.5 }) // true
+isHyper(8.0, 'mmol/L', { mmoll: 8.5 }) // false
+
+// Custom thresholds for labeling
+getGlucoseLabel(75, 'mg/dL', { hypo: { mgdl: 80 } }) // 'low'
+getGlucoseLabel(170, 'mg/dL', { hyper: { mgdl: 160 } }) // 'high'
+getGlucoseLabel(100, 'mg/dL', { hypo: { mgdl: 80 }, hyper: { mgdl: 160 } }) // 'normal'
+
+// Custom A1C category cutoffs
+getA1CCategory(6.0, { normalMax: 6.0, prediabetesMax: 7.0 }) // 'normal'
+getA1CCategory(6.5, { normalMax: 6.0, prediabetesMax: 7.0 }) // 'prediabetes'
+getA1CCategory(7.5, { normalMax: 6.0, prediabetesMax: 7.0 }) // 'diabetes'
+
+// ---
+// Clinical-Grade Glucose Variability Analytics (NEW!)
+// ---
+
+// Calculate unbiased sample standard deviation (SD)
+
+glucoseStandardDeviation([90, 100, 110, 120, 130, 140, 150, 160, 170, 180]) // 30.28
+
+// Calculate coefficient of variation (CV)
+
+glucoseCoefficientOfVariation([90, 100, 110, 120, 130, 140, 150, 160, 170, 180]) // 22.43
+
+// Calculate percentiles (nearest-rank method)
+
+glucosePercentiles(
+  [90, 100, 110, 120, 130, 140, 150, 160, 170, 180],
+  [10, 25, 50, 75, 90]
+)
+// { 10: 90, 25: 110, 50: 130, 75: 160, 90: 170 }
 ```
+
+## Clinical-Grade Glucose Variability Analytics
+
+Diabetic Utils is the **only TypeScript/JavaScript library** offering clinical-grade, research-backed glucose variability metrics:
+
+- **Standard Deviation (SD):** Unbiased sample SD (n-1), as used in clinical research and guidelines ([See ADA 2019](https://care.diabetesjournals.org/content/42/8/1593), [See ISPAD 2019](https://www.ncbi.nlm.nih.gov/pmc/articles/PMC7445493/)).
+- **Coefficient of Variation (CV):** SD divided by mean, multiplied by 100. Used to assess glycemic variability in clinical trials.
+- **Percentiles:** Nearest-rank method, standard in research and clinical reporting.
+
+### Usage Examples
+
+```typescript
+import {
+  glucoseStandardDeviation,
+  glucoseCoefficientOfVariation,
+  glucosePercentiles,
+} from 'diabetic-utils'
+
+const data = [90, 100, 110, 120, 130, 140, 150, 160, 170, 180]
+
+glucoseStandardDeviation(data) // 30.28
+
+glucoseCoefficientOfVariation(data) // 22.43
+
+glucosePercentiles(data, [10, 50, 90]) // { 10: 90, 50: 130, 90: 170 }
+```
+
+> **References:**
+>
+> - [ADA Standards of Medical Care in Diabetes—2019. Glycemic Targets. Diabetes Care 2019;42(Suppl. 1):S61–S70.](https://care.diabetesjournals.org/content/42/8/1593)
+> - [ISPAD Clinical Practice Consensus Guidelines 2018: Assessment and management of hypoglycemia in children and adolescents with diabetes.](https://www.ncbi.nlm.nih.gov/pmc/articles/PMC7445493/)
+
+These analytics make diabetic-utils uniquely suited for research, clinical trials, and advanced diabetes management apps.
 
 ## 🧑‍💻 Full Examples
 
 Here are some real-world TypeScript examples to get you started:
 
-```ts
+```typescript
 // Convert mg/dL to mmol/L
 const mmol = mgDlToMmolL(100) // 5.5
 
@@ -142,6 +221,12 @@ _Pushing pixels with purpose. Tools for humans._
 >
 > ⭐ Star the repo, share on socials, and help us build the best diabetes data toolkit together!
 
-## 👨🏻‍💻 Developer Notes
+## 📝 A Personal Note
 
-Check back!
+I built diabetic-utils because I believe in the power of data-driven diabetes management. As someone who's lived with diabetes, I know how hard it can be to make sense of the numbers. That's why I've poured my heart into creating a library that's both clinically accurate and easy to use. Whether you're building an app, working on a research project, or just trying to make sense of your own data, I hope diabetic-utils can help. Let's work together to make diabetes management better, one data point at a time.
+
+## 📝 License
+
+MIT License. Use it, fork it, build something that matters.
+
+© 2024–2025 Mark Learst
