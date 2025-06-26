@@ -13,9 +13,10 @@ import { isEstimateGMIOptions } from './guards'
 import { parseGlucoseString } from './glucose'
 
 /**
- * Converts average glucose (mg/dL) to estimated A1C.
+ * Converts clinical average glucose (mg/dL) to estimated A1C (percentage).
+ * Used for clinical analytics and patient reporting.
  * @param avgMgDl - Average glucose in mg/dL
- * @returns Estimated A1C value
+ * @returns Estimated A1C value (percentage)
  * @see https://www.cdc.gov/diabetes/managing/managing-blood-sugar/a1c.html
  */
 export function estimateA1CFromAvgGlucose(avgMgDl: number): number {
@@ -23,8 +24,9 @@ export function estimateA1CFromAvgGlucose(avgMgDl: number): number {
 }
 
 /**
- * Converts A1C value to estimated average glucose (mg/dL).
- * @param a1c - A1C value
+ * Converts clinical A1C value (percentage) to estimated average glucose (mg/dL).
+ * Used for clinical analytics and patient reporting.
+ * @param a1c - A1C value (percentage)
  * @returns Estimated average glucose in mg/dL
  * @see https://www.cdc.gov/diabetes/managing/managing-blood-sugar/a1c.html
  */
@@ -33,10 +35,11 @@ export function estimateAvgGlucoseFromA1C(a1c: number): number {
 }
 
 /**
- * Estimates eAG (estimated average glucose) from A1C.
- * @param a1c - A1C value
- * @returns Estimated average glucose (eAG) in mg/dL
- * @throws {Error} If a1c is negative.
+ * Estimates eAG (estimated average glucose, mg/dL) from clinical A1C value.
+ * Throws if input is negative. Used for clinical and research reporting.
+ * @param a1c - A1C value (percentage)
+ * @returns Estimated average glucose (mg/dL)
+ * @throws {Error} If a1c is negative
  * @see https://www.cdc.gov/diabetes/managing/managing-blood-sugar/a1c.html
  */
 export function estimateEAG(a1c: number): number {
@@ -117,10 +120,11 @@ export function estimateGMI(
 }
 
 /**
- * Converts mg/dL to mmol/L.
+ * Converts clinical glucose value from mg/dL to mmol/L.
+ * Used for international interoperability and reporting.
  * @param val - Glucose value in mg/dL
  * @returns Value in mmol/L
- * @throws {Error} If val is not a finite number or is negative/zero.
+ * @throws {Error} If val is not a finite number or is negative/zero
  * @see https://www.diabetes.co.uk/diabetes_care/blood-sugar-conversion.html
  */
 export function mgDlToMmolL(val: number): number {
@@ -130,10 +134,11 @@ export function mgDlToMmolL(val: number): number {
 }
 
 /**
- * Converts mmol/L to mg/dL.
+ * Converts clinical glucose value from mmol/L to mg/dL.
+ * Used for international interoperability and reporting.
  * @param val - Glucose value in mmol/L
  * @returns Value in mg/dL
- * @throws {Error} If val is not a finite number or is negative/zero.
+ * @throws {Error} If val is not a finite number or is negative/zero
  * @see https://www.diabetes.co.uk/diabetes_care/blood-sugar-conversion.html
  */
 export function mmolLToMgDl(val: number): number {
@@ -143,12 +148,13 @@ export function mmolLToMgDl(val: number): number {
 }
 
 /**
- * Converts glucose value between mg/dL and mmol/L.
- * @param value - Glucose value
- * @param unit - Current glucose unit
+ * Converts clinical glucose value between mg/dL and mmol/L.
+ * Used for clinical interoperability and analytics.
+ * @param value - Glucose value (number)
+ * @param unit - Current glucose unit ('mg/dL' or 'mmol/L')
  * @returns Object with converted value and new unit
- * @throws {Error} If value is not a finite number or is negative/zero.
- * @throws {Error} If unit is not a supported glucose unit.
+ * @throws {Error} If value is not a finite number or is negative/zero
+ * @throws {Error} If unit is not a supported glucose unit
  * @see https://www.diabetes.co.uk/diabetes_care/blood-sugar-conversion.html
  */
 export function convertGlucoseUnit({
