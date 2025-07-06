@@ -160,43 +160,6 @@ These analytics make diabetic-utils uniquely suited for research, clinical trial
 
 ## 🧑‍💻 Full Examples
 
----
-
-## 🤝 Contributing
-
-Contributions, issues and feature requests are welcome!
-
-1. Fork the repository
-2. Create your feature branch (`git checkout -b my-feature`)
-3. Commit your changes (`git commit -am 'Add new feature'`)
-4. Push to the branch (`git push origin my-feature`)
-5. Open a pull request
-
----
-
-## 📝 Changelog
-
-See [CHANGELOG.md](CHANGELOG.md) for release notes and version history.
-
-## 📄 License
-
-This project is licensed under the MIT License. See the [LICENSE](LICENSE) file for details.
-
----
-
-## 💬 Support
-
-For questions, issues, or feature requests, open an issue on GitHub or email mark@marklearst.com.
-
----
-
-## 🔗 Project Links
-
-- [GitHub Repository](https://github.com/marklearst/diabetic-utils)
-- [NPM Package](https://www.npmjs.com/package/diabetic-utils)
-- [Documentation](https://marklearst.github.io/diabetic-utils/)
-
-
 Here are some real-world TypeScript examples to get you started:
 
 ```typescript
