@@ -23,6 +23,15 @@ A modern TypeScript utility library for glucose, A1C, and diabetic health data. 
 
 ---
 
+## 📚 Table of Contents
+
+- [Installation](#-installation)
+- [Quick Usage](#-quick-usage)
+- [Features](#-features)
+- [Full Examples](#-full-examples)
+- [Contributing](#-contributing)
+- [License](#-license)
+
 ## 📦 Installation
 
 Install from npm:
@@ -165,9 +174,27 @@ Contributions, issues and feature requests are welcome!
 
 ---
 
+## 📝 Changelog
+
+See [CHANGELOG.md](CHANGELOG.md) for release notes and version history.
+
 ## 📄 License
 
 This project is licensed under the MIT License. See the [LICENSE](LICENSE) file for details.
+
+---
+
+## 💬 Support
+
+For questions, issues, or feature requests, open an issue on GitHub or email mark@marklearst.com.
+
+---
+
+## 🔗 Project Links
+
+- [GitHub Repository](https://github.com/marklearst/diabetic-utils)
+- [NPM Package](https://www.npmjs.com/package/diabetic-utils)
+- [Documentation](https://marklearst.github.io/diabetic-utils/)
 
 
 Here are some real-world TypeScript examples to get you started:
