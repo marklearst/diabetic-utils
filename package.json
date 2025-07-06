@@ -27,7 +27,7 @@
     "test:ui": "vitest --ui",
     "test:coverage": "vitest run --coverage",
     "clean": "rm -rf dist",
-    "docs:api": "typedoc"
+    "docs:api": "typedoc src --out docs"
   },
   "keywords": [
     "diabetes",

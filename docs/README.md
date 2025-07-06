@@ -1,3 +1,7 @@
+**diabetic-utils**
+
+***
+
 # Diabetic Utils
 
 **The professional TypeScript toolkit for diabetes analytics and clinical-grade health data.**
@@ -242,7 +246,6 @@ For questions, issues, or feature requests, open an issue on GitHub or email mar
 - [GitHub Repository](https://github.com/marklearst/diabetic-utils)
 - [NPM Package](https://www.npmjs.com/package/diabetic-utils)
 - [Documentation](https://marklearst.github.io/diabetic-utils/)
-
 
 Here are some real-world TypeScript examples to get you started:
 

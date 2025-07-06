@@ -1,6 +1,24 @@
 // @file src/constants.ts
 
 /**
+ * Denominator constant for HOMA-IR calculation.
+ * HOMA-IR = (glucose [mg/dL] × insulin [µIU/mL]) / HOMA_IR_DENOMINATOR
+ * @see https://www.ncbi.nlm.nih.gov/books/NBK279396/
+ */
+export const HOMA_IR_DENOMINATOR = 405
+
+/**
+ * Interpretation cutoffs for HOMA-IR (insulin resistance assessment).
+ * These are general clinical categories, not diagnostic.
+ */
+export const HOMA_IR_CUTOFFS = {
+  VERY_SENSITIVE: 1,
+  NORMAL: 2,
+  EARLY_RESISTANCE: 2.9,
+}
+
+
+/**
  * Clinical hypoglycemia threshold (mg/dL).
  * Used for detecting low glucose events in analytics and reporting.
  * @see https://www.diabetes.co.uk/diabetes_care/blood-sugar-level-ranges.html
@@ -61,6 +79,7 @@ export const MG_DL = 'mg/dL' as const
  * @see https://www.diabetes.co.uk/diabetes_care/blood-sugar-conversion.html
  */
 export const MMOL_L = 'mmol/L' as const
+
 
 /**
  * Color codes for glucose zones.
