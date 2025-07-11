@@ -1,20 +1,46 @@
 # Diabetic Utils Documentation
 
-Welcome to the Diabetic Utils API docs.
+Welcome to the Diabetic Utils API reference site.
 
-## Available sections
+## Modules
 
-- [Functions](functions)
-- [Interfaces](interfaces)
-- [Type Aliases](type-aliases)
-- [Variables](variables)
-- [Globals](globals.md)
+### 🩸 Functions
+
+A full list of clinical and utility functions.
+
+- [View all functions](functions)
+
+### 🩺 Interfaces
+
+Type interfaces used across clinical calculations.
+
+- [View all interfaces](interfaces)
+
+### 🔬 Type Aliases
+
+Utility and clinical type aliases.
+
+- [View all type aliases](type-aliases)
+
+### ⚙️ Variables
+
+Constants and clinical thresholds.
+
+- [View all variables](variables)
+
+---
+
+## Globals
+
+- [Global constants and types](globals.md)
+
+---
 
 ## Links
 
-- [GitHub Repo](https://github.com/marklearst/diabetic-utils)
+- [GitHub Repository](https://github.com/marklearst/diabetic-utils)
 - [NPM Package](https://www.npmjs.com/package/diabetic-utils)
 
 ---
 
-These docs are generated using TypeDoc and fully aligned with our TypeScript source. If you find an issue or want to improve coverage, feel free to open an issue or PR on GitHub.
+_These docs are auto-generated using TypeDoc with full clinical-grade validation. Please review and consult PR guidelines if you'd like to contribute._
