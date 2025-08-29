@@ -7,6 +7,8 @@ A modern TypeScript utility library for glucose, A1C, and diabetic health data. 
 > ⚠️ This is a full v1 rewrite - rebuilt from the ground up with strict TypeScript types, runtime guards, and modular, test-driven architecture.
 > No bloat. No guesswork. Just sharp utilities built for real-world usage.
 
+## 📊 **Status & Badges**
+
 ![Status](https://img.shields.io/badge/status-stable-brightgreen)
 [![codecov](https://codecov.io/gh/marklearst/diabetic-utils/branch/main/graph/badge.svg)](https://codecov.io/gh/marklearst/diabetic-utils)
 ![CI](https://github.com/marklearst/diabetic-utils/actions/workflows/ci-cd.yml/badge.svg)
@@ -92,7 +94,7 @@ const isValid = isValidGlucoseValue(value, unit) // true
 // ...and more!
 ```
 
-## 🛠️ Why diabetic-utils?
+## 🤔 Why diabetic-utils?
 
 - Zero-bloat, focused utilities
 - 100% test coverage
@@ -126,7 +128,7 @@ const isValid = isValidGlucoseValue(value, unit) // true
 - Coverage: 100%
 - NPM: Live!
 
-## ✍️ Author
+## 🙋‍♂️ Author
 
 Built by [@marklearst](https://x.com/marklearst)
 
@@ -144,6 +146,20 @@ _Pushing pixels with purpose. Tools for humans._
 >
 > ⭐ Star the repo, share on socials, and help us build the best diabetes data toolkit together!
 
+
 ## 👨🏻‍💻 Developer Notes
 
-Check back!
+- This library follows **semver** for versioning.
+- All calculations are based on peer-reviewed medical sources.  
+  (See: [NIH A1C](https://www.niddk.nih.gov/health-information/diagnostic-tests/a1c-test), [ADA conversion formulas](https://diabetes.org/diabetes/a1c/diagnosis))
+- Unit tests live in `/test` and run automatically via CI.
+- API will stay stable for all `1.x` releases—any breaking change will be in `2.0`.
+- Planned next: [ ] Add more unit conversions, [ ] Support for Type 1-specific metrics.
+- Got a formula you want to see? File an issue or PR!
+
+---
+
+## 📝 License
+
+This project is licensed under the [MIT License](LICENSE).  
+© 2024–2025 Mark Learst
