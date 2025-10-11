@@ -1,12 +1,13 @@
 import { describe, it, expect } from 'vitest'
 import {
   calculateTIR,
+  calculateType2AdvancedTIR,
   calculateTimeInRange,
   getTIRSummary,
   groupByDay,
 } from '../src/tir'
 import { GlucoseReading } from '../src/types'
-import { MG_DL } from '../src/constants'
+import { MG_DL, MMOL_L } from '../src/constants'
 
 describe('Time in Range (TIR) calculations', () => {
   const mockReadings: GlucoseReading[] = [
@@ -158,6 +159,79 @@ describe('Time in Range (TIR) calculations', () => {
       expect(calculateTimeInRange([90, 100, 150], 100, 140)).toBe(
         33.33333333333333
       )
+    })
+  })
+
+  describe('calculateType2AdvancedTIR', () => {
+    it('calculates level 1/2 breakdown for mg/dL readings', () => {
+      const result = calculateType2AdvancedTIR([
+        { value: 50, unit: MG_DL, timestamp: '2024-03-15T10:00:00Z' }, // very low
+        { value: 65, unit: MG_DL, timestamp: '2024-03-15T11:00:00Z' }, // low
+        { value: 100, unit: MG_DL, timestamp: '2024-03-15T12:00:00Z' }, // in range
+        { value: 190, unit: MG_DL, timestamp: '2024-03-15T13:00:00Z' }, // high
+        { value: 260, unit: MG_DL, timestamp: '2024-03-15T14:00:00Z' }, // very high
+      ])
+
+      expect(result).toEqual({
+        veryLow: 20,
+        low: 20,
+        inRange: 20,
+        high: 20,
+        veryHigh: 20,
+      })
+    })
+
+    it('handles mmol/L readings and respects precision option', () => {
+      const result = calculateType2AdvancedTIR(
+        [
+          { value: 2.8, unit: MMOL_L, timestamp: '2024-03-15T10:00:00Z' }, // very low
+          { value: 3.5, unit: MMOL_L, timestamp: '2024-03-15T11:00:00Z' }, // low
+          { value: 6.5, unit: MMOL_L, timestamp: '2024-03-15T12:00:00Z' }, // in range
+          { value: 11.5, unit: MMOL_L, timestamp: '2024-03-15T13:00:00Z' }, // high
+          { value: 15, unit: MMOL_L, timestamp: '2024-03-15T14:00:00Z' }, // very high
+        ],
+        { precision: 2 }
+      )
+
+      expect(result).toEqual({
+        veryLow: 20,
+        low: 20,
+        inRange: 20,
+        high: 20,
+        veryHigh: 20,
+      })
+    })
+
+    it('allows overriding thresholds while keeping ordering validation', () => {
+      const result = calculateType2AdvancedTIR(
+        [
+          { value: 55, unit: MG_DL, timestamp: '2024-03-15T10:00:00Z' },
+          { value: 80, unit: MG_DL, timestamp: '2024-03-15T11:00:00Z' },
+          { value: 190, unit: MG_DL, timestamp: '2024-03-15T12:00:00Z' },
+          { value: 240, unit: MG_DL, timestamp: '2024-03-15T13:00:00Z' },
+        ],
+        {
+          thresholdsMgDl: {
+            veryLowMax: 60,
+            lowMax: 90,
+            inRangeMax: 200,
+          },
+        }
+      )
+
+      expect(result).toEqual({
+        veryLow: 25,
+        low: 25,
+        inRange: 25,
+        high: 25,
+        veryHigh: 0,
+      })
+
+      expect(() =>
+        calculateType2AdvancedTIR([], {
+          thresholdsMgDl: { veryLowMax: 80, lowMax: 60 },
+        })
+      ).toThrowError('Type 2 TIR thresholds must satisfy')
     })
   })
 })

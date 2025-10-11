@@ -39,6 +39,20 @@ export interface TIRResult {
 }
 
 /**
+ * Advanced Time-in-Range (TIR) result with clinical level 1/2 breakdowns.
+ * Provides the percentage of readings falling into each ADA-recommended
+ * glucose band for nonpregnant adults with type 1 or type 2 diabetes.
+ * @see https://care.diabetesjournals.org/content/44/1/17
+ */
+export interface AdvancedTIRResult {
+  veryLow: number
+  low: number
+  inRange: number
+  high: number
+  veryHigh: number
+}
+
+/**
  * Options for clinical GMI (Glucose Management Indicator) estimation.
  * Used to standardize GMI calculation input.
  * @see https://diatribe.org/glucose-management-indicator-gmi

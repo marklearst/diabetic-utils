@@ -1,6 +1,33 @@
 // @file src/tir.ts
 
-import { GlucoseReading, TIRResult } from './types'
+import {
+  AdvancedTIRResult,
+  GlucoseReading,
+  TIRResult,
+} from './types'
+import { MGDL_MMOLL_CONVERSION, MMOL_L } from './constants'
+
+export const DEFAULT_TYPE2_TIR_THRESHOLDS_MGDL = {
+  veryLowMax: 54,
+  lowMax: 70,
+  inRangeMax: 180,
+  highMax: 250,
+} as const
+
+export type Type2AdvancedTIRThresholds = typeof DEFAULT_TYPE2_TIR_THRESHOLDS_MGDL
+
+/**
+ * Options for {@link calculateType2AdvancedTIR}.
+ */
+export interface Type2AdvancedTIROptions {
+  /**
+   * Custom thresholds expressed in mg/dL to override ADA defaults.
+   * Values must remain ordered: veryLowMax < lowMax ≤ inRangeMax < highMax.
+   */
+  thresholdsMgDl?: Partial<Type2AdvancedTIRThresholds>
+  /** Number of decimal places to round percentages to. Defaults to 1. */
+  precision?: number
+}
 
 /**
  * Calculates clinical Time in Range (TIR) metrics for glucose readings.
@@ -85,4 +112,98 @@ export function calculateTimeInRange(
 
   const inRange = readings.filter((r) => r >= lower && r <= upper).length
   return (inRange / readings.length) * 100
+}
+
+function resolveType2Thresholds(
+  overrides: Partial<Type2AdvancedTIRThresholds> = {}
+): Type2AdvancedTIRThresholds {
+  const thresholds = {
+    ...DEFAULT_TYPE2_TIR_THRESHOLDS_MGDL,
+    ...overrides,
+  }
+
+  if (
+    !(
+      thresholds.veryLowMax < thresholds.lowMax &&
+      thresholds.lowMax <= thresholds.inRangeMax &&
+      thresholds.inRangeMax < thresholds.highMax
+    )
+  ) {
+    throw new Error(
+      'Type 2 TIR thresholds must satisfy veryLow < low ≤ inRange < high'
+    )
+  }
+
+  return thresholds
+}
+
+function toMgDl(reading: GlucoseReading): number {
+  return reading.unit === MMOL_L
+    ? reading.value * MGDL_MMOLL_CONVERSION
+    : reading.value
+}
+
+function toPercentage(count: number, total: number, precision: number): number {
+  if (total === 0) return 0
+  return +((count / total) * 100).toFixed(precision)
+}
+
+/**
+ * Calculates the ADA advanced Time-in-Range breakdown for people with type 2 diabetes.
+ * Returns percentages in the five consensus glucose bands (very low, low, in range,
+ * high, very high). Internally normalizes readings to mg/dL so mixed-unit datasets
+ * are handled transparently.
+ * @param readings - Array of glucose readings with timestamps and units
+ * @param options - Optional overrides for thresholds (mg/dL) and precision
+ * @returns {@link AdvancedTIRResult} representing the percentage in each band
+ * @see https://care.diabetesjournals.org/content/44/1/17
+ */
+export function calculateType2AdvancedTIR(
+  readings: GlucoseReading[],
+  options: Type2AdvancedTIROptions = {}
+): AdvancedTIRResult {
+  const { thresholdsMgDl, precision = 1 } = options
+  const thresholds = resolveType2Thresholds(thresholdsMgDl)
+
+  if (readings.length === 0) {
+    return {
+      veryLow: 0,
+      low: 0,
+      inRange: 0,
+      high: 0,
+      veryHigh: 0,
+    }
+  }
+
+  let veryLow = 0
+  let low = 0
+  let inRange = 0
+  let high = 0
+  let veryHigh = 0
+
+  for (const reading of readings) {
+    const valueMgDl = toMgDl(reading)
+
+    if (valueMgDl < thresholds.veryLowMax) {
+      veryLow++
+    } else if (valueMgDl < thresholds.lowMax) {
+      low++
+    } else if (valueMgDl <= thresholds.inRangeMax) {
+      inRange++
+    } else if (valueMgDl <= thresholds.highMax) {
+      high++
+    } else {
+      veryHigh++
+    }
+  }
+
+  const total = readings.length
+
+  return {
+    veryLow: toPercentage(veryLow, total, precision),
+    low: toPercentage(low, total, precision),
+    inRange: toPercentage(inRange, total, precision),
+    high: toPercentage(high, total, precision),
+    veryHigh: toPercentage(veryHigh, total, precision),
+  }
 }
