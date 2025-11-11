@@ -10,13 +10,11 @@ import type { EstimateGMIOptions } from './types'
 export function isEstimateGMIOptions(
   input: unknown
 ): input is EstimateGMIOptions {
+  if (typeof input !== 'object' || input === null) return false
+
+  const candidate = input as Record<string, unknown>
   return (
-    typeof input === 'object' &&
-    input !== null &&
-    'value' in input &&
-    'unit' in input &&
-    typeof (input as any).value === 'number' &&
-    typeof (input as any).unit === 'string'
+    typeof candidate.value === 'number' && typeof candidate.unit === 'string'
   )
 }
 
