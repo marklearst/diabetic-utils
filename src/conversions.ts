@@ -6,9 +6,9 @@ import {
   MGDL_MMOLL_CONVERSION,
   MG_DL,
   MMOL_L,
+  GMI_COEFFICIENTS,
 } from './constants'
-import { GlucoseUnit } from './types'
-import type { EstimateGMIOptions } from './types'
+import type { GlucoseUnit, EstimateGMIOptions, ConversionResult } from './types'
 import { isEstimateGMIOptions } from './guards'
 import { parseGlucoseString } from './glucose'
 
@@ -73,7 +73,10 @@ export function estimateA1CFromAverage(
  * @see https://diatribe.org/glucose-management-indicator-gmi
  */
 export function a1cToGMI(a1c: number): number {
-  return +(3.31 + 0.02392 * a1c).toFixed(2)
+  return +(
+    GMI_COEFFICIENTS.A1C_INTERCEPT +
+    GMI_COEFFICIENTS.A1C_SLOPE * a1c
+  ).toFixed(2)
 }
 
 /**
@@ -114,7 +117,10 @@ export function estimateGMI(
     throw new Error('Glucose value must be a positive number.')
   }
 
-  const gmi = resolvedUnit === MMOL_L ? 1.57 * value + 3.5 : 0.03 * value + 2.4
+  const gmi =
+    resolvedUnit === MMOL_L
+      ? GMI_COEFFICIENTS.MMOL_L_SLOPE * value + GMI_COEFFICIENTS.MMOL_L_INTERCEPT
+      : GMI_COEFFICIENTS.MG_DL_SLOPE * value + GMI_COEFFICIENTS.MG_DL_INTERCEPT
 
   return parseFloat(gmi.toFixed(1))
 }
@@ -126,6 +132,12 @@ export function estimateGMI(
  * @returns Value in mmol/L
  * @throws {Error} If val is not a finite number or is negative/zero
  * @see https://www.diabetes.co.uk/diabetes_care/blood-sugar-conversion.html
+ *
+ * @example
+ * ```typescript
+ * const result = mgDlToMmolL(180)
+ * console.log(result) // 10.0
+ * ```
  */
 export function mgDlToMmolL(val: number): number {
   if (!Number.isFinite(val) || val <= 0)
@@ -140,6 +152,12 @@ export function mgDlToMmolL(val: number): number {
  * @returns Value in mg/dL
  * @throws {Error} If val is not a finite number or is negative/zero
  * @see https://www.diabetes.co.uk/diabetes_care/blood-sugar-conversion.html
+ *
+ * @example
+ * ```typescript
+ * const result = mmolLToMgDl(5.5)
+ * console.log(result) // 99
+ * ```
  */
 export function mmolLToMgDl(val: number): number {
   if (!Number.isFinite(val) || val <= 0)
@@ -163,7 +181,7 @@ export function convertGlucoseUnit({
 }: {
   value: number
   unit: GlucoseUnit
-}): { value: number; unit: GlucoseUnit } {
+}): ConversionResult {
   if (!Number.isFinite(value) || value <= 0)
     throw new Error('Invalid glucose value')
   if (![MG_DL, MMOL_L].includes(unit)) throw new Error('Invalid unit')
