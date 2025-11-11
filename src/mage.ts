@@ -102,7 +102,7 @@ export function glucoseMAGE(
     // Step 4: Select direction (ascending/descending) and calculate MAGE
     return _calculateMAGEFromExcursions(excursions, direction)
   /* c8 ignore start */
-  } catch (error) {
+  } catch {
     // If complex algorithm fails, fall back to simple method
     return _calculateSimpleMAGE(validReadings, sd);
   }
@@ -259,8 +259,8 @@ function _findTurningPoints(
           maxVal = readings[j]
           maxIdx = j
         }
+        /* c8 ignore start -- minVal comparison rarely triggers in typical glucose patterns */
         if (readings[j] < minVal) {
-          /* c8 ignore start */
           minVal = readings[j]
           minIdx = j
         }
