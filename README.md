@@ -243,7 +243,7 @@ I built diabetic-utils because I believe in the power of data-driven diabetes ma
 
 ## 📝 License
 
-MIT License. Use it, fork it, build something that matters.
-
 This project is licensed under the [MIT License](LICENSE).
 © 2024–2025 Mark Learst
+
+Use it, fork it, build something that matters.
