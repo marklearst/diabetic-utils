@@ -24,10 +24,23 @@ describe('A1C utilities', () => {
     expect(getA1CCategory(7)).toBe('diabetes')
     expect(getA1CCategory(-1)).toBe('invalid')
   })
+
+  it('gets A1C category with custom thresholds', () => {
+    expect(getA1CCategory(6.0, { normalMax: 6.0, prediabetesMax: 7.0 })).toBe('normal')
+    expect(getA1CCategory(6.5, { normalMax: 6.0, prediabetesMax: 7.0 })).toBe('prediabetes')
+    expect(getA1CCategory(7.5, { normalMax: 6.0, prediabetesMax: 7.0 })).toBe('diabetes')
+  })
+
   it('checks if A1C is in target', () => {
     expect(isA1CInTarget(6.8)).toBe(true)
     expect(isA1CInTarget(7.5)).toBe(false)
     expect(isA1CInTarget(6.8, [6, 7])).toBe(true)
+  })
+
+  it('checks if A1C is in target with custom min/max', () => {
+    expect(isA1CInTarget(6.8, [6.5, 7.0], { min: 6.0, max: 7.5 })).toBe(true)
+    expect(isA1CInTarget(5.9, [6.5, 7.0], { min: 6.0, max: 7.5 })).toBe(false)
+    expect(isA1CInTarget(7.6, [6.5, 7.0], { min: 6.0, max: 7.5 })).toBe(false)
   })
   it('calculates A1C delta', () => {
     expect(a1cDelta(7, 6.5)).toBe(0.5)
