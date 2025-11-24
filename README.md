@@ -7,13 +7,17 @@ A modern TypeScript utility library for glucose, A1C, and diabetic health data. 
 > ⚠️ This is a full v1 rewrite - rebuilt from the ground up with strict TypeScript types, runtime guards, and modular, test-driven architecture.
 > No bloat. No guesswork. Just sharp utilities built for real-world usage.
 
+## 📊 **Status & Badges**
+
 ![Status](https://img.shields.io/badge/status-stable-brightgreen)
 [![codecov](https://codecov.io/gh/marklearst/diabetic-utils/branch/main/graph/badge.svg)](https://codecov.io/gh/marklearst/diabetic-utils)
-![CI](https://github.com/marklearst/diabetic-utils/actions/workflows/ci.yml/badge.svg)
+![CI](https://github.com/marklearst/diabetic-utils/actions/workflows/ci-cd.yml/badge.svg)
 ![License](https://img.shields.io/github/license/marklearst/diabetic-utils)
 ![GitHub last commit](https://img.shields.io/github/last-commit/marklearst/diabetic-utils)
 ![GitHub code size](https://img.shields.io/github/languages/code-size/marklearst/diabetic-utils)
 ![TypeScript](https://img.shields.io/badge/TypeScript-Strict-blue?logo=typescript)
+![npm](https://img.shields.io/npm/v/diabetic-utils)
+![npm downloads](https://img.shields.io/npm/dm/diabetic-utils)
 
 ---
 
@@ -169,7 +173,7 @@ const isValid = isValidGlucoseValue(value, unit) // true
 // ...and more!
 ```
 
-## 🛠️ Why diabetic-utils?
+## 🤔 Why diabetic-utils?
 
 - Zero-bloat, focused utilities
 - 100% test coverage
@@ -203,7 +207,7 @@ const isValid = isValidGlucoseValue(value, unit) // true
 - Coverage: 100%
 - NPM: Live!
 
-## ✍️ Author
+## 🙋‍♂️ Author
 
 Built by [@marklearst](https://x.com/marklearst)
 
@@ -225,8 +229,21 @@ _Pushing pixels with purpose. Tools for humans._
 
 I built diabetic-utils because I believe in the power of data-driven diabetes management. As someone who's lived with diabetes, I know how hard it can be to make sense of the numbers. That's why I've poured my heart into creating a library that's both clinically accurate and easy to use. Whether you're building an app, working on a research project, or just trying to make sense of your own data, I hope diabetic-utils can help. Let's work together to make diabetes management better, one data point at a time.
 
+## 👨🏻‍💻 Developer Notes
+
+- This library follows **semver** for versioning.
+- All calculations are based on peer-reviewed medical sources.
+  (See: [NIH A1C](https://www.niddk.nih.gov/health-information/diagnostic-tests/a1c-test), [ADA conversion formulas](https://diabetes.org/diabetes/a1c/diagnosis))
+- Unit tests live in `/test` and run automatically via CI.
+- API will stay stable for all `1.x` releases—any breaking change will be in `2.0`.
+- Planned next: [ ] Add more unit conversions, [ ] Support for Type 1-specific metrics.
+- Got a formula you want to see? File an issue or PR!
+
+---
+
 ## 📝 License
 
 MIT License. Use it, fork it, build something that matters.
 
+This project is licensed under the [MIT License](LICENSE).
 © 2024–2025 Mark Learst
