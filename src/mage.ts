@@ -101,13 +101,13 @@ export function glucoseMAGE(
 
     // Step 4: Select direction (ascending/descending) and calculate MAGE
     return _calculateMAGEFromExcursions(excursions, direction)
+  /* c8 ignore start */
   } catch (error) {
     // If complex algorithm fails, fall back to simple method
-    /* c8 ignore start */
     return _calculateSimpleMAGE(validReadings, sd);
-    }
-    /* c8 ignore stop */
   }
+  /* c8 ignore stop */
+}
 
 /**
  * Configuration options for clinical-grade MAGE calculation.
