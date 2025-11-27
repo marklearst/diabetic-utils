@@ -1,5 +1,7 @@
 # Diabetic Utils
 
+**Essential utilities for diabetes data, made simple.**
+
 ![Diabetic Utils Logo](https://raw.githubusercontent.com/marklearst/diabetic-utils/refs/heads/main/assets/dujs.png)
 
 A modern TypeScript utility library for glucose, A1C, and diabetic health data. **No bloat. No guesswork. Just sharp utilities built for real-world usage.**
@@ -58,6 +60,16 @@ estimateGMI({ value: 100, unit: 'mg/dL' }) // → 5.4
 
 // You can also automatically label glucose values as low, normal, or high:
 getGlucoseLabel(60, 'mg/dL') // 'low'
+```
+
+## 🌟 Features
+
+- TypeScript-first, fully typed API
+- Glucose, A1C, GMI, and time-in-range utilities
+- Input parsing and validation
+- Labeling and categorization helpers
+- No dependencies, no bloat
+
 getGlucoseLabel(5.5, 'mmol/L') // 'normal'
 getGlucoseLabel(200, 'mg/dL') // 'high'
 
@@ -138,6 +150,25 @@ glucosePercentiles(data, [10, 50, 90]) // { 10: 90, 50: 130, 90: 170 }
 These analytics make diabetic-utils uniquely suited for research, clinical trials, and advanced diabetes management apps.
 
 ## 🧑‍💻 Full Examples
+
+---
+
+## 🤝 Contributing
+
+Contributions, issues and feature requests are welcome!
+
+1. Fork the repository
+2. Create your feature branch (`git checkout -b my-feature`)
+3. Commit your changes (`git commit -am 'Add new feature'`)
+4. Push to the branch (`git push origin my-feature`)
+5. Open a pull request
+
+---
+
+## 📄 License
+
+This project is licensed under the MIT License. See the [LICENSE](LICENSE) file for details.
+
 
 Here are some real-world TypeScript examples to get you started:
 
