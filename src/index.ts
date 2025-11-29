@@ -14,6 +14,7 @@
  */
 
 export * from './a1c'
+export * from './alignment'
 export * from './conversions'
 export * from './constants'
 export * from './formatters'
@@ -25,8 +26,8 @@ export {
   glucoseStandardDeviation,
   glucoseCoefficientOfVariation,
   glucosePercentiles,
-  glucoseMAGE
-} from './variability';
+  glucoseMAGE,
+} from './variability'
 
 // Export clinical-grade MAGE implementation and types
-export { glucoseMAGE as clinicalMAGE, type MAGEOptions } from './mage';
+export { glucoseMAGE as clinicalMAGE, type MAGEOptions } from './mage'
