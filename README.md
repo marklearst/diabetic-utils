@@ -1,5 +1,7 @@
 # 🩸 Diabetic Utils
 
+Built and maintained by Mark Learst.
+
 **The professional TypeScript toolkit for diabetes analytics and clinical-grade health data.**
 
 ![Diabetic Utils Logo](https://raw.githubusercontent.com/marklearst/diabetic-utils/refs/heads/main/assets/dujs.png)
