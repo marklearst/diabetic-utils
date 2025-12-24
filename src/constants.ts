@@ -15,7 +15,7 @@ export const HOMA_IR_CUTOFFS = {
   VERY_SENSITIVE: 1,
   NORMAL: 2,
   EARLY_RESISTANCE: 2.9,
-}
+} as const
 
 
 /**
@@ -61,6 +61,26 @@ export const A1C_TO_EAG_MULTIPLIER = 28.7
 export const A1C_TO_EAG_CONSTANT = 46.7
 
 /**
+ * GMI (Glucose Management Indicator) calculation coefficients.
+ * Used for estimating GMI from average glucose values.
+ * @see https://diatribe.org/glucose-management-indicator-gmi
+ */
+export const GMI_COEFFICIENTS = {
+  /** Slope for mmol/L to GMI conversion */
+  MMOL_L_SLOPE: 1.57,
+  /** Intercept for mmol/L to GMI conversion */
+  MMOL_L_INTERCEPT: 3.5,
+  /** Slope for mg/dL to GMI conversion */
+  MG_DL_SLOPE: 0.03,
+  /** Intercept for mg/dL to GMI conversion */
+  MG_DL_INTERCEPT: 2.4,
+  /** Slope for A1C to GMI conversion */
+  A1C_SLOPE: 0.02392,
+  /** Intercept for A1C to GMI conversion */
+  A1C_INTERCEPT: 3.31,
+} as const
+
+/**
  * Clinical conversion factor between mg/dL and mmol/L.
  * Used for unit conversion in all clinical analytics.
  * @see https://www.diabetes.co.uk/diabetes_care/blood-sugar-conversion.html
@@ -104,7 +124,7 @@ export const GLUCOSE_ZONE_COLORS = {
   // Colors for trending normal up and down
   NORMAL_UP: GLUCOSE_COLOR_NORMAL_UP, // Lighter Green
   NORMAL_DOWN: GLUCOSE_COLOR_NORMAL_DOWN, // Darker Green
-}
+} as const
 
 /**
  * Unicode arrows for glucose trend indication.
@@ -116,4 +136,159 @@ export const TREND_ARROWS = {
   FALLING: '↘',
   RAPIDRISE: '↑',
   RAPIDFALL: '↓',
-}
+} as const
+
+// ============================================================================
+// Enhanced Time-in-Range (TIR) Constants
+// Per International Consensus on Time in Range (Battelino et al. 2019)
+// ============================================================================
+
+/**
+ * Level 2 hypoglycemia threshold (mg/dL).
+ * Readings below this value indicate clinically significant hypoglycemia.
+ * @see {@link https://diabetesjournals.org/care/article/42/8/1593 | International Consensus on Time in Range (2019)}
+ */
+export const TIR_VERY_LOW_THRESHOLD_MGDL = 54
+
+/**
+ * Level 1 hypoglycemia threshold (mg/dL).
+ * Target range begins at this value.
+ * @see {@link https://diabetesjournals.org/care/article/42/8/1593 | International Consensus on Time in Range (2019)}
+ */
+export const TIR_LOW_THRESHOLD_MGDL = 70
+
+/**
+ * Level 1 hyperglycemia threshold (mg/dL).
+ * Target range ends at this value.
+ * @see {@link https://diabetesjournals.org/care/article/42/8/1593 | International Consensus on Time in Range (2019)}
+ */
+export const TIR_HIGH_THRESHOLD_MGDL = 180
+
+/**
+ * Level 2 hyperglycemia threshold (mg/dL).
+ * Readings above this value indicate clinically significant hyperglycemia.
+ * @see {@link https://diabetesjournals.org/care/article/42/8/1593 | International Consensus on Time in Range (2019)}
+ */
+export const TIR_VERY_HIGH_THRESHOLD_MGDL = 250
+
+/**
+ * Level 2 hypoglycemia threshold (mmol/L).
+ * Readings below this value indicate clinically significant hypoglycemia.
+ * @see {@link https://diabetesjournals.org/care/article/42/8/1593 | International Consensus on Time in Range (2019)}
+ */
+export const TIR_VERY_LOW_THRESHOLD_MMOLL = 3.0
+
+/**
+ * Level 1 hypoglycemia threshold (mmol/L).
+ * Target range begins at this value.
+ * @see {@link https://diabetesjournals.org/care/article/42/8/1593 | International Consensus on Time in Range (2019)}
+ */
+export const TIR_LOW_THRESHOLD_MMOLL = 3.9
+
+/**
+ * Level 1 hyperglycemia threshold (mmol/L).
+ * Target range ends at this value.
+ * @see {@link https://diabetesjournals.org/care/article/42/8/1593 | International Consensus on Time in Range (2019)}
+ */
+export const TIR_HIGH_THRESHOLD_MMOLL = 10.0
+
+/**
+ * Level 2 hyperglycemia threshold (mmol/L).
+ * Readings above this value indicate clinically significant hyperglycemia.
+ * @see {@link https://diabetesjournals.org/care/article/42/8/1593 | International Consensus on Time in Range (2019)}
+ */
+export const TIR_VERY_HIGH_THRESHOLD_MMOLL = 13.9
+
+// ============================================================================
+// Pregnancy-Specific TIR Constants
+// Per ADA Standards of Care in Diabetes (2024, 2025)
+// ============================================================================
+
+/**
+ * Lower bound of target glucose range during pregnancy (mg/dL).
+ * Applies to Type 1, Type 2, and gestational diabetes.
+ * @see {@link https://diabetesjournals.org/care/article/47/Supplement_1/S282 | ADA Standards of Care (2024)}
+ */
+export const PREGNANCY_TARGET_LOW_MGDL = 63
+
+/**
+ * Upper bound of target glucose range during pregnancy (mg/dL).
+ * Applies to Type 1, Type 2, and gestational diabetes.
+ * @see {@link https://diabetesjournals.org/care/article/47/Supplement_1/S282 | ADA Standards of Care (2024)}
+ */
+export const PREGNANCY_TARGET_HIGH_MGDL = 140
+
+/**
+ * Lower bound of target glucose range during pregnancy (mmol/L).
+ * Applies to Type 1, Type 2, and gestational diabetes.
+ * @see {@link https://diabetesjournals.org/care/article/47/Supplement_1/S282 | ADA Standards of Care (2024)}
+ */
+export const PREGNANCY_TARGET_LOW_MMOLL = 3.5
+
+/**
+ * Upper bound of target glucose range during pregnancy (mmol/L).
+ * Applies to Type 1, Type 2, and gestational diabetes.
+ * @see {@link https://diabetesjournals.org/care/article/47/Supplement_1/S282 | ADA Standards of Care (2024)}
+ */
+export const PREGNANCY_TARGET_HIGH_MMOLL = 7.8
+
+// ============================================================================
+// Clinical TIR Goals (percentages)
+// Per International Consensus on Time in Range (Battelino et al. 2019)
+// ============================================================================
+
+/**
+ * Target percentage for time-in-range (70-180 mg/dL).
+ * Clinical goal: ≥70% of readings in target range.
+ * @see {@link https://diabetesjournals.org/care/article/42/8/1593 | International Consensus on Time in Range (2019)}
+ */
+export const TIR_GOAL_STANDARD = 70
+
+/**
+ * Maximum acceptable percentage for Level 1 hypoglycemia (54-69 mg/dL).
+ * Clinical goal: <4% of readings in this range.
+ * @see {@link https://diabetesjournals.org/care/article/42/8/1593 | International Consensus on Time in Range (2019)}
+ */
+export const TBR_LEVEL1_GOAL = 4
+
+/**
+ * Maximum acceptable percentage for Level 2 hypoglycemia (<54 mg/dL).
+ * Clinical goal: <1% of readings in this range.
+ * @see {@link https://diabetesjournals.org/care/article/42/8/1593 | International Consensus on Time in Range (2019)}
+ */
+export const TBR_LEVEL2_GOAL = 1
+
+/**
+ * Maximum acceptable percentage for Level 1 hyperglycemia (181-250 mg/dL).
+ * Clinical goal: <25% of readings in this range.
+ * @see {@link https://diabetesjournals.org/care/article/42/8/1593 | International Consensus on Time in Range (2019)}
+ */
+export const TAR_LEVEL1_GOAL = 25
+
+/**
+ * Maximum acceptable percentage for Level 2 hyperglycemia (>250 mg/dL).
+ * Clinical goal: <5% of readings in this range.
+ * @see {@link https://diabetesjournals.org/care/article/42/8/1593 | International Consensus on Time in Range (2019)}
+ */
+export const TAR_LEVEL2_GOAL = 5
+
+/**
+ * Target percentage for time-in-range for older/high-risk adults.
+ * More lenient goal: ≥50% of readings in target range.
+ * @see {@link https://diabetesjournals.org/care/article/42/8/1593 | International Consensus on Time in Range (2019)}
+ */
+export const TIR_GOAL_OLDER_ADULTS = 50
+
+/**
+ * Maximum acceptable percentage for Level 1 hypoglycemia for older/high-risk adults.
+ * More stringent goal: <1% of readings in this range.
+ * @see {@link https://diabetesjournals.org/care/article/42/8/1593 | International Consensus on Time in Range (2019)}
+ */
+export const TBR_LEVEL1_GOAL_OLDER_ADULTS = 1
+
+/**
+ * Maximum acceptable percentage for Level 2 hypoglycemia for older/high-risk adults.
+ * More stringent goal: <0.5% of readings in this range.
+ * @see {@link https://diabetesjournals.org/care/article/42/8/1593 | International Consensus on Time in Range (2019)}
+ */
+export const TBR_LEVEL2_GOAL_OLDER_ADULTS = 0.5
