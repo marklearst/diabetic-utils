@@ -7,7 +7,7 @@
  * @returns True if value is a valid fasting insulin (µIU/mL)
  * @see https://www.ncbi.nlm.nih.gov/books/NBK279396/ (normal fasting insulin: ~2-25 µIU/mL, but allow wider plausible range for outliers)
  */
-export function isValidInsulin(value: unknown): boolean {
+export function isValidInsulin(value: unknown): value is number {
   return (
     typeof value === 'number' &&
     Number.isFinite(value) &&
