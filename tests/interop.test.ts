@@ -151,6 +151,26 @@ describe('Open mHealth interop', () => {
       const result = buildOMHBloodGlucose(reading)
       expect(result.blood_glucose.unit).toBe('mmol/L')
     })
+
+    it('allows overriding specimen_source', () => {
+      const reading: GlucoseReading = {
+        value: 120,
+        unit: 'mg/dL',
+        timestamp: '2024-01-01T08:00:00Z',
+      }
+      const result = buildOMHBloodGlucose(reading, { specimenSource: 'capillary blood' })
+      expect(result.specimen_source).toBe('capillary blood')
+    })
+
+    it('omits specimen_source when specimenSource is explicitly undefined', () => {
+      const reading: GlucoseReading = {
+        value: 120,
+        unit: 'mg/dL',
+        timestamp: '2024-01-01T08:00:00Z',
+      }
+      const result = buildOMHBloodGlucose(reading, { specimenSource: undefined })
+      expect('specimen_source' in result).toBe(false)
+    })
   })
 
   describe('buildOMHDataPoint', () => {
