@@ -6,7 +6,7 @@
  * which are compatible with the existing GlucoseReading interface.
  */
 
-import type { GlucoseUnit, GlucoseReading } from '../types'
+import type { GlucoseReading } from '../types'
 
 /**
  * Trend direction reported by CGM devices.
