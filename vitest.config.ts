@@ -11,7 +11,11 @@ export default defineConfig({
     coverage: {
       provider: 'v8',
       reporter: ['text', 'lcov'],
-      exclude: ['node_modules'],
+      exclude: [
+        'node_modules',
+        'src/connectors/types.ts',
+        'src/interop/types.ts',
+      ],
       all: true,
       include: ['src/**/*.ts'],
       thresholds: {
