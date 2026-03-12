@@ -414,6 +414,25 @@ describe('calculateEnhancedTIR', () => {
       expect(result.inRange.duration).toBeCloseTo(30, -1)
       expect(result.high.duration).toBeCloseTo(30, -1)
     })
+
+    it('should produce stable duration for out-of-order timestamps', () => {
+      const sorted: GlucoseReading[] = [
+        { value: 120, unit: 'mg/dL', timestamp: '2024-01-01T08:00:00Z' },
+        { value: 130, unit: 'mg/dL', timestamp: '2024-01-01T08:05:00Z' },
+        { value: 110, unit: 'mg/dL', timestamp: '2024-01-01T08:10:00Z' },
+      ]
+      const unsorted: GlucoseReading[] = [
+        sorted[2],
+        sorted[0],
+        sorted[1],
+      ]
+
+      const sortedResult = calculateEnhancedTIR(sorted)
+      const unsortedResult = calculateEnhancedTIR(unsorted)
+
+      expect(unsortedResult.summary.totalDuration).toBe(sortedResult.summary.totalDuration)
+      expect(unsortedResult.summary.totalDuration).toBeGreaterThan(0)
+    })
   })
 
   describe('Average value calculation', () => {

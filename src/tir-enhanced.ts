@@ -333,11 +333,26 @@ function estimateReadingInterval(readings: GlucoseReading[]): number {
     return 5 // Default: 5-minute intervals (CGM standard)
   }
 
-  const timestamps = readings.map((r) => new Date(r.timestamp).getTime())
+  const timestamps = readings
+    .map((r) => new Date(r.timestamp).getTime())
+    .filter(Number.isFinite)
+    .sort((a, b) => a - b)
+
+  if (timestamps.length < 2) {
+    return 5
+  }
+
   const intervals: number[] = []
 
   for (let i = 1; i < Math.min(10, timestamps.length); i++) {
-    intervals.push(timestamps[i] - timestamps[i - 1])
+    const delta = timestamps[i] - timestamps[i - 1]
+    if (delta > 0) {
+      intervals.push(delta)
+    }
+  }
+
+  if (intervals.length === 0) {
+    return 5
   }
 
   const avgIntervalMs = intervals.reduce((a, b) => a + b, 0) / intervals.length
