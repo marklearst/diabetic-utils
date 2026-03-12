@@ -59,7 +59,7 @@ export interface FHIRCGMSensorReading {
   readonly effectiveDateTime: string
   readonly valueQuantity: {
     readonly value: number
-    readonly unit: string
+    readonly unit: GlucoseUnit
     readonly system: string
     readonly code: string
   }
@@ -77,7 +77,7 @@ export interface FHIRCGMSensorReading {
 export interface OMHBloodGlucose {
   readonly blood_glucose: {
     readonly value: number
-    readonly unit: string
+    readonly unit: GlucoseUnit
   }
   readonly effective_time_frame: {
     readonly date_time: string
