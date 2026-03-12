@@ -228,6 +228,15 @@ getA1CCategory(6.5, {
 - ✅ **LBGI / HBGI**: Low/High Blood Glucose Index (Kovatchev 2006)
 - ✅ **GRI**: Glycemia Risk Index with zone classification (Klonoff 2023)
 - ✅ **MODD**: Mean of Daily Differences for day-to-day variability (Service 1980)
+### CGM Connector Adapters (NEW!)
+- ✅ **Dexcom Share**: Normalize Dexcom Share API responses
+- ✅ **Libre LinkUp**: Normalize Libre LinkUp API responses
+- ✅ **Nightscout**: Normalize Nightscout SGV entries
+- ✅ **Canonical Type**: `NormalizedCGMReading` with trend + source metadata
+
+### Interoperability (NEW!)
+- ✅ **FHIR CGM IG**: Build HL7 FHIR-aligned CGM summary and sensor reading payloads
+- ✅ **Open mHealth**: Build OMH blood-glucose datapoints
 
 ### Quality & DX
 - ✅ **TypeScript-First**: 100% strict mode, zero `any` types
@@ -268,6 +277,8 @@ Every formula, threshold, and calculation is sourced from authoritative clinical
 - Pregnancy-specific TIR metrics
 - Clinical-grade MAGE calculation
 - LBGI/HBGI, GRI, and MODD metrics
+- CGM vendor adapters (Dexcom, Libre, Nightscout)
+- FHIR CGM IG-aligned export utilities
 - Type predicates for validation
 
 ---
@@ -315,6 +326,18 @@ Every formula, threshold, and calculation is sourced from authoritative clinical
 - `glucoseHBGI(readings)` - High Blood Glucose Index (Kovatchev 2006)
 - `calculateGRI(input)` - Glycemia Risk Index with zone A-E (Klonoff 2023)
 - `calculateMODD(readings, options?)` - Mean of Daily Differences (Service 1980)
+### CGM Connector Adapters
+- `normalizeDexcomEntries(entries)` - Dexcom Share → NormalizedCGMReading[]
+- `normalizeLibreEntries(entries)` - Libre LinkUp → NormalizedCGMReading[]
+- `normalizeNightscoutEntries(entries)` - Nightscout SGV → NormalizedCGMReading[]
+
+### Interoperability
+- `buildFHIRCGMSummary(tir, period, options?)` - FHIR CGM summary observation
+- `buildFHIRSensorReading(reading)` - FHIR sensor reading observation
+- `buildFHIRSensorReadings(readings)` - FHIR sensor reading observations from a list of readings
+- `buildOMHBloodGlucose(reading)` - Open mHealth blood-glucose body
+- `buildOMHBloodGlucoseList(readings)` - Open mHealth blood-glucose bodies from a list of readings
+- `buildOMHDataPoint(reading, id)` - Full OMH datapoint with header
 
 ### Utilities
 - `parseGlucoseString(str)` - Parse "120 mg/dL" → { value, unit }
@@ -359,6 +382,7 @@ All calculations are based on peer-reviewed clinical sources:
 - **GRI**: [Klonoff et al. (2023)](https://doi.org/10.1177/19322968221085273)
 - **MODD**: [Service & Nelson (1980)](https://doi.org/10.2337/diacare.3.1.58)
 - **Variability**: [ISPAD Guidelines (2018)](https://www.ncbi.nlm.nih.gov/pmc/articles/PMC7445493/)
+- **FHIR CGM IG**: [HL7 CGM IG v1.0.0](https://build.fhir.org/ig/HL7/cgm/index.html)
 
 ---
 
