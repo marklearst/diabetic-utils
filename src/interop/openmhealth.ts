@@ -17,13 +17,32 @@ const OMH_SCHEMA = {
   version: '3.0',
 } as const
 
+/** Options for {@link buildOMHBloodGlucose}. */
+export interface BuildOMHBloodGlucoseOptions {
+  /**
+   * Specimen source for the blood glucose reading.
+   * Defaults to `'interstitial fluid'` (typical for CGM sensors).
+   * Pass `undefined` to omit the field entirely.
+   */
+  specimenSource?: OMHBloodGlucose['specimen_source']
+}
+
 /**
  * Converts a GlucoseReading into an Open mHealth blood-glucose body.
  *
  * @param reading - A GlucoseReading from any source
+ * @param options - Optional overrides; omit `specimenSource` to exclude the field
  * @returns OMH blood-glucose body
  */
-export function buildOMHBloodGlucose(reading: GlucoseReading): OMHBloodGlucose {
+export function buildOMHBloodGlucose(
+  reading: GlucoseReading,
+  options?: BuildOMHBloodGlucoseOptions
+): OMHBloodGlucose {
+  const specimenSource =
+    options && 'specimenSource' in options
+      ? options.specimenSource
+      : 'interstitial fluid'
+
   return {
     blood_glucose: {
       value: reading.value,
@@ -32,7 +51,7 @@ export function buildOMHBloodGlucose(reading: GlucoseReading): OMHBloodGlucose {
     effective_time_frame: {
       date_time: reading.timestamp,
     },
-    specimen_source: 'interstitial fluid',
+    ...(specimenSource !== undefined ? { specimen_source: specimenSource } : {}),
   }
 }
 
@@ -41,11 +60,13 @@ export function buildOMHBloodGlucose(reading: GlucoseReading): OMHBloodGlucose {
  *
  * @param reading - A GlucoseReading from any source
  * @param id - Unique datapoint identifier (UUID recommended)
+ * @param options - Optional overrides forwarded to {@link buildOMHBloodGlucose}
  * @returns Full OMH DataPoint with header and body
  */
 export function buildOMHDataPoint(
   reading: GlucoseReading,
-  id: string
+  id: string,
+  options?: BuildOMHBloodGlucoseOptions
 ): OMHDataPoint<OMHBloodGlucose> {
   return {
     header: {
@@ -57,7 +78,7 @@ export function buildOMHDataPoint(
       },
       creation_date_time: new Date().toISOString(),
     },
-    body: buildOMHBloodGlucose(reading),
+    body: buildOMHBloodGlucose(reading, options),
   }
 }
 
@@ -65,10 +86,12 @@ export function buildOMHDataPoint(
  * Converts an array of GlucoseReadings into Open mHealth blood-glucose bodies.
  *
  * @param readings - Array of glucose readings
+ * @param options - Optional overrides forwarded to {@link buildOMHBloodGlucose}
  * @returns Array of OMH blood-glucose bodies
  */
 export function buildOMHBloodGlucoseList(
-  readings: GlucoseReading[]
+  readings: GlucoseReading[],
+  options?: BuildOMHBloodGlucoseOptions
 ): OMHBloodGlucose[] {
-  return readings.map(buildOMHBloodGlucose)
+  return readings.map((r) => buildOMHBloodGlucose(r, options))
 }
