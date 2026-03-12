@@ -44,6 +44,17 @@ describe('index exports', () => {
     expect(api.buildOMHBloodGlucose).toBeDefined()
     expect(api.buildOMHDataPoint).toBeDefined()
     expect(api.buildOMHBloodGlucoseList).toBeDefined()
+    // Connector adapters
+    expect(api.normalizeDexcomEntry).toBeDefined()
+    expect(api.normalizeDexcomEntries).toBeDefined()
+    expect(api.parseDexcomDate).toBeDefined()
+    expect(api.normalizeDexcomTrend).toBeDefined()
+    expect(api.normalizeLibreEntry).toBeDefined()
+    expect(api.normalizeLibreEntries).toBeDefined()
+    expect(api.normalizeLibreTrend).toBeDefined()
+    expect(api.normalizeNightscoutEntry).toBeDefined()
+    expect(api.normalizeNightscoutEntries).toBeDefined()
+    expect(api.normalizeNightscoutDirection).toBeDefined()
   })
 
   it('should export all expected types', () => {

@@ -37,3 +37,5 @@ export { calculateEnhancedTIR, calculatePregnancyTIR } from './tir-enhanced'
 
 // Export interoperability utilities (FHIR, Open mHealth)
 export * from './interop'
+// Export CGM connector adapters
+export * from './connectors'

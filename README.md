@@ -227,6 +227,11 @@ getA1CCategory(6.5, {
 ### Interoperability (NEW!)
 - ✅ **FHIR CGM IG**: Build HL7 FHIR-aligned CGM summary and sensor reading payloads
 - ✅ **Open mHealth**: Build OMH blood-glucose datapoints
+### CGM Connector Adapters (NEW!)
+- ✅ **Dexcom Share**: Normalize Dexcom Share API responses
+- ✅ **Libre LinkUp**: Normalize Libre LinkUp API responses
+- ✅ **Nightscout**: Normalize Nightscout SGV entries
+- ✅ **Canonical Type**: `NormalizedCGMReading` with trend + source metadata
 
 ### Quality & DX
 - ✅ **TypeScript-First**: 100% strict mode, zero `any` types
@@ -267,6 +272,7 @@ Every formula, threshold, and calculation is sourced from authoritative clinical
 - Pregnancy-specific TIR metrics
 - Clinical-grade MAGE calculation
 - FHIR CGM IG-aligned export utilities
+- CGM vendor adapters (Dexcom, Libre, Nightscout)
 - Type predicates for validation
 
 ---
@@ -316,6 +322,10 @@ Every formula, threshold, and calculation is sourced from authoritative clinical
 - `buildOMHBloodGlucose(reading)` - Open mHealth blood-glucose body
 - `buildOMHBloodGlucoseList(readings)` - Open mHealth blood-glucose bodies from a list of readings
 - `buildOMHDataPoint(reading, id)` - Full OMH datapoint with header
+### CGM Connector Adapters
+- `normalizeDexcomEntries(entries)` - Dexcom Share → NormalizedCGMReading[]
+- `normalizeLibreEntries(entries)` - Libre LinkUp → NormalizedCGMReading[]
+- `normalizeNightscoutEntries(entries)` - Nightscout SGV → NormalizedCGMReading[]
 
 ### Utilities
 - `parseGlucoseString(str)` - Parse "120 mg/dL" → { value, unit }
