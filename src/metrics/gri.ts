@@ -55,16 +55,29 @@ export interface GRIResult {
  * @see https://doi.org/10.1177/19322968221085273
  */
 export function calculateGRI(input: GRIInput): GRIResult {
+  const values = [
+    input.veryLowPercent,
+    input.lowPercent,
+    input.highPercent,
+    input.veryHighPercent,
+  ]
+  if (values.some((v) => !Number.isFinite(v) || v < 0 || v > 100)) {
+    throw new RangeError(
+      'GRI inputs must be finite percentages between 0 and 100.'
+    )
+  }
+
   const hypoComponent = 3.0 * input.veryLowPercent + 2.4 * input.lowPercent
   const hyperComponent = 1.6 * input.veryHighPercent + 0.8 * input.highPercent
   const raw = hypoComponent + hyperComponent
-  const score = Math.min(100, Math.max(0, Math.round(raw * 10) / 10))
+  const clampedRaw = Math.min(100, Math.max(0, raw))
+  const score = Math.round(clampedRaw * 10) / 10
 
   let zone: GRIResult['zone']
-  if (score <= 20) zone = 'A'
-  else if (score <= 40) zone = 'B'
-  else if (score <= 60) zone = 'C'
-  else if (score <= 80) zone = 'D'
+  if (clampedRaw <= 20) zone = 'A'
+  else if (clampedRaw <= 40) zone = 'B'
+  else if (clampedRaw <= 60) zone = 'C'
+  else if (clampedRaw <= 80) zone = 'D'
   else zone = 'E'
 
   return {
