@@ -2,13 +2,17 @@
 
 Built and maintained by Mark Learst.
 
-**The professional TypeScript toolkit for diabetes analytics and clinical-grade health data.**
+**A TypeScript toolkit for diabetes analytics and health data.**
 
 ![Diabetic Utils Logo](https://raw.githubusercontent.com/marklearst/diabetic-utils/refs/heads/main/assets/dujs.png)
 
-A modern, strictly-typed utility library for glucose, A1C, insulin, and diabetes metrics. Designed for reliability, transparency, and real-world clinical use—no bloat, no guesswork, just robust utilities backed by authoritative clinical references.
+A modern, strictly-typed utility library for glucose, A1C, insulin, and diabetes metrics. Designed for reliability and transparency—no bloat, no guesswork, just robust utilities with referenced formulas from published guidelines.
 
-> ⚠️ **v1.4+** features enhanced TIR calculations, 100% test coverage, zero `any` types, and clinical-grade glucose variability analytics. Trusted by developers, clinicians, and researchers.
+> **Disclaimer**: This library is for **informational and educational purposes only**.
+> It does not constitute medical advice, diagnosis, or treatment. Always consult
+> a qualified healthcare provider for medical decisions.
+
+> **v1.4+** features enhanced TIR calculations, 100% test coverage, zero `any` types, and glucose variability analytics.
 
 ---
 
@@ -28,10 +32,10 @@ A modern, strictly-typed utility library for glucose, A1C, insulin, and diabetes
 ## 🚀 What's New in v1.4.0
 
 ### 🎯 Enhanced Time-in-Range (TIR)
-Clinical-grade TIR calculations per **International Consensus 2019** and **ADA 2024 Guidelines**:
+TIR calculations per **International Consensus 2019** and **ADA 2024 Guidelines**:
 - **5-Range Enhanced TIR**: Very Low, Low, In Range, High, Very High
 - **Pregnancy TIR**: Tighter targets (63-140 mg/dL / 3.5-7.8 mmol/L)
-- **Clinical Recommendations**: Automated insights based on targets
+- **Recommendations**: Automated observations based on targets
 - **Population-Specific Goals**: Standard, older-adults, high-risk
 
 ### 🛡️ Type Safety Excellence
@@ -41,7 +45,7 @@ Clinical-grade TIR calculations per **International Consensus 2019** and **ADA 2
 - **Named Return Types** - `ConversionResult` interface
 
 ### 📚 Self-Documenting Code
-- **Named Constants**: `GMI_COEFFICIENTS` with clinical references
+- **Named Constants**: `GMI_COEFFICIENTS` with published references
 - **Working Examples**: Every function has `@example` tags
 - **Test Helpers**: Reusable test utilities for your own projects
 
@@ -116,7 +120,7 @@ console.log(`Assessment: ${result.meetsTargets.overallAssessment}`)
 // Assessment: good
 
 console.log(result.meetsTargets.recommendations)
-// ['Excellent glycemic control! All metrics meet clinical targets...']
+// ['All metrics meet consensus targets.']
 ```
 
 ### Pregnancy TIR (NEW!)
@@ -133,7 +137,7 @@ console.log(`Meets pregnancy targets: ${result.meetsPregnancyTargets}`)
 // Meets pregnancy targets: true
 
 console.log(result.recommendations)
-// ['Excellent glycemic control for pregnancy!...']
+// ['All metrics meet pregnancy consensus targets.', ...]
 ```
 
 ### Glucose Labeling & Validation
@@ -151,7 +155,7 @@ getGlucoseLabel(60, 'mg/dL')   // → 'low'
 getGlucoseLabel(5.5, 'mmol/L') // → 'normal'
 getGlucoseLabel(200, 'mg/dL')  // → 'high'
 
-// Clinical checks
+// Threshold checks
 isHypo(65, 'mg/dL')   // → true
 isHyper(180, 'mg/dL') // → false
 
@@ -160,14 +164,14 @@ isValidGlucoseValue(120, 'mg/dL')  // → true
 isValidGlucoseValue(-10, 'mg/dL')  // → false
 ```
 
-### Clinical Variability Analytics
+### Variability Analytics
 
 ```typescript
 import {
   glucoseStandardDeviation,
   glucoseCoefficientOfVariation,
   glucosePercentiles,
-  calculateMAGE
+  glucoseMAGE
 } from 'diabetic-utils'
 
 const data = [90, 100, 110, 120, 130, 140, 150, 160, 170, 180]
@@ -183,8 +187,8 @@ glucosePercentiles(data, [10, 50, 90])
 // → { 10: 90, 50: 130, 90: 170 }
 
 // MAGE (Mean Amplitude of Glycemic Excursions)
-const mage = calculateMAGE(readings)
-console.log(`MAGE: ${mage.value} mg/dL`)
+const mage = glucoseMAGE([100, 120, 80, 160, 90, 140, 70, 180])
+console.log(`MAGE: ${mage} mg/dL`)
 ```
 
 ### Custom Thresholds
@@ -224,11 +228,26 @@ getA1CCategory(6.5, {
 - ✅ **Validation**: Input guards, string parsing
 - ✅ **Labeling**: Glucose status (low/normal/high)
 
+### CGM Connector Adapters (NEW!)
+- ✅ **Dexcom Share**: Normalize Dexcom Share API responses
+- ✅ **Libre LinkUp**: Normalize Libre LinkUp API responses
+- ✅ **Nightscout**: Normalize Nightscout SGV entries
+- ✅ **Canonical Type**: `NormalizedCGMReading` with trend + source metadata
+
+### Interoperability (NEW!)
+- ✅ **FHIR CGM IG**: Build HL7 FHIR-aligned CGM summary and sensor reading payloads
+- ✅ **Open mHealth**: Build OMH blood-glucose datapoints
+
+### Advanced CGM Metrics (NEW!)
+- ✅ **LBGI / HBGI**: Low/High Blood Glucose Index (Kovatchev 2006)
+- ✅ **GRI**: Glycemia Risk Index with zone classification (Klonoff 2023)
+- ✅ **MODD**: Mean of Daily Differences for day-to-day variability (Service 1980)
+
 ### Quality & DX
 - ✅ **TypeScript-First**: 100% strict mode, zero `any` types
-- ✅ **100% Test Coverage**: 205 tests, all edge cases covered
+- ✅ **100% Test Coverage**: 283 tests, all edge cases covered
 - ✅ **Zero Dependencies**: No bloat, tree-shakable
-- ✅ **Clinical References**: ADA, CDC, ISPAD, PubMed citations
+- ✅ **Published References**: ADA, CDC, ISPAD, PubMed citations
 - ✅ **TSDoc**: Complete API documentation
 - ✅ **ESM + CJS**: Works everywhere
 - ✅ **Type Predicates**: Better type narrowing
@@ -238,8 +257,8 @@ getA1CCategory(6.5, {
 
 ## 🏆 Why Choose Diabetic Utils?
 
-### Clinical-Grade Accuracy
-Every formula, threshold, and calculation is sourced from authoritative clinical guidelines:
+### Referenced Formulas
+Every formula, threshold, and calculation references published guidelines:
 - **International Consensus on Time in Range (2019)** - TIR calculations
 - **ADA Standards of Care (2024)** - Pregnancy targets, A1C guidelines
 - **ISPAD Guidelines (2018)** - Glucose variability metrics
@@ -261,7 +280,10 @@ Every formula, threshold, and calculation is sourced from authoritative clinical
 **Only TypeScript/JavaScript library with:**
 - Enhanced TIR (5-range breakdown)
 - Pregnancy-specific TIR metrics
-- Clinical-grade MAGE calculation
+- MAGE calculation (Service 1970)
+- CGM vendor adapters (Dexcom, Libre, Nightscout)
+- FHIR CGM IG-aligned export utilities
+- LBGI/HBGI, GRI, and MODD metrics
 - Type predicates for validation
 
 ---
@@ -277,7 +299,7 @@ Every formula, threshold, and calculation is sourced from authoritative clinical
 - `estimateA1CFromAverage(glucose, unit)` - A1C from average glucose
 - `estimateGMI(input, unit?)` - GMI from average glucose
 - `a1cToGMI(a1c)` - Convert A1C to GMI
-- `a1cToAverageGlucose(a1c, unit)` - A1C to eAG
+- `estimateAvgGlucoseFromA1C(a1c)` - A1C to estimated average glucose (mg/dL)
 
 ### Time-in-Range
 - `calculateTimeInRange(readings, low, high)` - Basic TIR
@@ -298,11 +320,28 @@ Every formula, threshold, and calculation is sourced from authoritative clinical
 - `glucoseStandardDeviation(readings)` - SD (unbiased)
 - `glucoseCoefficientOfVariation(readings)` - CV%
 - `glucosePercentiles(readings, percentiles)` - Percentile ranks
-- `calculateMAGE(readings)` - Mean Amplitude of Glycemic Excursions
+- `glucoseMAGE(readings, options?)` - Mean Amplitude of Glycemic Excursions
 
 ### Insulin Metrics
 - `calculateHOMAIR(glucose, insulin, unit)` - HOMA-IR
 - `isValidInsulin(value)` - Validate insulin value
+
+### Advanced CGM Metrics
+- `glucoseLBGI(readings)` - Low Blood Glucose Index (Kovatchev 2006)
+- `glucoseHBGI(readings)` - High Blood Glucose Index (Kovatchev 2006)
+- `calculateGRI(input)` - Glycemia Risk Index with zone A-E (Klonoff 2023)
+- `calculateMODD(readings, options?)` - Mean of Daily Differences (Service 1980)
+
+### CGM Connector Adapters
+- `normalizeDexcomEntries(entries)` - Dexcom Share → NormalizedCGMReading[]
+- `normalizeLibreEntries(entries)` - Libre LinkUp → NormalizedCGMReading[]
+- `normalizeNightscoutEntries(entries)` - Nightscout SGV → NormalizedCGMReading[]
+
+### Interoperability
+- `buildFHIRCGMSummary(tir, period, options?)` - FHIR CGM summary observation
+- `buildFHIRSensorReading(reading)` - FHIR sensor reading observation
+- `buildOMHBloodGlucose(reading)` - Open mHealth blood-glucose body
+- `buildOMHDataPoint(reading, id)` - Full OMH datapoint with header
 
 ### Utilities
 - `parseGlucoseString(str)` - Parse "120 mg/dL" → { value, unit }
@@ -313,16 +352,17 @@ Every formula, threshold, and calculation is sourced from authoritative clinical
 
 ---
 
-## 🧪 Test Helpers (NEW!)
+## 🧪 Test Helpers
 
-Use our test utilities in your own projects:
+The repository includes test utilities in `tests/test-helpers.ts` for contributors and downstream developers:
 
 ```typescript
+// In your test files (not published to npm — copy as needed)
 import {
   createGlucoseReadings,
   COMMON_TEST_VALUES,
   TEST_TIMESTAMP_BASE
-} from 'diabetic-utils/tests/test-helpers'
+} from './tests/test-helpers'
 
 // Create test data easily
 const readings = createGlucoseReadings([100, 110, 120], 'mg/dL', 5)
@@ -334,16 +374,21 @@ const { NORMAL_GLUCOSE_MGDL, HYPO_GLUCOSE_MGDL } = COMMON_TEST_VALUES
 
 ---
 
-## 🔬 Clinical References
+## 🔬 References
 
-All calculations are based on peer-reviewed clinical sources:
+All calculations reference peer-reviewed published sources:
 
 - **Time-in-Range**: [International Consensus (2019)](https://diabetesjournals.org/care/article/42/8/1593)
 - **Pregnancy TIR**: [ADA Standards of Care (2024)](https://diabetesjournals.org/care/article/47/Supplement_1/S282)
+- **ADA 2026 Standards**: [ADA Standards of Care (2026)](https://diabetesjournals.org/care/issue/49/Supplement_1)
 - **A1C/eAG**: [Nathan et al. (2008)](https://diabetesjournals.org/care/article/31/8/1473)
 - **HOMA-IR**: [Matthews et al. (1985)](https://diabetesjournals.org/diabetes/article/34/12/1212)
 - **MAGE**: [Service et al. (1970)](https://diabetesjournals.org/diabetes/article/19/9/644)
+- **LBGI/HBGI**: [Kovatchev et al. (2006)](https://doi.org/10.2337/dc06-1085)
+- **GRI**: [Klonoff et al. (2023)](https://doi.org/10.1177/19322968221085273)
+- **MODD**: [Service & Nelson (1980)](https://doi.org/10.2337/diacare.3.1.58)
 - **Variability**: [ISPAD Guidelines (2018)](https://www.ncbi.nlm.nih.gov/pmc/articles/PMC7445493/)
+- **FHIR CGM IG**: [HL7 CGM IG v1.0.0](https://build.fhir.org/ig/HL7/cgm/index.html)
 
 ---
 
@@ -352,24 +397,37 @@ All calculations are based on peer-reviewed clinical sources:
 ```
 diabetic-utils/
 ├── src/
-│   ├── index.ts           # Main exports
-│   ├── constants.ts       # Clinical thresholds & formulas
-│   ├── types.ts           # TypeScript types
-│   ├── conversions.ts     # Glucose unit conversions
-│   ├── a1c.ts            # A1C & GMI calculations
-│   ├── tir.ts            # Basic time-in-range
-│   ├── tir-enhanced.ts   # Enhanced & pregnancy TIR
-│   ├── glucose.ts        # Glucose utilities
-│   ├── alignment.ts      # HOMA-IR
-│   ├── variability.ts    # SD, CV, percentiles
-│   ├── mage.ts           # MAGE calculation
-│   ├── formatters.ts     # String formatting
-│   ├── guards.ts         # Type guards
-│   └── validators.ts     # Input validation
+│   ├── index.ts              # Main exports
+│   ├── constants.ts          # Clinical thresholds & formulas
+│   ├── types.ts              # TypeScript types
+│   ├── conversions.ts        # Glucose unit conversions
+│   ├── a1c.ts               # A1C & GMI calculations
+│   ├── tir.ts               # Basic time-in-range
+│   ├── tir-enhanced.ts      # Enhanced & pregnancy TIR
+│   ├── glucose.ts           # Glucose utilities
+│   ├── alignment.ts         # HOMA-IR
+│   ├── variability.ts       # SD, CV, percentiles
+│   ├── mage.ts              # MAGE calculation
+│   ├── formatters.ts        # String formatting
+│   ├── guards.ts            # Type guards
+│   ├── validators.ts        # Input validation
+│   ├── connectors/          # CGM vendor adapters
+│   │   ├── dexcom.ts        # Dexcom Share normalization
+│   │   ├── libre.ts         # Libre LinkUp normalization
+│   │   ├── nightscout.ts    # Nightscout SGV normalization
+│   │   └── types.ts         # Vendor & canonical types
+│   ├── interop/             # Health data interoperability
+│   │   ├── fhir.ts          # FHIR CGM IG payload builders
+│   │   ├── openmhealth.ts   # Open mHealth payload builders
+│   │   └── types.ts         # Interop payload types
+│   └── metrics/             # Advanced CGM metrics
+│       ├── bgi.ts           # LBGI / HBGI
+│       ├── gri.ts           # Glycemia Risk Index
+│       └── modd.ts          # Mean of Daily Differences
 ├── tests/
-│   ├── test-helpers.ts   # Shared test utilities
-│   └── *.test.ts         # 100% coverage tests
-└── dist/                 # Built output (ESM + CJS)
+│   ├── test-helpers.ts      # Shared test utilities
+│   └── *.test.ts            # 100% coverage tests (283 tests)
+└── dist/                    # Built output (ESM + CJS)
 ```
 
 **Key Principles:**
@@ -377,7 +435,7 @@ diabetic-utils/
 - ✅ Tree-shakable modules
 - ✅ Strict TypeScript
 - ✅ 100% test coverage
-- ✅ Clinical references in TSDoc
+- ✅ Published references in TSDoc
 
 ---
 
@@ -407,12 +465,6 @@ pnpm test:coverage
 
 # Build library
 pnpm build
-
-# Lint code
-pnpm lint
-
-# Type check
-pnpm typecheck
 ```
 
 ---
@@ -468,7 +520,7 @@ Full-stack developer, diabetes advocate, and open source contributor.
 
 I built diabetic-utils because I believe in the power of data-driven diabetes management. As someone who's lived with diabetes, I know how hard it can be to make sense of the numbers.
 
-That's why I've poured my heart into creating a library that's both **clinically accurate** and **easy to use**. Whether you're building an app, working on research, or just trying to understand your own data, I hope diabetic-utils can help.
+That's why I've poured my heart into creating a library that's both **accurate** and **easy to use**. Whether you're building an app, working on research, or just trying to understand your own data, I hope diabetic-utils can help.
 
 Let's work together to make diabetes management better, one data point at a time. 🩸
 

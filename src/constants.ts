@@ -9,7 +9,7 @@ export const HOMA_IR_DENOMINATOR = 405
 
 /**
  * Interpretation cutoffs for HOMA-IR (insulin resistance assessment).
- * These are general clinical categories, not diagnostic.
+ * These are general categories, not diagnostic.
  */
 export const HOMA_IR_CUTOFFS = {
   VERY_SENSITIVE: 1,
@@ -19,42 +19,42 @@ export const HOMA_IR_CUTOFFS = {
 
 
 /**
- * Clinical hypoglycemia threshold (mg/dL).
- * Used for detecting low glucose events in analytics and reporting.
+ * Hypoglycemia threshold (mg/dL).
+ * Used for detecting low glucose events.
  * @see https://www.diabetes.co.uk/diabetes_care/blood-sugar-level-ranges.html
  */
 export const HYPO_THRESHOLD_MGDL = 70
 
 /**
- * Clinical hyperglycemia threshold (mg/dL).
- * Used for detecting high glucose events in clinical analytics.
+ * Hyperglycemia threshold (mg/dL).
+ * Used for detecting high glucose events.
  * @see https://www.diabetes.co.uk/diabetes_care/blood-sugar-level-ranges.html
  */
 export const HYPER_THRESHOLD_MGDL = 180
 
 /**
- * Clinical hypoglycemia threshold (mmol/L).
+ * Hypoglycemia threshold (mmol/L).
  * Used for low glucose detection in international/metric contexts.
  * @see https://www.diabetes.co.uk/diabetes_care/blood-sugar-level-ranges.html
  */
 export const HYPO_THRESHOLD_MMOLL = 3.9
 
 /**
- * Clinical hyperglycemia threshold (mmol/L).
+ * Hyperglycemia threshold (mmol/L).
  * Used for high glucose detection in international/metric contexts.
  * @see https://www.diabetes.co.uk/diabetes_care/blood-sugar-level-ranges.html
  */
 export const HYPER_THRESHOLD_MMOLL = 10
 
 /**
- * Clinical multiplier for converting A1C to estimated average glucose (eAG).
+ * Multiplier for converting A1C to estimated average glucose (eAG).
  * Used in eAG calculation per CDC/ADA guidelines.
  * @see https://www.cdc.gov/diabetes/managing/managing-blood-sugar/a1c.html
  */
 export const A1C_TO_EAG_MULTIPLIER = 28.7
 
 /**
- * Clinical constant for converting A1C to estimated average glucose (eAG).
+ * Constant for converting A1C to estimated average glucose (eAG).
  * Used in eAG calculation per CDC/ADA guidelines.
  * @see https://www.cdc.gov/diabetes/managing/managing-blood-sugar/a1c.html
  */
@@ -81,15 +81,15 @@ export const GMI_COEFFICIENTS = {
 } as const
 
 /**
- * Clinical conversion factor between mg/dL and mmol/L.
- * Used for unit conversion in all clinical analytics.
+ * Conversion factor between mg/dL and mmol/L.
+ * Used for unit conversion.
  * @see https://www.diabetes.co.uk/diabetes_care/blood-sugar-conversion.html
  */
 export const MGDL_MMOLL_CONVERSION = 18.0182
 
 /**
- * Clinical string literal for mg/dL glucose unit.
- * Used for clinical data interoperability and formatting.
+ * String literal for mg/dL glucose unit.
+ * Used for data interoperability and formatting.
  * @see https://www.diabetes.co.uk/diabetes_care/blood-sugar-conversion.html
  */
 export const MG_DL = 'mg/dL' as const
@@ -145,7 +145,7 @@ export const TREND_ARROWS = {
 
 /**
  * Level 2 hypoglycemia threshold (mg/dL).
- * Readings below this value indicate clinically significant hypoglycemia.
+ * Readings below this value indicate significant hypoglycemia.
  * @see {@link https://diabetesjournals.org/care/article/42/8/1593 | International Consensus on Time in Range (2019)}
  */
 export const TIR_VERY_LOW_THRESHOLD_MGDL = 54
@@ -166,14 +166,14 @@ export const TIR_HIGH_THRESHOLD_MGDL = 180
 
 /**
  * Level 2 hyperglycemia threshold (mg/dL).
- * Readings above this value indicate clinically significant hyperglycemia.
+ * Readings above this value indicate significant hyperglycemia.
  * @see {@link https://diabetesjournals.org/care/article/42/8/1593 | International Consensus on Time in Range (2019)}
  */
 export const TIR_VERY_HIGH_THRESHOLD_MGDL = 250
 
 /**
  * Level 2 hypoglycemia threshold (mmol/L).
- * Readings below this value indicate clinically significant hypoglycemia.
+ * Readings below this value indicate significant hypoglycemia.
  * @see {@link https://diabetesjournals.org/care/article/42/8/1593 | International Consensus on Time in Range (2019)}
  */
 export const TIR_VERY_LOW_THRESHOLD_MMOLL = 3.0
@@ -194,7 +194,7 @@ export const TIR_HIGH_THRESHOLD_MMOLL = 10.0
 
 /**
  * Level 2 hyperglycemia threshold (mmol/L).
- * Readings above this value indicate clinically significant hyperglycemia.
+ * Readings above this value indicate significant hyperglycemia.
  * @see {@link https://diabetesjournals.org/care/article/42/8/1593 | International Consensus on Time in Range (2019)}
  */
 export const TIR_VERY_HIGH_THRESHOLD_MMOLL = 13.9
