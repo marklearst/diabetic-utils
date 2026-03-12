@@ -37,6 +37,11 @@ describe('index exports', () => {
     expect(api.MMOL_L).toBeDefined()
     expect(api.AllowedGlucoseUnits).toBeDefined()
 
+    // Advanced CGM metrics
+    expect(api.glucoseLBGI).toBeDefined()
+    expect(api.glucoseHBGI).toBeDefined()
+    expect(api.calculateGRI).toBeDefined()
+    expect(api.calculateMODD).toBeDefined()
     // Interop (FHIR / Open mHealth)
     expect(api.buildFHIRCGMSummary).toBeDefined()
     expect(api.buildFHIRSensorReading).toBeDefined()
