@@ -12,16 +12,23 @@ import type { GlucoseUnit } from '../types'
 // FHIR-aligned CGM summary types (HL7 CGM IG v1.0.0)
 // ---------------------------------------------------------------------------
 
-/** LOINC-coded CGM summary observation component. */
+/**
+ * FHIR-compliant CGM summary observation component.
+ * Matches the `Observation.component` shape required by the FHIR spec:
+ * `code` is a CodeableConcept and the measured value is in `valueQuantity`.
+ */
 export interface FHIRCGMComponent {
-  /** LOINC code */
-  readonly code: string
-  /** Human-readable display name */
-  readonly display: string
-  /** Numeric value */
-  readonly value: number
-  /** UCUM unit code */
-  readonly unit: string
+  /** CodeableConcept identifying the component (LOINC coding) */
+  readonly code: {
+    readonly coding: readonly [{ readonly system: string; readonly code: string; readonly display: string }]
+  }
+  /** Measured quantity (UCUM-coded) */
+  readonly valueQuantity: {
+    readonly value: number
+    readonly unit: string
+    readonly system: string
+    readonly code: string
+  }
 }
 
 /**
