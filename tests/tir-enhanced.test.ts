@@ -433,6 +433,26 @@ describe('calculateEnhancedTIR', () => {
       expect(unsortedResult.summary.totalDuration).toBe(sortedResult.summary.totalDuration)
       expect(unsortedResult.summary.totalDuration).toBeGreaterThan(0)
     })
+
+    it('should fall back to default interval when timestamps are invalid', () => {
+      const readings: GlucoseReading[] = [
+        { value: 120, unit: 'mg/dL', timestamp: '' },
+        { value: 130, unit: 'mg/dL', timestamp: 'not-a-date' },
+      ]
+
+      const result = calculateEnhancedTIR(readings)
+      expect(result.summary.totalDuration).toBe(10) // 2 readings * 5 min default
+    })
+
+    it('should fall back to default interval when all timestamp deltas are non-positive', () => {
+      const readings: GlucoseReading[] = [
+        { value: 120, unit: 'mg/dL', timestamp: '2024-01-01T08:00:00Z' },
+        { value: 130, unit: 'mg/dL', timestamp: '2024-01-01T08:00:00Z' },
+      ]
+
+      const result = calculateEnhancedTIR(readings)
+      expect(result.summary.totalDuration).toBe(10) // 2 readings * 5 min default
+    })
   })
 
   describe('Average value calculation', () => {
