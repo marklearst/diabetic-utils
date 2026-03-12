@@ -141,3 +141,4 @@ coverage/
 
 # Assets
 assets/v*.*# Force CI rebuild - Thu Jun 26 00:13:37 EDT 2025
+package-lock.json
