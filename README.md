@@ -224,6 +224,10 @@ getA1CCategory(6.5, {
 - ✅ **Validation**: Input guards, string parsing
 - ✅ **Labeling**: Glucose status (low/normal/high)
 
+### Interoperability (NEW!)
+- ✅ **FHIR CGM IG**: Build HL7 FHIR-aligned CGM summary and sensor reading payloads
+- ✅ **Open mHealth**: Build OMH blood-glucose datapoints
+
 ### Quality & DX
 - ✅ **TypeScript-First**: 100% strict mode, zero `any` types
 - ✅ **100% Test Coverage**: 205 tests, all edge cases covered
@@ -262,6 +266,7 @@ Every formula, threshold, and calculation is sourced from authoritative clinical
 - Enhanced TIR (5-range breakdown)
 - Pregnancy-specific TIR metrics
 - Clinical-grade MAGE calculation
+- FHIR CGM IG-aligned export utilities
 - Type predicates for validation
 
 ---
@@ -304,6 +309,12 @@ Every formula, threshold, and calculation is sourced from authoritative clinical
 - `calculateHOMAIR(glucose, insulin, unit)` - HOMA-IR
 - `isValidInsulin(value)` - Validate insulin value
 
+### Interoperability
+- `buildFHIRCGMSummary(tir, period, options?)` - FHIR CGM summary observation
+- `buildFHIRSensorReading(reading)` - FHIR sensor reading observation
+- `buildOMHBloodGlucose(reading)` - Open mHealth blood-glucose body
+- `buildOMHDataPoint(reading, id)` - Full OMH datapoint with header
+
 ### Utilities
 - `parseGlucoseString(str)` - Parse "120 mg/dL" → { value, unit }
 - `formatGlucose(value, unit)` - Format glucose with unit
@@ -344,6 +355,7 @@ All calculations are based on peer-reviewed clinical sources:
 - **HOMA-IR**: [Matthews et al. (1985)](https://diabetesjournals.org/diabetes/article/34/12/1212)
 - **MAGE**: [Service et al. (1970)](https://diabetesjournals.org/diabetes/article/19/9/644)
 - **Variability**: [ISPAD Guidelines (2018)](https://www.ncbi.nlm.nih.gov/pmc/articles/PMC7445493/)
+- **FHIR CGM IG**: [HL7 CGM IG v1.0.0](https://build.fhir.org/ig/HL7/cgm/index.html)
 
 ---
 

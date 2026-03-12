@@ -34,3 +34,6 @@ export { glucoseMAGE as clinicalMAGE, type MAGEOptions } from './mage'
 
 // Export Enhanced Time-in-Range functions (v2.0+)
 export { calculateEnhancedTIR, calculatePregnancyTIR } from './tir-enhanced'
+
+// Export interoperability utilities (FHIR, Open mHealth)
+export * from './interop'
