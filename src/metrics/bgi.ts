@@ -21,9 +21,10 @@
 
 /**
  * Computes the blood glucose symmetry function f(G).
+ * Used by LBGI, HBGI, and ADRR calculations.
  * @internal
  */
-function fbg(glucoseMgDl: number): number {
+export function fbg(glucoseMgDl: number): number {
   return 1.509 * (Math.pow(Math.log(glucoseMgDl), 1.084) - 5.381)
 }
 
