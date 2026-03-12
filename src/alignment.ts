@@ -1,10 +1,9 @@
 /**
  * @file src/alignment.ts
  *
- * Clinical utility functions for evaluating glycemic alignment using A1C, fasting glucose, and insulin.
- * These functions are provided for informational and educational purposes only. They do not constitute
- * medical advice, diagnosis, or treatment. Always consult a licensed healthcare provider before making
- * medical decisions or interpreting laboratory results.
+ * Utility functions for evaluating glycemic alignment using A1C, fasting glucose, and insulin.
+ * These functions are for informational and educational purposes only. They do not constitute
+ * medical advice, diagnosis, or treatment.
  */
 import { isValidA1C } from './a1c'
 import { isValidGlucoseValue } from './glucose'
@@ -22,11 +21,11 @@ import {
  *
  * Formula: HOMA-IR = (fasting glucose [mg/dL] × fasting insulin [µIU/mL]) / 405
  *
- * Used for estimating insulin resistance in clinical analytics and research. Not a diagnostic tool—interpret with clinical context.
+ * Used for estimating insulin resistance. Not a diagnostic tool.
  *
  * @param glucose - Fasting glucose value in mg/dL. Must be a positive finite number.
  * @param insulin - Fasting insulin value in µIU/mL. Must be a positive finite number.
- * @returns Object with numeric HOMA-IR value and clinical interpretation label.
+ * @returns Object with numeric HOMA-IR value and interpretation label.
  * @throws {Error} If glucose or insulin are invalid (non-finite, zero, or negative).
  * @see https://pubmed.ncbi.nlm.nih.gov/3899825/ (Original HOMA-IR publication)
  * @see https://diabetesjournals.org/care/article/26/1/118/22567/Prevalence-and-Concomitants-of-Glucose-Intolerance (ADA: Glucose Intolerance and HOMA-IR context)
@@ -50,7 +49,7 @@ export function calculateHOMAIR(glucose: number, insulin: number) {
 }
 
 /**
- * Interprets a numeric HOMA-IR score into a clinical insulin sensitivity/resistance category.
+ * Interprets a numeric HOMA-IR score into an insulin sensitivity/resistance category.
  *
  * Categories:
  *   - Very insulin sensitive: < 1.0
@@ -61,7 +60,7 @@ export function calculateHOMAIR(glucose: number, insulin: number) {
  * Cutoffs are conventional and may vary by population and lab; not diagnostic.
  *
  * @param score - HOMA-IR numeric value
- * @returns Clinical interpretation string
+ * @returns Interpretation string
  */
 function interpretHOMAIR(score: number): string {
   if (score < HOMA_IR_CUTOFFS.VERY_SENSITIVE) return 'Very insulin sensitive'
@@ -76,15 +75,15 @@ function interpretHOMAIR(score: number): string {
 }
 
 /**
- * Checks clinical consistency among A1C, fasting glucose, and fasting insulin markers.
+ * Checks consistency among A1C, fasting glucose, and fasting insulin markers.
  *
  * Returns:
  *   - Estimated average glucose (mg/dL), calculated per CDC formula
  *   - HOMA-IR result (value and interpretation)
  *   - Flags for potential inconsistencies
- *   - Educational recommendation and disclaimer
+ *   - Informational note and disclaimer
  *
- * Used for high-level clinical insight and trend alignment, not for diagnosis.
+ * Used for high-level insight and trend alignment, not for diagnosis.
  *
  * @param a1c - A1C value (percentage). Must be a positive finite number.
  * @param glucose - Fasting glucose value in mg/dL. Must be a positive finite number.
@@ -134,8 +133,8 @@ export function checkGlycemicAlignment(
     homaIR: homaResult,
     flags,
     recommendation: flags.length
-      ? 'Some inconsistencies were detected in your markers. This may occur for various reasons including diet, stress, or lab variability. Always consult your healthcare provider for interpretation and guidance.'
-      : 'Your markers appear consistent based on this informational analysis. This does not replace professional medical advice. Always consult your healthcare provider for interpretation and guidance.',
+      ? 'Some inconsistencies were detected in your markers. This may occur for various reasons including diet, stress, or lab variability.'
+      : 'Your markers appear consistent based on this informational analysis.',
     disclaimer:
       'This tool is for informational and educational purposes only. It does not constitute medical advice, diagnosis, or treatment.',
   }

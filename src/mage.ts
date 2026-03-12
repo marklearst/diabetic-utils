@@ -1,10 +1,10 @@
 // @file src/mage.ts
-// Clinical-Grade Mean Amplitude of Glycemic Excursions (MAGE) Implementation
-// Based on Service FJ et al. (1970) and validated against manual calculations
+// Mean Amplitude of Glycemic Excursions (MAGE) Implementation
+// Based on Service FJ et al. (1970)
 
 /**
- * Calculates clinical-grade Mean Amplitude of Glycemic Excursions (MAGE).
- * Implements gold-standard Service FJ et al. (1970) methodology with modern optimizations and clinical validation.
+ * Calculates Mean Amplitude of Glycemic Excursions (MAGE).
+ * Implements Service FJ et al. (1970) methodology.
  * @param readings - Array of glucose values (mg/dL or mmol/L)
  * @param options - Configuration options for MAGE calculation
  * @returns MAGE value, or NaN if insufficient data or no valid excursions
@@ -20,7 +20,7 @@
  * - Minimum 24 data points recommended (1 day of hourly readings)
  * - Best suited for continuous glucose monitoring (CGM) data
  * - Not recommended for sparse or irregular measurements
- * - Uses dual moving averages, three-point excursion definition, and prevents double-counting for clinical accuracy.
+ * - Uses dual moving averages, three-point excursion definition, and prevents double-counting.
  */
 export function glucoseMAGE(
   readings: number[],
@@ -110,16 +110,16 @@ export function glucoseMAGE(
 }
 
 /**
- * Configuration options for clinical-grade MAGE calculation.
+ * Configuration options for MAGE calculation.
  * @property shortWindow - Short moving average window (default: 5)
  * @property longWindow - Long moving average window (default: 32)
  * @property direction - Excursion direction: 'auto', 'ascending', or 'descending'
  */
 export interface MAGEOptions {
-  /** Short moving average window size (default: 5, validated optimal range: 1-7) */
+  /** Short moving average window size (default: 5, recommended range: 1-7) */
   shortWindow?: number
 
-  /** Long moving average window size (default: 32, validated optimal range: 16-38) */
+  /** Long moving average window size (default: 32, recommended range: 16-38) */
   longWindow?: number
 
   /**
@@ -132,7 +132,7 @@ export interface MAGEOptions {
 }
 
 /**
- * Represents a turning point (peak or nadir) in the glucose trace for clinical MAGE analysis.
+ * Represents a turning point (peak or nadir) in the glucose trace for MAGE analysis.
  * @property index - Index of the turning point in the glucose array
  * @property value - Glucose value at the turning point
  * @property type - 'peak' or 'nadir'
@@ -147,7 +147,7 @@ interface TurningPoint {
 }
 
 /**
- * Represents a valid clinical MAGE excursion with left and right half-excursion amplitudes.
+ * Represents a valid MAGE excursion with left and right half-excursion amplitudes.
  * @property leftAmplitude - Amplitude from turning point to nadir/peak (left half)
  * @property rightAmplitude - Amplitude from nadir/peak to next turning point (right half)
  * @property direction - 'ascending' or 'descending'
@@ -226,7 +226,7 @@ function _calculateMovingAverage(
 
 /**
  * Find alternating turning points (peaks/nadirs) between crossing points.
- * Implements the clinical algorithm with whiplash protection.
+ * Implements the algorithm with whiplash protection.
  */
 function _findTurningPoints(
   readings: number[],
@@ -463,7 +463,7 @@ function _calculateSimpleMAGE(readings: number[], sd: number): number {
       const leftAmplitude = Math.abs(tp2.value - tp1.value)
       const rightAmplitude = Math.abs(tp3.value - tp2.value)
 
-      // Both halves must exceed 1 SD (clinical requirement)
+      // Both halves must exceed 1 SD (per Service 1970)
       if (leftAmplitude > sd && rightAmplitude > sd) {
         const excursionAmplitude = (leftAmplitude + rightAmplitude) / 2
         validAmplitudes.push(excursionAmplitude)

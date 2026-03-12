@@ -1,10 +1,10 @@
 // @file src/variability.ts
 
-import { glucoseMAGE as clinicalMAGE, type MAGEOptions } from './mage';
+import { glucoseMAGE as mageImpl, type MAGEOptions } from './mage';
 
 /**
  * Calculates the unbiased sample standard deviation (SD) of glucose values.
- * Uses n-1 in the denominator (sample SD), as recommended in clinical research and guidelines.
+ * Uses n-1 in the denominator (sample SD), as recommended in research guidelines.
  *
  * @param readings Array of glucose values (numbers)
  * @returns Standard deviation, or NaN if fewer than 2 values
@@ -55,7 +55,7 @@ export function glucoseCoefficientOfVariation(readings: number[]): number {
 
 /**
  * Calculates specified percentiles from an array of glucose values using the nearest-rank method.
- * Used for clinical analytics and glucose variability assessment.
+ * Used for glucose variability assessment.
  * @param readings - Array of glucose values (numbers)
  * @param percentiles - Array of percentiles to calculate (e.g., [10, 25, 50, 75, 90])
  * @returns Object mapping percentile to value, or {} if input is empty
@@ -85,7 +85,7 @@ export function glucosePercentiles(readings: number[], percentiles: number[]): R
 
 /**
  * Calculates Mean Amplitude of Glycemic Excursions (MAGE) for glucose values.
- * Implements gold-standard Service FJ et al. (1970) clinical methodology, validated to 1.4% median error vs manual calculations.
+ * Implements Service FJ et al. (1970) methodology.
  * @param readings - Array of glucose values (mg/dL or mmol/L)
  * @param options - Optional configuration for MAGE calculation
  * @returns MAGE value, or NaN if insufficient data or no valid excursions
@@ -99,9 +99,8 @@ export function glucosePercentiles(readings: number[], percentiles: number[]): R
  * - Minimum 24 data points recommended (1 day of hourly readings)
  * - Best suited for continuous glucose monitoring (CGM) data
  * - Not recommended for sparse or irregular measurements
- * - Uses dual moving averages, three-point excursion definition, and prevents double-counting for clinical accuracy.
+ * - Uses dual moving averages, three-point excursion definition, and prevents double-counting.
  */
 export function glucoseMAGE(readings: number[], options?: MAGEOptions): number {
-  // Delegate to the clinical-grade implementation
-  return clinicalMAGE(readings, options);
+  return mageImpl(readings, options);
 }
