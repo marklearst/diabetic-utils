@@ -12,7 +12,7 @@ A modern, strictly-typed utility library for glucose, A1C, insulin, and diabetes
 > It does not constitute medical advice, diagnosis, or treatment. Always consult
 > a qualified healthcare provider for medical decisions.
 
-> **v1.4+** features enhanced TIR calculations, 100% test coverage, zero `any` types, and glucose variability analytics.
+> **v1.5.0** adds a full advanced CGM metrics suite, CGM vendor adapters, and health data interoperability (FHIR, Open mHealth).
 
 ---
 
@@ -29,30 +29,34 @@ A modern, strictly-typed utility library for glucose, A1C, insulin, and diabetes
 
 ---
 
-## 🚀 What's New in v1.4.0
+## 🚀 What's New in v1.5.0
 
-### 🎯 Enhanced Time-in-Range (TIR)
-TIR calculations per **International Consensus 2019** and **ADA 2024 Guidelines**:
-- **5-Range Enhanced TIR**: Very Low, Low, In Range, High, Very High
-- **Pregnancy TIR**: Tighter targets (63-140 mg/dL / 3.5-7.8 mmol/L)
-- **Recommendations**: Automated observations based on targets
-- **Population-Specific Goals**: Standard, older-adults, high-risk
+### 📈 Advanced CGM Metrics Suite
+A complete set of published CGM analytics, each with peer-reviewed references:
+- **ADRR**: Average Daily Risk Range (Kovatchev 2006)
+- **GRADE**: Glycemic Risk Assessment Diabetes Equation with hypo/eu/hyper partitioning (Hill 2007)
+- **J-Index**: Composite mean + variability score (Wojcicki 1995)
+- **CONGA**: Continuous Overall Net Glycemic Action for intra-day variability (McDonnell 2005)
+- **Active Percent**: CGM wear-time tracking against clinical thresholds (Danne 2017)
+- **AGP Aggregate**: Single-call `calculateAGPMetrics()` computes all Tier 1 metrics at once
+- **LBGI / HBGI**: Low/High Blood Glucose Index (Kovatchev 2006)
+- **GRI**: Glycemia Risk Index with zone A-E classification (Klonoff 2023)
+- **MODD**: Mean of Daily Differences for day-to-day variability (Service 1980)
 
-### 🛡️ Type Safety Excellence
-- **Zero `any` types** - Complete type safety throughout
-- **Type Predicates** - Better TypeScript narrowing
-- **Literal Types** - `as const` for autocomplete perfection
-- **Named Return Types** - `ConversionResult` interface
+### 🔌 CGM Connector Adapters
+Pure transformation helpers that normalize vendor payloads into a canonical `NormalizedCGMReading` type:
+- **Dexcom Share** — normalize Dexcom Share API responses
+- **Libre LinkUp** — normalize Libre LinkUp API responses
+- **Nightscout** — normalize Nightscout SGV entries
 
-### 📚 Self-Documenting Code
-- **Named Constants**: `GMI_COEFFICIENTS` with published references
-- **Working Examples**: Every function has `@example` tags
-- **Test Helpers**: Reusable test utilities for your own projects
+### 🏥 Health Data Interoperability
+Build standards-compliant payloads for health data exchange:
+- **FHIR CGM IG** — HL7 FHIR-aligned CGM summary and sensor reading observations
+- **Open mHealth** — OMH blood-glucose datapoints with full header support
 
-### ✅ 100% Test Coverage
-- 295 passing tests
-- Every line, branch, and function covered
-- Defensive code properly documented
+### ✅ 337 Passing Tests
+- 100% coverage across lines, branches, functions, and statements
+- New edge-case coverage for out-of-order timestamps, mixed units, and cross-module interactions
 
 ---
 
@@ -95,7 +99,7 @@ estimateGMI({ value: 100, unit: 'mg/dL' })  // → 5.4
 estimateA1CFromAverage(154, 'mg/dL')  // → 7.0
 ```
 
-### Enhanced Time-in-Range (NEW!)
+### Enhanced Time-in-Range
 
 ```typescript
 import { calculateEnhancedTIR } from 'diabetic-utils'
@@ -123,7 +127,7 @@ console.log(result.meetsTargets.recommendations)
 // ['All metrics meet consensus targets.']
 ```
 
-### Pregnancy TIR (NEW!)
+### Pregnancy TIR
 
 ```typescript
 import { calculatePregnancyTIR } from 'diabetic-utils'
@@ -138,6 +142,79 @@ console.log(`Meets pregnancy targets: ${result.meetsPregnancyTargets}`)
 
 console.log(result.recommendations)
 // ['All metrics meet pregnancy consensus targets.', ...]
+```
+
+### AGP Metrics (All-in-One)
+
+```typescript
+import { calculateAGPMetrics } from 'diabetic-utils'
+import type { GlucoseReading } from 'diabetic-utils'
+
+const readings: GlucoseReading[] = [
+  { value: 120, unit: 'mg/dL', timestamp: '2024-01-01T08:00:00Z' },
+  { value: 95,  unit: 'mg/dL', timestamp: '2024-01-01T08:05:00Z' },
+  { value: 180, unit: 'mg/dL', timestamp: '2024-01-01T08:10:00Z' },
+  // ... more readings across multiple days
+]
+
+const agp = calculateAGPMetrics(readings)
+
+console.log(`Mean: ${agp.meanGlucose} mg/dL`)
+console.log(`SD: ${agp.sd}, CV: ${agp.cv}%`)
+console.log(`LBGI: ${agp.lbgi}, HBGI: ${agp.hbgi}`)
+console.log(`ADRR: ${agp.adrr}`)
+console.log(`GRADE: ${agp.grade.gradeScore}`)
+console.log(`GRI: ${agp.gri.gri} (Zone ${agp.gri.zone})`)
+console.log(`J-Index: ${agp.jIndex}`)
+console.log(`MODD: ${agp.modd} mg/dL`)
+console.log(`CONGA: ${agp.conga} mg/dL`)
+console.log(`Active: ${agp.activePercent.activePercent}%`)
+```
+
+### CGM Connector Adapters
+
+```typescript
+import {
+  normalizeDexcomEntries,
+  normalizeLibreEntries,
+  normalizeNightscoutEntries
+} from 'diabetic-utils'
+
+// Normalize vendor data into a canonical format
+const dexcomReadings = normalizeDexcomEntries(dexcomShareResponse)
+const libreReadings = normalizeLibreEntries(libreLinkUpResponse)
+const nightscoutReadings = normalizeNightscoutEntries(nightscoutSGVEntries)
+
+// All return NormalizedCGMReading[] with:
+//   { value, unit, timestamp, trend, source }
+// Ready to pass into any diabetic-utils analytics function
+```
+
+### FHIR & Open mHealth Export
+
+```typescript
+import {
+  buildFHIRCGMSummary,
+  buildFHIRSensorReading,
+  buildOMHDataPoint
+} from 'diabetic-utils'
+
+// Build a FHIR CGM summary observation
+const fhirSummary = buildFHIRCGMSummary(tirResult, {
+  start: '2024-01-01',
+  end: '2024-01-14'
+})
+
+// Build a FHIR sensor reading observation
+const fhirReading = buildFHIRSensorReading({
+  value: 120, unit: 'mg/dL', timestamp: '2024-01-01T08:00:00Z'
+})
+
+// Build an Open mHealth blood-glucose datapoint
+const omhPoint = buildOMHDataPoint(
+  { value: 120, unit: 'mg/dL', timestamp: '2024-01-01T08:00:00Z' },
+  'reading-001'
+)
 ```
 
 ### Glucose Labeling & Validation
@@ -230,21 +307,28 @@ getA1CCategory(6.5, {
 
 ### Advanced CGM Metrics
 - ✅ **LBGI / HBGI**: Low/High Blood Glucose Index (Kovatchev 2006)
-- ✅ **GRI**: Glycemia Risk Index with zone classification (Klonoff 2023)
+- ✅ **GRI**: Glycemia Risk Index with zone A-E classification (Klonoff 2023)
 - ✅ **MODD**: Mean of Daily Differences for day-to-day variability (Service 1980)
-### CGM Connector Adapters (NEW!)
+- ✅ **ADRR**: Average Daily Risk Range (Kovatchev 2006)
+- ✅ **GRADE**: Glycemic Risk Assessment Diabetes Equation with partitioning (Hill 2007)
+- ✅ **J-Index**: Composite mean + variability score (Wojcicki 1995)
+- ✅ **CONGA**: Continuous Overall Net Glycemic Action (McDonnell 2005)
+- ✅ **Active Percent**: CGM wear-time tracking (Danne 2017)
+- ✅ **AGP Aggregate**: All Tier 1 metrics in a single call
+
+### CGM Connector Adapters
 - ✅ **Dexcom Share**: Normalize Dexcom Share API responses
 - ✅ **Libre LinkUp**: Normalize Libre LinkUp API responses
 - ✅ **Nightscout**: Normalize Nightscout SGV entries
 - ✅ **Canonical Type**: `NormalizedCGMReading` with trend + source metadata
 
-### Interoperability (NEW!)
+### Interoperability
 - ✅ **FHIR CGM IG**: Build HL7 FHIR-aligned CGM summary and sensor reading payloads
 - ✅ **Open mHealth**: Build OMH blood-glucose datapoints
 
 ### Quality & DX
 - ✅ **TypeScript-First**: 100% strict mode, zero `any` types
-- ✅ **100% Test Coverage**: 295 tests, all edge cases covered
+- ✅ **100% Test Coverage**: 337 tests, all edge cases covered
 - ✅ **Zero Dependencies**: No bloat, tree-shakable
 - ✅ **Published References**: ADA, CDC, ISPAD, PubMed citations
 - ✅ **TSDoc**: Complete API documentation
@@ -262,6 +346,12 @@ Every formula, threshold, and calculation references published guidelines:
 - **ADA Standards of Care (2024)** - Pregnancy targets, A1C guidelines
 - **ISPAD Guidelines (2018)** - Glucose variability metrics
 - **NIH/NIDDK** - HOMA-IR, eAG formulas
+- **Kovatchev et al. (2006)** - LBGI, HBGI, ADRR
+- **Hill et al. (2007)** - GRADE
+- **Klonoff et al. (2023)** - GRI
+- **Wojcicki (1995)** - J-Index
+- **McDonnell et al. (2005)** - CONGA
+- **Danne et al. (2017)** - Active Percent
 
 ### Production-Ready
 - **100% Test Coverage** - Every line tested
@@ -277,9 +367,10 @@ Every formula, threshold, and calculation references published guidelines:
 
 ### Unique Features
 **Only TypeScript/JavaScript library with:**
-- Enhanced TIR (5-range breakdown)
-- Pregnancy-specific TIR metrics
+- Full AGP metrics suite in a single call
+- Enhanced TIR (5-range breakdown) and Pregnancy TIR
 - MAGE calculation (Service 1970)
+- ADRR, GRADE, J-Index, CONGA, and Active Percent
 - CGM vendor adapters (Dexcom, Libre, Nightscout)
 - FHIR CGM IG-aligned export utilities
 - LBGI/HBGI, GRI, and MODD metrics
@@ -326,10 +417,17 @@ Every formula, threshold, and calculation references published guidelines:
 - `isValidInsulin(value)` - Validate insulin value
 
 ### Advanced CGM Metrics
+- `calculateAGPMetrics(readings, options?)` - All Tier 1 metrics in a single call
 - `glucoseLBGI(readings)` - Low Blood Glucose Index (Kovatchev 2006)
 - `glucoseHBGI(readings)` - High Blood Glucose Index (Kovatchev 2006)
+- `calculateADRR(readings)` - Average Daily Risk Range (Kovatchev 2006)
+- `calculateGRADE(readings)` - Glycemic Risk Assessment Diabetes Equation (Hill 2007)
 - `calculateGRI(input)` - Glycemia Risk Index with zone A-E (Klonoff 2023)
+- `calculateJIndex(readings)` - J-Index composite score (Wojcicki 1995)
 - `calculateMODD(readings, options?)` - Mean of Daily Differences (Service 1980)
+- `calculateCONGA(readings, options?)` - Continuous Overall Net Glycemic Action (McDonnell 2005)
+- `calculateActivePercent(readings, options?)` - CGM wear-time percentage (Danne 2017)
+
 ### CGM Connector Adapters
 - `normalizeDexcomEntries(entries)` - Dexcom Share → NormalizedCGMReading[]
 - `normalizeLibreEntries(entries)` - Libre LinkUp → NormalizedCGMReading[]
@@ -384,9 +482,13 @@ All calculations reference peer-reviewed published sources:
 - **A1C/eAG**: [Nathan et al. (2008)](https://diabetesjournals.org/care/article/31/8/1473)
 - **HOMA-IR**: [Matthews et al. (1985)](https://diabetesjournals.org/diabetes/article/34/12/1212)
 - **MAGE**: [Service et al. (1970)](https://diabetesjournals.org/diabetes/article/19/9/644)
-- **LBGI/HBGI**: [Kovatchev et al. (2006)](https://doi.org/10.2337/dc06-1085)
+- **LBGI/HBGI/ADRR**: [Kovatchev et al. (2006)](https://doi.org/10.2337/dc06-1085)
 - **GRI**: [Klonoff et al. (2023)](https://doi.org/10.1177/19322968221085273)
 - **MODD**: [Service & Nelson (1980)](https://doi.org/10.2337/diacare.3.1.58)
+- **GRADE**: [Hill et al. (2007)](https://doi.org/10.1111/j.1464-5491.2007.02119.x)
+- **J-Index**: [Wojcicki (1995)](https://doi.org/10.1055/s-2007-979906)
+- **CONGA**: [McDonnell et al. (2005)](https://doi.org/10.1089/dia.2005.7.253)
+- **Active Percent**: [Danne et al. (2017)](https://doi.org/10.2337/dc17-1600)
 - **Variability**: [ISPAD Guidelines (2018)](https://www.ncbi.nlm.nih.gov/pmc/articles/PMC7445493/)
 - **FHIR CGM IG**: [HL7 CGM IG v1.0.0](https://build.fhir.org/ig/HL7/cgm/index.html)
 
@@ -421,12 +523,18 @@ diabetic-utils/
 │   │   ├── openmhealth.ts   # Open mHealth payload builders
 │   │   └── types.ts         # Interop payload types
 │   └── metrics/             # Advanced CGM metrics
+│       ├── agp.ts           # Aggregate AGP metrics
 │       ├── bgi.ts           # LBGI / HBGI
+│       ├── adrr.ts          # Average Daily Risk Range
+│       ├── grade.ts         # GRADE score
 │       ├── gri.ts           # Glycemia Risk Index
-│       └── modd.ts          # Mean of Daily Differences
+│       ├── jindex.ts        # J-Index
+│       ├── modd.ts          # Mean of Daily Differences
+│       ├── conga.ts         # CONGA
+│       └── active-percent.ts # CGM wear time
 ├── tests/
 │   ├── test-helpers.ts      # Shared test utilities
-│   └── *.test.ts            # 100% coverage tests (295 tests)
+│   └── *.test.ts            # 100% coverage tests (337 tests)
 └── dist/                    # Built output (ESM + CJS)
 ```
 
@@ -479,7 +587,7 @@ See [CHANGELOG.md](CHANGELOG.md) for detailed release notes and version history.
 
 This project is licensed under the **MIT License**. See the [LICENSE](LICENSE) file for details.
 
-© 2024–2025 [Mark Learst](https://marklearst.com)
+© 2024–2026 [Mark Learst](https://marklearst.com)
 
 Use it, fork it, build something that matters.
 
