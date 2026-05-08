@@ -16,6 +16,12 @@ A modern, strictly-typed utility library for glucose, A1C, insulin, and diabetes
 
 ---
 
+## 🧭 Headless CGM Roadmap
+
+Looking to build UI-agnostic CGM apps and dashboards? See the project roadmap: **[`docs/HEADLESS_CGM_ROADMAP.md`](docs/HEADLESS_CGM_ROADMAP.md)**.
+
+---
+
 ## 📊 Status & Quality
 
 ![Status](https://img.shields.io/badge/status-stable-brightgreen)
