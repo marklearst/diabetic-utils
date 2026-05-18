@@ -36,6 +36,12 @@ describe('index exports', () => {
     expect(api.MG_DL).toBeDefined()
     expect(api.MMOL_L).toBeDefined()
     expect(api.AllowedGlucoseUnits).toBeDefined()
+
+    // Advanced CGM metrics
+    expect(api.glucoseLBGI).toBeDefined()
+    expect(api.glucoseHBGI).toBeDefined()
+    expect(api.calculateGRI).toBeDefined()
+    expect(api.calculateMODD).toBeDefined()
   })
 
   it('should export all expected types', () => {
