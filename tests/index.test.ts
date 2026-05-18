@@ -36,6 +36,18 @@ describe('index exports', () => {
     expect(api.MG_DL).toBeDefined()
     expect(api.MMOL_L).toBeDefined()
     expect(api.AllowedGlucoseUnits).toBeDefined()
+
+    // Connector adapters
+    expect(api.normalizeDexcomEntry).toBeDefined()
+    expect(api.normalizeDexcomEntries).toBeDefined()
+    expect(api.parseDexcomDate).toBeDefined()
+    expect(api.normalizeDexcomTrend).toBeDefined()
+    expect(api.normalizeLibreEntry).toBeDefined()
+    expect(api.normalizeLibreEntries).toBeDefined()
+    expect(api.normalizeLibreTrend).toBeDefined()
+    expect(api.normalizeNightscoutEntry).toBeDefined()
+    expect(api.normalizeNightscoutEntries).toBeDefined()
+    expect(api.normalizeNightscoutDirection).toBeDefined()
   })
 
   it('should export all expected types', () => {
