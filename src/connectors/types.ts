@@ -131,7 +131,7 @@ export interface NightscoutEntry {
   /** Epoch timestamp in milliseconds */
   date: number
   /** ISO 8601 date string */
-  dateString: string
+  dateString?: string
   /** Trend direction */
   direction?: NightscoutDirection
   /** Entry type (usually "sgv") */
