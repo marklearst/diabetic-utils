@@ -80,8 +80,8 @@ type NormalizedReading = GlucoseReading & { normalizedValue: number }
  *
  * @remarks
  * - Requires minimum 24 hours of data for meaningful results
- * - Clinical targets: TIR ≥70%, TBR Level 1 <4%, TBR Level 2 <1%, TAR Level 1 <25%, TAR Level 2 <5%
- * - For clinical use, verify data quality and sensor accuracy
+ * - Consensus targets: TIR ≥70%, TBR Level 1 <4%, TBR Level 2 <1%, TAR Level 1 <25%, TAR Level 2 <5%
+ * - Verify data quality and sensor accuracy before drawing conclusions
  * - Readings are assumed to be evenly distributed for duration calculations
  *
  * @category Enhanced TIR
@@ -172,7 +172,7 @@ export function calculateEnhancedTIR(
  * Calculates Pregnancy-specific Time-in-Range metrics per ADA 2024 guidelines.
  *
  * Uses tighter target range for pregnancy: 63-140 mg/dL (3.5-7.8 mmol/L).
- * Clinical targets: TIR >70%, TBR <4% (Level 1) and <1% (Level 2), TAR <25%.
+ * Consensus targets: TIR >70%, TBR <4% (Level 1) and <1% (Level 2), TAR <25%.
  *
  * @param readings - Array of glucose readings with timestamp, value, and unit
  * @param options - Optional configuration for glucose unit
@@ -196,8 +196,8 @@ export function calculateEnhancedTIR(
  *
  * @remarks
  * - Target range: 63-140 mg/dL (3.5-7.8 mmol/L)
- * - Tighter targets reduce risk of maternal and fetal complications
- * - Should be used in conjunction with clinical assessment
+ * - Tighter targets per published guidelines
+ * - This is informational only and does not constitute medical advice
  * - Applies to Type 1, Type 2, and gestational diabetes during pregnancy
  *
  * @category Pregnancy TIR
@@ -427,7 +427,7 @@ function calculateSummary(readings: GlucoseReading[]): TIRSummary {
 }
 
 /**
- * Selects population-specific clinical goals.
+ * Selects population-specific consensus goals.
  *
  * @param population - Population type
  * @returns Object with TIR and TBR goals for the population
@@ -444,7 +444,7 @@ function getPopulationGoals(population: TIRPopulation) {
 }
 
 /**
- * Assesses whether TIR metrics meet clinical targets.
+ * Assesses whether TIR metrics meet consensus targets.
  *
  * @param ranges - Calculated range metrics
  * @param population - Population type for target selection
@@ -521,10 +521,10 @@ function assessTargets(
 }
 
 /**
- * Generates clinical recommendations based on TIR metrics.
+ * Generates observations based on TIR metrics.
  *
  * @param params - Assessment parameters
- * @returns Array of clinical recommendations
+ * @returns Array of informational observations (not medical advice)
  *
  * @internal
  */
@@ -545,29 +545,27 @@ function generateRecommendations(params: {
 }): readonly string[] {
   const recommendations: string[] = []
 
-  // Critical recommendations first
   if (!params.tbrLevel2Safe) {
     recommendations.push(
-      `CRITICAL: Level 2 hypoglycemia (${params.ranges.veryLow.percentage.toFixed(
+      `Level 2 hypoglycemia (${params.ranges.veryLow.percentage.toFixed(
         1
-      )}%) exceeds safe limit. Consult healthcare provider immediately to reduce hypoglycemia risk.`
+      )}%) exceeds the consensus target.`
     )
   }
 
   if (!params.tarLevel2Acceptable) {
     recommendations.push(
-      `URGENT: Level 2 hyperglycemia (${params.ranges.veryHigh.percentage.toFixed(
+      `Level 2 hyperglycemia (${params.ranges.veryHigh.percentage.toFixed(
         1
-      )}%) exceeds acceptable limit. Review treatment plan with healthcare provider.`
+      )}%) exceeds the consensus target.`
     )
   }
 
-  // Important recommendations (check these AFTER critical issues)
   if (!params.tbrLevel1Safe && params.tbrLevel2Safe) {
     recommendations.push(
       `Level 1 hypoglycemia (${params.ranges.low.percentage.toFixed(
         1
-      )}%) is elevated. Consider adjusting insulin doses or carbohydrate intake.`
+      )}%) is elevated.`
     )
   }
 
@@ -575,7 +573,7 @@ function generateRecommendations(params: {
     recommendations.push(
       `Level 1 hyperglycemia (${params.ranges.high.percentage.toFixed(
         1
-      )}%) is elevated. Review meal planning and medication timing.`
+      )}%) is elevated.`
     )
   }
 
@@ -583,11 +581,10 @@ function generateRecommendations(params: {
     recommendations.push(
       `Time-in-range (${params.ranges.inRange.percentage.toFixed(
         1
-      )}%) is below target. Work with healthcare team to optimize glycemic control.`
+      )}%) is below the consensus target.`
     )
   }
 
-  // Positive feedback (if no critical issues)
   if (
     params.tirMeetsGoal &&
     params.tbrLevel1Safe &&
@@ -596,7 +593,7 @@ function generateRecommendations(params: {
     params.tarLevel2Acceptable
   ) {
     recommendations.push(
-      'Excellent glycemic control! All metrics meet clinical targets. Continue current management plan.'
+      'All metrics meet consensus targets.'
     )
     /* c8 ignore start -- defensive fallback when no recommendations were generated */
   } else if (
@@ -605,18 +602,17 @@ function generateRecommendations(params: {
     recommendations.length === 0
   ) {
     recommendations.push(
-      'Glycemic control shows room for improvement. Work with healthcare team to optimize management.'
+      'Some metrics are outside consensus targets.'
     )
   }
   /* c8 ignore stop */
 
-  // Population-specific guidance
   if (
     params.population === 'older-adults' ||
     params.population === 'high-risk'
   ) {
     recommendations.push(
-      'For older/high-risk populations, hypoglycemia prevention is prioritized. Lower TIR targets are acceptable.'
+      'Older/high-risk population targets applied (lower TIR goal, stricter hypoglycemia limits).'
     )
   }
 
@@ -624,10 +620,10 @@ function generateRecommendations(params: {
 }
 
 /**
- * Generates pregnancy-specific recommendations.
+ * Generates pregnancy-specific observations.
  *
  * @param ranges - Pregnancy range metrics
- * @returns Array of pregnancy-specific recommendations
+ * @returns Array of pregnancy-specific observations (not medical advice)
  *
  * @internal
  */
@@ -638,53 +634,48 @@ function generatePregnancyRecommendations(ranges: {
 }): readonly string[] {
   const recommendations: string[] = []
 
-  // Critical hypoglycemia
   if (ranges.belowRange.percentage >= TBR_LEVEL1_GOAL) {
     recommendations.push(
-      `CRITICAL: Time below range (${ranges.belowRange.percentage.toFixed(
+      `Time below range (${ranges.belowRange.percentage.toFixed(
         1
-      )}%) exceeds safe limit for pregnancy. Contact healthcare provider immediately.`
+      )}%) exceeds the pregnancy consensus target.`
     )
   }
 
-  // Hyperglycemia
   if (ranges.aboveRange.percentage >= TAR_LEVEL1_GOAL) {
     recommendations.push(
-      `URGENT: Time above range (${ranges.aboveRange.percentage.toFixed(
+      `Time above range (${ranges.aboveRange.percentage.toFixed(
         1
-      )}%) exceeds acceptable limit for pregnancy. Review treatment plan.`
+      )}%) exceeds the pregnancy consensus target.`
     )
   }
 
-  // TIR below goal
   if (ranges.inRange.percentage < TIR_GOAL_STANDARD) {
     recommendations.push(
       `Time-in-range (${ranges.inRange.percentage.toFixed(
         1
-      )}%) is below pregnancy target of 70%. Work with healthcare team to optimize control.`
+      )}%) is below the pregnancy target of 70%.`
     )
   }
 
-  // Meeting targets
   if (
     ranges.inRange.percentage >= TIR_GOAL_STANDARD &&
     ranges.belowRange.percentage < TBR_LEVEL1_GOAL &&
     ranges.aboveRange.percentage < TAR_LEVEL1_GOAL
   ) {
     recommendations.push(
-      'Excellent glycemic control for pregnancy! All metrics meet clinical targets. Continue current management.'
+      'All metrics meet pregnancy consensus targets.'
     )
     /* c8 ignore start -- defensive fallback when no recommendations were generated */
   } else if (recommendations.length === 0) {
     recommendations.push(
-      'Work with healthcare team to optimize glycemic control for pregnancy.'
+      'Some pregnancy metrics are outside consensus targets.'
     )
   }
   /* c8 ignore stop */
 
-  // General pregnancy guidance (always include)
   recommendations.push(
-    'Pregnancy requires tighter glucose control. Target range is 63-140 mg/dL (3.5-7.8 mmol/L).'
+    'Pregnancy target range: 63-140 mg/dL (3.5-7.8 mmol/L).'
   )
 
   return recommendations

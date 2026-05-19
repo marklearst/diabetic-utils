@@ -20,6 +20,7 @@ export * from './constants'
 export * from './formatters'
 export * from './glucose'
 export * from './guards'
+export * from './validators'
 export * from './tir'
 export * from './types'
 export {
@@ -29,8 +30,17 @@ export {
   glucoseMAGE,
 } from './variability'
 
-// Export clinical-grade MAGE implementation and types
+// Export MAGE implementation and types
 export { glucoseMAGE as clinicalMAGE, type MAGEOptions } from './mage'
 
 // Export Enhanced Time-in-Range functions (v2.0+)
 export { calculateEnhancedTIR, calculatePregnancyTIR } from './tir-enhanced'
+
+// Export CGM connector adapters
+export * from './connectors'
+
+// Export interoperability utilities (FHIR, Open mHealth)
+export * from './interop'
+
+// Export advanced CGM metrics (LBGI, HBGI, GRI, MODD)
+export * from './metrics'

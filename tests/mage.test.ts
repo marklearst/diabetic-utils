@@ -1,7 +1,7 @@
 import { describe, it, expect } from 'vitest';
 import { glucoseMAGE, type MAGEOptions } from '../src/mage';
 
-describe('Clinical-Grade MAGE Implementation', () => {
+describe('MAGE Implementation', () => {
   describe('Input Validation', () => {
     it('should return NaN for empty array', () => {
       expect(glucoseMAGE([])).toBeNaN();
