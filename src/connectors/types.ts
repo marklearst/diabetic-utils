@@ -117,7 +117,7 @@ export type NightscoutDirection =
   | 'NONE'
   | 'NOT COMPUTABLE'
   | 'RATE OUT OF RANGE'
-  | string
+  | (string & {})
 
 /**
  * Nightscout SGV (Sensor Glucose Value) entry.
