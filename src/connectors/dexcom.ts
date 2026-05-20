@@ -51,8 +51,13 @@ export function parseDexcomDate(raw: string): string {
 /**
  * Normalizes a Dexcom Share trend string into a canonical CGMTrend.
  */
-export function normalizeDexcomTrend(trend: DexcomTrendString): CGMTrend {
-  return DEXCOM_TREND_MAP[trend] ?? 'unknown'
+export function normalizeDexcomTrend(
+  trend: DexcomTrendString | (string & {}) | null | undefined
+): CGMTrend {
+  if (trend == null) {
+    return 'unknown'
+  }
+  return DEXCOM_TREND_MAP[trend as DexcomTrendString] ?? 'unknown'
 }
 
 /**
