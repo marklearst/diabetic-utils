@@ -27,9 +27,23 @@ const LIBRE_TREND_MAP: Record<LibreTrendValue, CGMTrend> = {
 
 /**
  * Normalizes a Libre LinkUp numeric trend value into a canonical CGMTrend.
+ *
+ * Accepts the raw API value (which may be null/undefined or out of range)
+ * and returns 'unknown' for any invalid or unmapped values.
  */
-export function normalizeLibreTrend(trend: LibreTrendValue): CGMTrend {
-  return LIBRE_TREND_MAP[trend] ?? 'unknown'
+export function normalizeLibreTrend(
+  trend: number | null | undefined
+): CGMTrend {
+  if (trend == null) {
+    return 'unknown'
+  }
+
+  // LibreTrendValue is defined as 1–5; anything else is treated as unknown.
+  if (trend < 1 || trend > 5) {
+    return 'unknown'
+  }
+
+  return LIBRE_TREND_MAP[trend as LibreTrendValue] ?? 'unknown'
 }
 
 /**
