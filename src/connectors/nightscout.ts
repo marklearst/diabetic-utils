@@ -49,10 +49,37 @@ export function normalizeNightscoutDirection(
 export function normalizeNightscoutEntry(
   entry: NightscoutEntry
 ): NormalizedCGMReading {
-  const timestamp = entry.dateString
-    ? new Date(entry.dateString).toISOString()
-    : new Date(entry.date).toISOString()
+  const timestamp = (() => {
+    if (entry.dateString) {
+      const parsed = Date.parse(entry.dateString)
+      if (!Number.isNaN(parsed)) {
+        return new Date(parsed).toISOString()
+      }
 
+      // Fall back to `entry.date` if available and valid
+      if (entry.date !== undefined && entry.date !== null) {
+        const fallbackDate = new Date(entry.date)
+        if (!Number.isNaN(fallbackDate.getTime())) {
+          return fallbackDate.toISOString()
+        }
+      }
+
+      throw new Error(
+        `Unable to parse Nightscout timestamp from 'dateString': ${entry.dateString}`
+      )
+    }
+
+    const date = new Date(entry.date)
+    if (Number.isNaN(date.getTime())) {
+      throw new Error(
+        `Unable to parse Nightscout timestamp from 'date' field: ${String(
+          entry.date
+        )}`
+      )
+    }
+
+    return date.toISOString()
+  })()
   return {
     value: entry.sgv,
     unit: MG_DL,
