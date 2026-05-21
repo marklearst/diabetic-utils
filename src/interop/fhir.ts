@@ -97,7 +97,9 @@ export function buildFHIRSensorReading(
         {
           system: LOINC_SYSTEM,
           code: isMgDl ? '99504-3' : '14745-4',
-          display: 'Glucose [Mass/volume] in Interstitial fluid',
+          display: isMgDl
+            ? 'Glucose [Mass/volume] in Interstitial fluid'
+            : 'Glucose [Moles/volume] in Interstitial fluid',
         },
       ],
     },
