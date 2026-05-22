@@ -324,7 +324,9 @@ Every formula, threshold, and calculation is sourced from authoritative clinical
 ### Interoperability
 - `buildFHIRCGMSummary(tir, period, options?)` - FHIR CGM summary observation
 - `buildFHIRSensorReading(reading)` - FHIR sensor reading observation
+- `buildFHIRSensorReadings(readings)` - FHIR sensor reading observations from a list of readings
 - `buildOMHBloodGlucose(reading)` - Open mHealth blood-glucose body
+- `buildOMHBloodGlucoseList(readings)` - Open mHealth blood-glucose bodies from a list of readings
 - `buildOMHDataPoint(reading, id)` - Full OMH datapoint with header
 
 ### Utilities

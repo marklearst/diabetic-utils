@@ -37,6 +37,13 @@ describe('index exports', () => {
     expect(api.MMOL_L).toBeDefined()
     expect(api.AllowedGlucoseUnits).toBeDefined()
 
+    // Interop (FHIR / Open mHealth)
+    expect(api.buildFHIRCGMSummary).toBeDefined()
+    expect(api.buildFHIRSensorReading).toBeDefined()
+    expect(api.buildFHIRSensorReadings).toBeDefined()
+    expect(api.buildOMHBloodGlucose).toBeDefined()
+    expect(api.buildOMHDataPoint).toBeDefined()
+    expect(api.buildOMHBloodGlucoseList).toBeDefined()
     // Connector adapters
     expect(api.normalizeDexcomEntry).toBeDefined()
     expect(api.normalizeDexcomEntries).toBeDefined()
@@ -48,14 +55,6 @@ describe('index exports', () => {
     expect(api.normalizeNightscoutEntry).toBeDefined()
     expect(api.normalizeNightscoutEntries).toBeDefined()
     expect(api.normalizeNightscoutDirection).toBeDefined()
-
-    // Interop (FHIR / Open mHealth)
-    expect(api.buildFHIRCGMSummary).toBeDefined()
-    expect(api.buildFHIRSensorReading).toBeDefined()
-    expect(api.buildFHIRSensorReadings).toBeDefined()
-    expect(api.buildOMHBloodGlucose).toBeDefined()
-    expect(api.buildOMHDataPoint).toBeDefined()
-    expect(api.buildOMHBloodGlucoseList).toBeDefined()
   })
 
   it('should export all expected types', () => {
