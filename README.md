@@ -224,6 +224,12 @@ getA1CCategory(6.5, {
 - ✅ **Validation**: Input guards, string parsing
 - ✅ **Labeling**: Glucose status (low/normal/high)
 
+### CGM Connector Adapters (NEW!)
+- ✅ **Dexcom Share**: Normalize Dexcom Share API responses
+- ✅ **Libre LinkUp**: Normalize Libre LinkUp API responses
+- ✅ **Nightscout**: Normalize Nightscout SGV entries
+- ✅ **Canonical Type**: `NormalizedCGMReading` with trend + source metadata
+
 ### Interoperability (NEW!)
 - ✅ **FHIR CGM IG**: Build HL7 FHIR-aligned CGM summary and sensor reading payloads
 - ✅ **Open mHealth**: Build OMH blood-glucose datapoints
@@ -266,6 +272,7 @@ Every formula, threshold, and calculation is sourced from authoritative clinical
 - Enhanced TIR (5-range breakdown)
 - Pregnancy-specific TIR metrics
 - Clinical-grade MAGE calculation
+- CGM vendor adapters (Dexcom, Libre, Nightscout)
 - FHIR CGM IG-aligned export utilities
 - Type predicates for validation
 
@@ -308,6 +315,11 @@ Every formula, threshold, and calculation is sourced from authoritative clinical
 ### Insulin Metrics
 - `calculateHOMAIR(glucose, insulin, unit)` - HOMA-IR
 - `isValidInsulin(value)` - Validate insulin value
+
+### CGM Connector Adapters
+- `normalizeDexcomEntries(entries)` - Dexcom Share → NormalizedCGMReading[]
+- `normalizeLibreEntries(entries)` - Libre LinkUp → NormalizedCGMReading[]
+- `normalizeNightscoutEntries(entries)` - Nightscout SGV → NormalizedCGMReading[]
 
 ### Interoperability
 - `buildFHIRCGMSummary(tir, period, options?)` - FHIR CGM summary observation
