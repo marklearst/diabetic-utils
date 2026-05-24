@@ -12,16 +12,29 @@ import type { GlucoseUnit } from '../types'
 // FHIR-aligned CGM summary types (HL7 CGM IG v1.0.0)
 // ---------------------------------------------------------------------------
 
+interface FHIRCoding {
+  readonly system: string
+  readonly code: string
+  readonly display: string
+}
+
+interface FHIRCodeableConcept {
+  readonly coding: readonly FHIRCoding[]
+}
+
+interface FHIRQuantity {
+  readonly value: number
+  readonly unit: string
+  readonly system: string
+  readonly code: string
+}
+
 /** LOINC-coded CGM summary observation component. */
 export interface FHIRCGMComponent {
-  /** LOINC code */
-  readonly code: string
-  /** Human-readable display name */
-  readonly display: string
-  /** Numeric value */
-  readonly value: number
-  /** UCUM unit code */
-  readonly unit: string
+  /** Coded component descriptor */
+  readonly code: FHIRCodeableConcept
+  /** Measured value in FHIR valueQuantity shape */
+  readonly valueQuantity: FHIRQuantity
 }
 
 /**
@@ -34,9 +47,7 @@ export interface FHIRCGMComponent {
 export interface FHIRCGMSummary {
   readonly resourceType: 'Observation'
   readonly status: 'final'
-  readonly code: {
-    readonly coding: readonly [{ readonly system: string; readonly code: string; readonly display: string }]
-  }
+  readonly code: FHIRCodeableConcept
   readonly effectivePeriod: {
     readonly start: string
     readonly end: string
@@ -53,16 +64,9 @@ export interface FHIRCGMSummary {
 export interface FHIRCGMSensorReading {
   readonly resourceType: 'Observation'
   readonly status: 'final'
-  readonly code: {
-    readonly coding: readonly [{ readonly system: string; readonly code: string; readonly display: string }]
-  }
+  readonly code: FHIRCodeableConcept
   readonly effectiveDateTime: string
-  readonly valueQuantity: {
-    readonly value: number
-    readonly unit: string
-    readonly system: string
-    readonly code: string
-  }
+  readonly valueQuantity: FHIRQuantity
 }
 
 // ---------------------------------------------------------------------------
@@ -77,12 +81,12 @@ export interface FHIRCGMSensorReading {
 export interface OMHBloodGlucose {
   readonly blood_glucose: {
     readonly value: number
-    readonly unit: string
+    readonly unit: GlucoseUnit
   }
   readonly effective_time_frame: {
     readonly date_time: string
   }
-  readonly specimen_source?: 'interstitial fluid' | 'capillary blood' | 'plasma'
+  readonly specimen_source: 'interstitial fluid' | 'capillary blood' | 'plasma'
 }
 
 /** Wrapped OMH datapoint with header metadata. */

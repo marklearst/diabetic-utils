@@ -34,28 +34,39 @@ export function buildFHIRCGMSummary(
   options?: { meanGlucose?: number; cv?: number }
 ): FHIRCGMSummary {
   const components: FHIRCGMComponent[] = [
-    { code: '97507-8', display: 'Time in range (70-180 mg/dL)', value: tir.inRange.percentage, unit: '%' },
-    { code: '97506-0', display: 'Time below range level 1 (54-69 mg/dL)', value: tir.low.percentage, unit: '%' },
-    { code: '97505-2', display: 'Time below range level 2 (<54 mg/dL)', value: tir.veryLow.percentage, unit: '%' },
-    { code: '97508-6', display: 'Time above range level 1 (181-250 mg/dL)', value: tir.high.percentage, unit: '%' },
-    { code: '97509-4', display: 'Time above range level 2 (>250 mg/dL)', value: tir.veryHigh.percentage, unit: '%' },
+    {
+      code: { coding: [{ system: LOINC_SYSTEM, code: '97507-8', display: 'Time in range (70-180 mg/dL)' }] },
+      valueQuantity: { value: tir.inRange.percentage, unit: '%', system: UCUM_SYSTEM, code: '%' },
+    },
+    {
+      code: { coding: [{ system: LOINC_SYSTEM, code: '97506-0', display: 'Time below range level 1 (54-69 mg/dL)' }] },
+      valueQuantity: { value: tir.low.percentage, unit: '%', system: UCUM_SYSTEM, code: '%' },
+    },
+    {
+      code: { coding: [{ system: LOINC_SYSTEM, code: '97505-2', display: 'Time below range level 2 (<54 mg/dL)' }] },
+      valueQuantity: { value: tir.veryLow.percentage, unit: '%', system: UCUM_SYSTEM, code: '%' },
+    },
+    {
+      code: { coding: [{ system: LOINC_SYSTEM, code: '97508-6', display: 'Time above range level 1 (181-250 mg/dL)' }] },
+      valueQuantity: { value: tir.high.percentage, unit: '%', system: UCUM_SYSTEM, code: '%' },
+    },
+    {
+      code: { coding: [{ system: LOINC_SYSTEM, code: '97509-4', display: 'Time above range level 2 (>250 mg/dL)' }] },
+      valueQuantity: { value: tir.veryHigh.percentage, unit: '%', system: UCUM_SYSTEM, code: '%' },
+    },
   ]
 
   if (options?.meanGlucose !== undefined) {
     components.push({
-      code: '97507-0',
-      display: 'Mean glucose',
-      value: options.meanGlucose,
-      unit: 'mg/dL',
+      code: { coding: [{ system: LOINC_SYSTEM, code: '97507-0', display: 'Mean glucose' }] },
+      valueQuantity: { value: options.meanGlucose, unit: 'mg/dL', system: UCUM_SYSTEM, code: 'mg/dL' },
     })
   }
 
   if (options?.cv !== undefined) {
     components.push({
-      code: '97506-2',
-      display: 'Coefficient of variation',
-      value: options.cv,
-      unit: '%',
+      code: { coding: [{ system: LOINC_SYSTEM, code: '97506-2', display: 'Coefficient of variation' }] },
+      valueQuantity: { value: options.cv, unit: '%', system: UCUM_SYSTEM, code: '%' },
     })
   }
 

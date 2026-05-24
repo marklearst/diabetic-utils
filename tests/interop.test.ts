@@ -37,7 +37,7 @@ describe('FHIR interop', () => {
       expect(summary.effectivePeriod.end).toBe(period.end)
       expect(summary.component.length).toBe(5)
 
-      const codes = summary.component.map((c) => c.code)
+      const codes = summary.component.map((c) => c.code.coding[0].code)
       expect(codes).toContain('97507-8')
       expect(codes).toContain('97506-0')
       expect(codes).toContain('97505-2')
@@ -49,18 +49,18 @@ describe('FHIR interop', () => {
       const tir = calculateEnhancedTIR(sampleReadings)
       const summary = buildFHIRCGMSummary(tir, period, { meanGlucose: 130 })
       expect(summary.component.length).toBe(6)
-      const meanComp = summary.component.find((c) => c.code === '97507-0')
+      const meanComp = summary.component.find((c) => c.code.coding[0].code === '97507-0')
       expect(meanComp).toBeDefined()
-      expect(meanComp!.value).toBe(130)
+      expect(meanComp!.valueQuantity.value).toBe(130)
     })
 
     it('includes optional CV component', () => {
       const tir = calculateEnhancedTIR(sampleReadings)
       const summary = buildFHIRCGMSummary(tir, period, { cv: 22.5 })
       expect(summary.component.length).toBe(6)
-      const cvComp = summary.component.find((c) => c.code === '97506-2')
+      const cvComp = summary.component.find((c) => c.code.coding[0].code === '97506-2')
       expect(cvComp).toBeDefined()
-      expect(cvComp!.value).toBe(22.5)
+      expect(cvComp!.valueQuantity.value).toBe(22.5)
     })
 
     it('includes both optional components', () => {
