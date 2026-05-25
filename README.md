@@ -224,6 +224,10 @@ getA1CCategory(6.5, {
 - ✅ **Validation**: Input guards, string parsing
 - ✅ **Labeling**: Glucose status (low/normal/high)
 
+### Advanced CGM Metrics
+- ✅ **LBGI / HBGI**: Low/High Blood Glucose Index (Kovatchev 2006)
+- ✅ **GRI**: Glycemia Risk Index with zone classification (Klonoff 2023)
+- ✅ **MODD**: Mean of Daily Differences for day-to-day variability (Service 1980)
 ### CGM Connector Adapters (NEW!)
 - ✅ **Dexcom Share**: Normalize Dexcom Share API responses
 - ✅ **Libre LinkUp**: Normalize Libre LinkUp API responses
@@ -272,6 +276,7 @@ Every formula, threshold, and calculation is sourced from authoritative clinical
 - Enhanced TIR (5-range breakdown)
 - Pregnancy-specific TIR metrics
 - Clinical-grade MAGE calculation
+- LBGI/HBGI, GRI, and MODD metrics
 - CGM vendor adapters (Dexcom, Libre, Nightscout)
 - FHIR CGM IG-aligned export utilities
 - Type predicates for validation
@@ -316,6 +321,11 @@ Every formula, threshold, and calculation is sourced from authoritative clinical
 - `calculateHOMAIR(glucose, insulin, unit)` - HOMA-IR
 - `isValidInsulin(value)` - Validate insulin value
 
+### Advanced CGM Metrics
+- `glucoseLBGI(readings)` - Low Blood Glucose Index (Kovatchev 2006)
+- `glucoseHBGI(readings)` - High Blood Glucose Index (Kovatchev 2006)
+- `calculateGRI(input)` - Glycemia Risk Index with zone A-E (Klonoff 2023)
+- `calculateMODD(readings, options?)` - Mean of Daily Differences (Service 1980)
 ### CGM Connector Adapters
 - `normalizeDexcomEntries(entries)` - Dexcom Share → NormalizedCGMReading[]
 - `normalizeLibreEntries(entries)` - Libre LinkUp → NormalizedCGMReading[]
@@ -368,6 +378,9 @@ All calculations are based on peer-reviewed clinical sources:
 - **A1C/eAG**: [Nathan et al. (2008)](https://diabetesjournals.org/care/article/31/8/1473)
 - **HOMA-IR**: [Matthews et al. (1985)](https://diabetesjournals.org/diabetes/article/34/12/1212)
 - **MAGE**: [Service et al. (1970)](https://diabetesjournals.org/diabetes/article/19/9/644)
+- **LBGI/HBGI**: [Kovatchev et al. (2006)](https://doi.org/10.2337/dc06-1085)
+- **GRI**: [Klonoff et al. (2023)](https://doi.org/10.1177/19322968221085273)
+- **MODD**: [Service & Nelson (1980)](https://doi.org/10.2337/diacare.3.1.58)
 - **Variability**: [ISPAD Guidelines (2018)](https://www.ncbi.nlm.nih.gov/pmc/articles/PMC7445493/)
 - **FHIR CGM IG**: [HL7 CGM IG v1.0.0](https://build.fhir.org/ig/HL7/cgm/index.html)
 
