@@ -72,6 +72,16 @@ describe('index exports', () => {
     expect(api.normalizeNightscoutEntries).toBeDefined()
     expect(api.normalizeNightscoutDirection).toBeDefined()
 
+    // Constants
+    expect(api.MG_DL).toBeDefined()
+    expect(api.MMOL_L).toBeDefined()
+    expect(api.AllowedGlucoseUnits).toBeDefined()
+
+    // Advanced CGM metrics
+    expect(api.glucoseLBGI).toBeDefined()
+    expect(api.glucoseHBGI).toBeDefined()
+    expect(api.calculateGRI).toBeDefined()
+    expect(api.calculateMODD).toBeDefined()
     // Interop (FHIR / Open mHealth)
     expect(api.buildFHIRCGMSummary).toBeDefined()
     expect(api.buildFHIRSensorReading).toBeDefined()
@@ -79,12 +89,6 @@ describe('index exports', () => {
     expect(api.buildOMHBloodGlucose).toBeDefined()
     expect(api.buildOMHDataPoint).toBeDefined()
     expect(api.buildOMHBloodGlucoseList).toBeDefined()
-
-    // Advanced CGM metrics
-    expect(api.glucoseLBGI).toBeDefined()
-    expect(api.glucoseHBGI).toBeDefined()
-    expect(api.calculateGRI).toBeDefined()
-    expect(api.calculateMODD).toBeDefined()
   })
 
   it('should export all expected constants', () => {
