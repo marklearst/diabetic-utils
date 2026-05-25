@@ -224,7 +224,7 @@ getA1CCategory(6.5, {
 - ✅ **Validation**: Input guards, string parsing
 - ✅ **Labeling**: Glucose status (low/normal/high)
 
-### Advanced CGM Metrics (NEW!)
+### Advanced CGM Metrics
 - ✅ **LBGI / HBGI**: Low/High Blood Glucose Index (Kovatchev 2006)
 - ✅ **GRI**: Glycemia Risk Index with zone classification (Klonoff 2023)
 - ✅ **MODD**: Mean of Daily Differences for day-to-day variability (Service 1980)

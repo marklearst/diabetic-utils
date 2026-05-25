@@ -45,7 +45,9 @@ export function calculateMODD(
   if (readings.length < 2) return NaN
 
   const toleranceMs =
-    (options?.toleranceMinutes ?? 15) * 60 * 1000
+    options?.toleranceMinutes !== undefined
+      ? options.toleranceMinutes * 60 * 1000
+      : DEFAULT_TOLERANCE_MS
 
   // Convert to timestamped mg/dL values and sort chronologically
   const sorted = readings
@@ -53,7 +55,10 @@ export function calculateMODD(
       time: new Date(r.timestamp).getTime(),
       value: r.unit === MG_DL ? r.value : r.value * MGDL_MMOLL_CONVERSION,
     }))
-    .filter((r) => Number.isFinite(r.time) && Number.isFinite(r.value))
+    .filter(
+      (r) =>
+        Number.isFinite(r.time) && Number.isFinite(r.value) && r.value > 0
+    )
     .sort((a, b) => a.time - b.time)
 
   if (sorted.length < 2) return NaN

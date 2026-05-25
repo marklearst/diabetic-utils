@@ -175,6 +175,47 @@ describe('calculateGRI', () => {
     expect(result.hypoComponent).toBeCloseTo(3.0 * 2 + 2.4 * 3, 0)
     expect(result.hyperComponent).toBeCloseTo(1.6 * 5 + 0.8 * 10, 0)
   })
+
+  it('throws for non-finite or out-of-range inputs', () => {
+    expect(() =>
+      calculateGRI({
+        veryLowPercent: NaN,
+        lowPercent: 0,
+        highPercent: 0,
+        veryHighPercent: 0,
+      })
+    ).toThrow(RangeError)
+
+    expect(() =>
+      calculateGRI({
+        veryLowPercent: -1,
+        lowPercent: 0,
+        highPercent: 0,
+        veryHighPercent: 0,
+      })
+    ).toThrow(RangeError)
+
+    expect(() =>
+      calculateGRI({
+        veryLowPercent: 0,
+        lowPercent: 0,
+        highPercent: 101,
+        veryHighPercent: 0,
+      })
+    ).toThrow(RangeError)
+  })
+
+  it('classifies zone using unrounded score near boundaries', () => {
+    const result = calculateGRI({
+      // raw = 1.6 * 12.525 = 20.04 (zone B), rounded display score = 20.0
+      veryLowPercent: 0,
+      lowPercent: 0,
+      highPercent: 0,
+      veryHighPercent: 12.525,
+    })
+    expect(result.score).toBe(20)
+    expect(result.zone).toBe('B')
+  })
 })
 
 // ---------------------------------------------------------------------------
@@ -247,5 +288,16 @@ describe('calculateMODD', () => {
       { value: 110, unit: 'mg/dL', timestamp: 'also-bad' },
     ]
     expect(calculateMODD(readings)).toBeNaN()
+  })
+
+  it('filters out non-positive glucose values', () => {
+    const readings: GlucoseReading[] = [
+      { value: 100, unit: 'mg/dL', timestamp: '2024-01-01T08:00:00Z' },
+      { value: 0, unit: 'mg/dL', timestamp: '2024-01-01T12:00:00Z' }, // invalid
+      { value: 130, unit: 'mg/dL', timestamp: '2024-01-02T08:00:00Z' },
+      { value: -10, unit: 'mg/dL', timestamp: '2024-01-02T12:00:00Z' }, // invalid
+    ]
+    // valid pair remains: |130 - 100| = 30
+    expect(calculateMODD(readings)).toBe(30)
   })
 })
