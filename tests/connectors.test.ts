@@ -66,6 +66,11 @@ describe('Dexcom Share adapter', () => {
         normalizeDexcomTrend('SomethingNew' as any)
       ).toBe('unknown')
     })
+
+    it('returns unknown for null or undefined trend', () => {
+      expect(normalizeDexcomTrend(null as any)).toBe('unknown')
+      expect(normalizeDexcomTrend(undefined as any)).toBe('unknown')
+    })
   })
 
   describe('normalizeDexcomEntry', () => {
@@ -142,6 +147,15 @@ describe('Libre LinkUp adapter', () => {
 
     it('returns unknown for unrecognized numeric trend', () => {
       expect(normalizeLibreTrend(99 as any)).toBe('unknown')
+    })
+
+    it('returns unknown for in-range non-integer trend values', () => {
+      expect(normalizeLibreTrend(4.5 as any)).toBe('unknown')
+    })
+
+    it('returns unknown for null or undefined trend', () => {
+      expect(normalizeLibreTrend(null)).toBe('unknown')
+      expect(normalizeLibreTrend(undefined)).toBe('unknown')
     })
   })
 
@@ -248,6 +262,41 @@ describe('Nightscout adapter', () => {
       }
       const result = normalizeNightscoutEntry(entry)
       expect(result.timestamp).toBe(new Date(1700000000000).toISOString())
+    })
+
+    it('falls back to date when dateString is invalid but date is valid', () => {
+      const entry: NightscoutEntry = {
+        sgv: 110,
+        date: 1700000000000,
+        dateString: 'not-a-valid-iso',
+        direction: 'Flat',
+      }
+      const result = normalizeNightscoutEntry(entry)
+      expect(result.timestamp).toBe(new Date(1700000000000).toISOString())
+    })
+
+    it('throws when dateString is invalid and date fallback is invalid', () => {
+      const entry: NightscoutEntry = {
+        sgv: 110,
+        date: 'also-bad' as any,
+        dateString: 'not-a-valid-iso',
+        direction: 'Flat',
+      }
+      expect(() => normalizeNightscoutEntry(entry)).toThrow(
+        "Unable to parse Nightscout timestamp from 'dateString'"
+      )
+    })
+
+    it('throws when dateString is missing and date is invalid', () => {
+      const entry: NightscoutEntry = {
+        sgv: 110,
+        date: 'bad-date' as any,
+        dateString: '',
+        direction: 'Flat',
+      }
+      expect(() => normalizeNightscoutEntry(entry)).toThrow(
+        "Unable to parse Nightscout timestamp from 'date' field"
+      )
     })
   })
 

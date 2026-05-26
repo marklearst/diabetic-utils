@@ -50,7 +50,7 @@ TIR calculations per **International Consensus 2019** and **ADA 2024 Guidelines*
 - **Test Helpers**: Reusable test utilities for your own projects
 
 ### ✅ 100% Test Coverage
-- 205 passing tests
+- 295 passing tests
 - Every line, branch, and function covered
 - Defensive code properly documented
 
@@ -244,7 +244,7 @@ getA1CCategory(6.5, {
 
 ### Quality & DX
 - ✅ **TypeScript-First**: 100% strict mode, zero `any` types
-- ✅ **100% Test Coverage**: 283 tests, all edge cases covered
+- ✅ **100% Test Coverage**: 295 tests, all edge cases covered
 - ✅ **Zero Dependencies**: No bloat, tree-shakable
 - ✅ **Published References**: ADA, CDC, ISPAD, PubMed citations
 - ✅ **TSDoc**: Complete API documentation
@@ -426,7 +426,7 @@ diabetic-utils/
 │       └── modd.ts          # Mean of Daily Differences
 ├── tests/
 │   ├── test-helpers.ts      # Shared test utilities
-│   └── *.test.ts            # 100% coverage tests (283 tests)
+│   └── *.test.ts            # 100% coverage tests (295 tests)
 └── dist/                    # Built output (ESM + CJS)
 ```
 
