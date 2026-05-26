@@ -5,6 +5,28 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.5.0] - 2026-03-12
+
+### Added
+- **Advanced CGM Metrics Suite**: ADRR (Kovatchev 2006), GRADE with hypo/eu/hyper partitioning (Hill 2007), J-Index (Wojcicki 1995), CONGA intra-day variability (McDonnell 2005), Active Percent wear-time tracking (Danne 2017)
+- **AGP Aggregate**: `calculateAGPMetrics()` computes all Tier 1 CGM metrics (mean, SD, CV, LBGI, HBGI, ADRR, GRADE, GRI, J-Index, MODD, CONGA, Active Percent) in a single call
+- **LBGI / HBGI**: Low and High Blood Glucose Index risk scores (Kovatchev 2006)
+- **GRI**: Glycemia Risk Index with zone A-E classification (Klonoff 2023)
+- **MODD**: Mean of Daily Differences for day-to-day glucose variability (Service 1980)
+- **CGM Connector Adapters**: `normalizeDexcomEntries()`, `normalizeLibreEntries()`, `normalizeNightscoutEntries()` — pure transformation helpers mapping vendor payloads into canonical `NormalizedCGMReading` type with trend and source metadata
+- **FHIR CGM IG**: `buildFHIRCGMSummary()`, `buildFHIRSensorReading()`, `buildFHIRSensorReadings()` for HL7 FHIR-aligned CGM observation payloads
+- **Open mHealth**: `buildOMHBloodGlucose()`, `buildOMHBloodGlucoseList()`, `buildOMHDataPoint()` for standards-compliant health data exchange
+- Edge-case tests for out-of-order timestamps, mixed units, and cross-module interactions
+
+### Changed
+- Softened authority-implying medical language across documentation and code comments
+- Test suite expanded from 295 to 337 passing tests, maintaining 100% coverage
+
+### Fixed
+- Enhanced TIR interval estimation now robust to unsorted timestamps
+- FHIR component schema alignment and tighter Open mHealth types
+- GRI and MODD calculations refined from review feedback
+
 ## [1.4.2] - 2024-11-11
 
 ### Documentation
