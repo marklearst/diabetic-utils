@@ -13,12 +13,12 @@ import {
 import { isValidGlucoseString } from './guards'
 
 /**
- * Checks if a glucose value is clinically hypoglycemic for the given unit.
- * Used for detecting low glucose events in clinical analytics and reporting.
+ * Checks if a glucose value is below the hypoglycemia threshold for the given unit.
+ * Used for detecting low glucose events.
  * @param val - Glucose value (number)
  * @param unit - Glucose unit ('mg/dL' or 'mmol/L'), default: 'mg/dL'
  * @param thresholds - Optional custom thresholds ({ mgdl?: number; mmoll?: number })
- * @returns True if value is below clinical hypoglycemia threshold
+ * @returns True if value is below the hypoglycemia threshold
  * @see https://www.diabetes.co.uk/diabetes_care/blood-sugar-level-ranges.html
  */
 export function isHypo(
@@ -32,12 +32,12 @@ export function isHypo(
 }
 
 /**
- * Checks if a glucose value is clinically hyperglycemic for the given unit.
- * Used for detecting high glucose events in clinical analytics and reporting.
+ * Checks if a glucose value is above the hyperglycemia threshold for the given unit.
+ * Used for detecting high glucose events.
  * @param val - Glucose value (number)
  * @param unit - Glucose unit ('mg/dL' or 'mmol/L'), default: 'mg/dL'
  * @param thresholds - Optional custom thresholds ({ mgdl?: number; mmoll?: number })
- * @returns True if value is above clinical hyperglycemia threshold
+ * @returns True if value is above the hyperglycemia threshold
  * @see https://www.diabetes.co.uk/diabetes_care/blood-sugar-level-ranges.html
  */
 export function isHyper(
@@ -51,12 +51,12 @@ export function isHyper(
 }
 
 /**
- * Returns a clinical glucose status label ('low', 'normal', or 'high') based on thresholds for the given unit.
- * Used for clinical charting, alerts, and reporting.
+ * Returns a glucose status label ('low', 'normal', or 'high') based on thresholds for the given unit.
+ * Used for charting, alerts, and reporting.
  * @param val - Glucose value (number)
  * @param unit - Glucose unit ('mg/dL' or 'mmol/L'), default: 'mg/dL'
  * @param thresholds - Optional custom thresholds for hypo/hyper ({ hypo?: { mgdl?: number; mmoll?: number }, hyper?: { mgdl?: number; mmoll?: number } })
- * @returns 'low', 'normal', or 'high' based on clinical thresholds
+ * @returns 'low', 'normal', or 'high' based on configured thresholds
  * @see https://www.diabetes.co.uk/diabetes_care/blood-sugar-level-ranges.html
  */
 export function getGlucoseLabel(
@@ -73,8 +73,8 @@ export function getGlucoseLabel(
 }
 
 /**
- * Parses a clinical glucose string (e.g., "100 mg/dL", "5.5 mmol/L") into value and unit.
- * Used for robust input validation and clinical data ingestion.
+ * Parses a glucose string (e.g., "100 mg/dL", "5.5 mmol/L") into value and unit.
+ * Used for robust input validation and data ingestion.
  * @param input - String in the format "value unit" (e.g., "100 mg/dL")
  * @returns Object with numeric value and validated unit
  * @throws {Error} If input string is invalid or not in expected format
@@ -103,11 +103,11 @@ export function parseGlucoseString(input: string): {
 }
 
 /**
- * Validates a clinical glucose value and unit.
- * Ensures value is a positive finite number and unit is supported for analytics.
+ * Validates a glucose value and unit.
+ * Ensures value is a positive finite number and unit is supported.
  * @param value - Glucose value to validate
  * @param unit - Glucose unit to validate
- * @returns True if value and unit are clinically valid
+ * @returns True if value and unit are valid
  */
 export function isValidGlucoseValue(value: unknown, unit: unknown): boolean {
   return (

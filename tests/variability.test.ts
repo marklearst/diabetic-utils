@@ -63,12 +63,12 @@ describe('glucosePercentiles', () => {
 })
 
 describe('glucoseMAGE', () => {
-  it('calculates MAGE using clinical-grade algorithm for typical data', () => {
-    // Clinical-grade MAGE uses dual moving averages and 3-point excursions
+  it('calculates MAGE using dual moving average algorithm for typical data', () => {
+    // MAGE uses dual moving averages and 3-point excursions
     const data = [100, 120, 80, 160, 90, 140, 70, 180]
     const result = glucoseMAGE(data)
     
-    // Should return a valid MAGE value (exact value depends on clinical algorithm)
+    // Should return a valid MAGE value (exact value depends on algorithm)
     expect(Number.isFinite(result)).toBe(true)
     expect(result).toBeGreaterThan(0)
     expect(result).toBeLessThan(200) // Reasonable upper bound
@@ -79,7 +79,7 @@ describe('glucoseMAGE', () => {
     const data = [100, 102, 101, 99, 100, 101, 99, 100]
     const result = glucoseMAGE(data)
     
-    // Clinical algorithm may return NaN if no valid excursions found
+    // Algorithm may return NaN if no valid excursions found
     expect(Number.isNaN(result) || Number.isFinite(result)).toBe(true)
   })
   
@@ -92,7 +92,7 @@ describe('glucoseMAGE', () => {
     expect(Number.isNaN(glucoseMAGE([100, 100, 100, 100]))).toBe(true)
   })
   
-  it('handles clinical-grade options parameter', () => {
+  it('handles options parameter', () => {
     const data = [100, 120, 80, 160, 90, 140, 70, 180]
     
     // Test with default options

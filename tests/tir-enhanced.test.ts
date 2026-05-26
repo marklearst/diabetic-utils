@@ -304,7 +304,7 @@ describe('calculateEnhancedTIR', () => {
 
       // Check that at least one recommendation contains the older/high-risk text
       const hasOlderAdultsText = result.meetsTargets.recommendations.some(r =>
-        r.includes('older/high-risk')
+        r.includes('Older/high-risk')
       )
       expect(hasOlderAdultsText).toBe(true)
     })
@@ -326,7 +326,7 @@ describe('calculateEnhancedTIR', () => {
   })
 
   describe('Recommendations', () => {
-    it('should recommend insulin adjustment for elevated Level 1 hypoglycemia', () => {
+    it('should note elevated Level 1 hypoglycemia', () => {
       const readings = createReadings([...Array(5).fill(60), ...Array(95).fill(120)])
 
       const result = calculateEnhancedTIR(readings)
@@ -334,39 +334,33 @@ describe('calculateEnhancedTIR', () => {
       expect(result.meetsTargets.recommendations).toEqual(
         expect.arrayContaining([
           expect.stringContaining('Level 1 hypoglycemia'),
+          expect.stringContaining('is elevated'),
         ])
-      )
-      expect(result.meetsTargets.recommendations).toEqual(
-        expect.arrayContaining([expect.stringContaining('insulin doses')])
       )
     })
 
-    it('should recommend urgent action for Level 2 hypoglycemia', () => {
+    it('should note Level 2 hypoglycemia exceeding target', () => {
       const readings = createReadings([...Array(2).fill(45), ...Array(98).fill(120)])
 
       const result = calculateEnhancedTIR(readings)
 
       expect(result.meetsTargets.recommendations).toEqual(
-        expect.arrayContaining([expect.stringContaining('CRITICAL')])
-      )
-      expect(result.meetsTargets.recommendations).toEqual(
         expect.arrayContaining([
-          expect.stringContaining('healthcare provider immediately'),
+          expect.stringContaining('Level 2 hypoglycemia'),
+          expect.stringContaining('exceeds the consensus target'),
         ])
       )
     })
 
-    it('should recommend treatment review for Level 2 hyperglycemia', () => {
+    it('should note Level 2 hyperglycemia exceeding target', () => {
       const readings = createReadings([...Array(6).fill(300), ...Array(94).fill(120)])
 
       const result = calculateEnhancedTIR(readings)
 
       expect(result.meetsTargets.recommendations).toEqual(
-        expect.arrayContaining([expect.stringContaining('URGENT')])
-      )
-      expect(result.meetsTargets.recommendations).toEqual(
         expect.arrayContaining([
           expect.stringContaining('Level 2 hyperglycemia'),
+          expect.stringContaining('exceeds the consensus target'),
         ])
       )
     })
@@ -378,7 +372,7 @@ describe('calculateEnhancedTIR', () => {
 
       expect(result.meetsTargets.recommendations).toEqual(
         expect.arrayContaining([
-          expect.stringContaining('Excellent glycemic control'),
+          expect.stringContaining('All metrics meet consensus targets'),
         ])
       )
     })
@@ -395,7 +389,7 @@ describe('calculateEnhancedTIR', () => {
       expect(result.meetsTargets.recommendations).toEqual(
         expect.arrayContaining([
           expect.stringContaining('Time-in-range'),
-          expect.stringContaining('below target'),
+          expect.stringContaining('below the consensus target'),
         ])
       )
     })
@@ -757,7 +751,7 @@ describe('calculatePregnancyTIR', () => {
   })
 
   describe('Recommendations', () => {
-    it('should recommend urgent action for elevated TBR', () => {
+    it('should note elevated TBR', () => {
       const readings = createReadings([
         ...Array(10).fill(55),
         ...Array(90).fill(100),
@@ -766,16 +760,13 @@ describe('calculatePregnancyTIR', () => {
       const result = calculatePregnancyTIR(readings)
 
       expect(result.recommendations).toEqual(
-        expect.arrayContaining([expect.stringContaining('CRITICAL')])
-      )
-      expect(result.recommendations).toEqual(
         expect.arrayContaining([
-          expect.stringContaining('Contact healthcare provider immediately'),
+          expect.stringContaining('exceeds the pregnancy consensus target'),
         ])
       )
     })
 
-    it('should recommend treatment review for elevated TAR', () => {
+    it('should note elevated TAR', () => {
       const readings = createReadings([
         ...Array(70).fill(100),
         ...Array(30).fill(160),
@@ -784,11 +775,8 @@ describe('calculatePregnancyTIR', () => {
       const result = calculatePregnancyTIR(readings)
 
       expect(result.recommendations).toEqual(
-        expect.arrayContaining([expect.stringContaining('URGENT')])
-      )
-      expect(result.recommendations).toEqual(
         expect.arrayContaining([
-          expect.stringContaining('exceeds acceptable limit for pregnancy'),
+          expect.stringContaining('exceeds the pregnancy consensus target'),
         ])
       )
     })
@@ -804,7 +792,7 @@ describe('calculatePregnancyTIR', () => {
 
       expect(result.recommendations).toEqual(
         expect.arrayContaining([
-          expect.stringContaining('Excellent glycemic control for pregnancy'),
+          expect.stringContaining('All metrics meet pregnancy consensus targets'),
         ])
       )
     })
@@ -819,7 +807,7 @@ describe('calculatePregnancyTIR', () => {
 
       expect(result.recommendations).toEqual(
         expect.arrayContaining([
-          expect.stringContaining('Pregnancy requires tighter glucose control'),
+          expect.stringContaining('Pregnancy target range'),
         ])
       )
       expect(result.recommendations).toEqual(
