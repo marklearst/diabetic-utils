@@ -6,7 +6,7 @@
 
 # Interface: GlucoseReading
 
-Defined in: [types.ts:24](https://github.com/marklearst/diabetic-utils/blob/0d03b5cd2e2b5edbf58275075cc81d8df31ac230/src/types.ts#L24)
+Defined in: [types.ts:24](https://github.com/marklearst/glucoseiq/blob/0d03b5cd2e2b5edbf58275075cc81d8df31ac230/src/types.ts#L24)
 
 Single clinical glucose reading.
 Includes value, unit, and ISO 8601 timestamp for clinical analytics.
@@ -21,7 +21,7 @@ https://www.ncbi.nlm.nih.gov/pmc/articles/PMC7445493/
 
 > `readonly` **timestamp**: `string`
 
-Defined in: [types.ts:27](https://github.com/marklearst/diabetic-utils/blob/0d03b5cd2e2b5edbf58275075cc81d8df31ac230/src/types.ts#L27)
+Defined in: [types.ts:27](https://github.com/marklearst/glucoseiq/blob/0d03b5cd2e2b5edbf58275075cc81d8df31ac230/src/types.ts#L27)
 
 ***
 
@@ -29,7 +29,7 @@ Defined in: [types.ts:27](https://github.com/marklearst/diabetic-utils/blob/0d03
 
 > `readonly` **unit**: [`GlucoseUnit`](../type-aliases/GlucoseUnit.md)
 
-Defined in: [types.ts:26](https://github.com/marklearst/diabetic-utils/blob/0d03b5cd2e2b5edbf58275075cc81d8df31ac230/src/types.ts#L26)
+Defined in: [types.ts:26](https://github.com/marklearst/glucoseiq/blob/0d03b5cd2e2b5edbf58275075cc81d8df31ac230/src/types.ts#L26)
 
 ***
 
@@ -37,4 +37,4 @@ Defined in: [types.ts:26](https://github.com/marklearst/diabetic-utils/blob/0d03
 
 > `readonly` **value**: `number`
 
-Defined in: [types.ts:25](https://github.com/marklearst/diabetic-utils/blob/0d03b5cd2e2b5edbf58275075cc81d8df31ac230/src/types.ts#L25)
+Defined in: [types.ts:25](https://github.com/marklearst/glucoseiq/blob/0d03b5cd2e2b5edbf58275075cc81d8df31ac230/src/types.ts#L25)

@@ -8,7 +8,7 @@
 
 > **groupByDay**(`readings`): `Record`\<`string`, [`GlucoseReading`](../interfaces/GlucoseReading.md)[]\>
 
-Defined in: [tir.ts:58](https://github.com/marklearst/diabetic-utils/blob/0d03b5cd2e2b5edbf58275075cc81d8df31ac230/src/tir.ts#L58)
+Defined in: [tir.ts:58](https://github.com/marklearst/glucoseiq/blob/0d03b5cd2e2b5edbf58275075cc81d8df31ac230/src/tir.ts#L58)
 
 Groups glucose readings by date (YYYY-MM-DD).
 

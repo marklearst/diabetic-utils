@@ -1,643 +1,151 @@
-# 🩸 Diabetic Utils
+# 🩸 GlucoseIQ
 
-Built and maintained by Mark Learst.
+**The headless engine behind glucose on every screen.**
 
-**A TypeScript toolkit for diabetes analytics and health data.**
+A zero-dependency TypeScript toolkit for CGM and diabetes analytics — the AGP percentile-band series, Time-in-Range, a full suite of cited variability & risk metrics, meal-response analysis, a live trend model, and render-ready SVG charts. One pure engine that runs the same on a server, in a browser, in a React app, or behind an Apple Watch complication.
 
-![Diabetic Utils Logo](https://raw.githubusercontent.com/marklearst/diabetic-utils/refs/heads/main/assets/dujs.png)
+> _**GlucoseIQ 1.0** expands `diabetic-utils` into a scoped package ecosystem with a zero-dependency headless core. Projects on `diabetic-utils` 1.5.x can adopt the 2.0 compatibility bridge without changing source imports (see [Migration](#-migration))._
 
-A modern, strictly-typed utility library for glucose, A1C, insulin, and diabetes metrics. Designed for reliability and transparency—no bloat, no guesswork, just robust utilities with referenced formulas from published guidelines.
+> **Disclaimer:** For informational and educational purposes only. Not medical advice, diagnosis, or treatment.
 
-> **Disclaimer**: This library is for **informational and educational purposes only**.
-> It does not constitute medical advice, diagnosis, or treatment. Always consult
-> a qualified healthcare provider for medical decisions.
-
-> **v1.5.0** adds a full advanced CGM metrics suite, CGM vendor adapters, and health data interoperability (FHIR, Open mHealth).
-
----
-
-## 🧭 Headless CGM Roadmap
-
-Looking to build UI-agnostic CGM apps and dashboards? See the project roadmap: **[`docs/HEADLESS_CGM_ROADMAP.md`](docs/HEADLESS_CGM_ROADMAP.md)**.
-
----
-
-## 📊 Status & Quality
-
-![Status](https://img.shields.io/badge/status-stable-brightgreen)
-[![codecov](https://codecov.io/gh/marklearst/diabetic-utils/branch/main/graph/badge.svg)](https://codecov.io/gh/marklearst/diabetic-utils)
-![CI](https://github.com/marklearst/diabetic-utils/actions/workflows/ci-cd.yml/badge.svg)
-![TypeScript](https://img.shields.io/badge/TypeScript-100%25_Strict-blue?logo=typescript)
+![Node](https://img.shields.io/badge/node-%E2%89%A524-brightgreen)
 ![Coverage](https://img.shields.io/badge/coverage-100%25-success)
-![npm](https://img.shields.io/npm/v/diabetic-utils)
-![npm downloads](https://img.shields.io/npm/dm/diabetic-utils)
-![License](https://img.shields.io/github/license/marklearst/diabetic-utils)
+![Types](https://img.shields.io/badge/TypeScript-strict-blue?logo=typescript)
+![Dependencies](https://img.shields.io/badge/dependencies-0-success)
+![License](https://img.shields.io/github/license/marklearst/glucoseiq)
 
 ---
 
-## 🚀 What's New in v1.5.0
+## Why GlucoseIQ
 
-### 📈 Advanced CGM Metrics Suite
-A complete set of published CGM analytics, each with peer-reviewed references:
-- **ADRR**: Average Daily Risk Range (Kovatchev 2006)
-- **GRADE**: Glycemic Risk Assessment Diabetes Equation with hypo/eu/hyper partitioning (Hill 2007)
-- **J-Index**: Composite mean + variability score (Wojcicki 1995)
-- **CONGA**: Continuous Overall Net Glycemic Action for intra-day variability (McDonnell 2005)
-- **Active Percent**: CGM wear-time tracking against clinical thresholds (Danne 2017)
-- **AGP Aggregate**: Single-call `calculateAGPMetrics()` computes all Tier 1 metrics at once
-- **LBGI / HBGI**: Low/High Blood Glucose Index (Kovatchev 2006)
-- **GRI**: Glycemia Risk Index with zone A-E classification (Klonoff 2023)
-- **MODD**: Mean of Daily Differences for day-to-day variability (Service 1980)
-
-### 🔌 CGM Connector Adapters
-Pure transformation helpers that normalize vendor payloads into a canonical `NormalizedCGMReading` type:
-- **Dexcom Share** — normalize Dexcom Share API responses
-- **Libre LinkUp** — normalize Libre LinkUp API responses
-- **Nightscout** — normalize Nightscout SGV entries
-
-### 🏥 Health Data Interoperability
-Build standards-compliant payloads for health data exchange:
-- **FHIR CGM IG** — HL7 FHIR-aligned CGM summary and sensor reading observations
-- **Open mHealth** — OMH blood-glucose datapoints with full header support
-
-### ✅ 337 Passing Tests
-- 100% coverage across lines, branches, functions, and statements
-- New edge-case coverage for out-of-order timestamps, mixed units, and cross-module interactions
+- **Zero runtime dependencies** in the core. Tree-shakable, tiny (~15 KB gzipped), runs anywhere.
+- **Cited, researcher-grade math.** Every metric traces to a published guideline, golden-tested against reference values (including the R `iglu` package and Nightscout).
+- **Headless by design.** Pure functions in, render-ready data out — draw it with any chart library, or use the built-in zero-dependency SVG renderers.
+- **100% test coverage**, strict TypeScript, ESM + CJS.
 
 ---
 
-## 📦 Installation
+## Packages
+
+| Package | What it is |
+|---|---|
+| **`@glucoseiq/core`** | The zero-dependency headless engine — all analytics, series, live model, interop, and SVG renderers. |
+| **`@glucoseiq/react`** | Memoized hooks + headless `<AgpChart/>`, `<TirBar/>`, `<TrendTile/>` components (React ≥18 peer). |
+| **`@glucoseiq/tokens`** | The canonical 5-zone palette, trend glyphs, and CSS variables. |
+| **`@glucoseiq/testing`** | Seedable mock-CGM generator + scenario fixtures (same seed → identical output). |
+| **`@glucoseiq/cli`** | `npx @glucoseiq/cli report data.csv` — zero-code analysis of any CGM export. |
+| **`diabetic-utils`** | 2.0 compatibility bridge for projects moving from `diabetic-utils` 1.5.x to `@glucoseiq/core`. |
 
 ```bash
-npm install diabetic-utils
-# or
-pnpm add diabetic-utils
-# or
-yarn add diabetic-utils
-```
-
-**Requirements:** TypeScript 4.5+ or JavaScript (ES2020+)
-
----
-
-## ⚡ Quick Start
-
-### Basic Conversions & Calculations
-
-```typescript
-import {
-  mgDlToMmolL,
-  mmolLToMgDl,
-  estimateGMI,
-  estimateA1CFromAverage
-} from 'diabetic-utils'
-
-// Glucose unit conversions
-mgDlToMmolL(180)  // → 10.0
-mmolLToMgDl(5.5)  // → 99
-
-// GMI calculation (multiple input formats)
-estimateGMI(100, 'mg/dL')              // → 5.4
-estimateGMI('5.5 mmol/L')              // → 5.4
-estimateGMI({ value: 100, unit: 'mg/dL' })  // → 5.4
-
-// A1C estimation
-estimateA1CFromAverage(154, 'mg/dL')  // → 7.0
-```
-
-### Enhanced Time-in-Range
-
-```typescript
-import { calculateEnhancedTIR } from 'diabetic-utils'
-import type { GlucoseReading } from 'diabetic-utils'
-
-const readings: GlucoseReading[] = [
-  { value: 120, unit: 'mg/dL', timestamp: '2024-01-01T08:00:00Z' },
-  { value: 95,  unit: 'mg/dL', timestamp: '2024-01-01T08:05:00Z' },
-  { value: 180, unit: 'mg/dL', timestamp: '2024-01-01T08:10:00Z' },
-  // ... more readings
-]
-
-const result = calculateEnhancedTIR(readings)
-
-console.log(`TIR: ${result.inRange.percentage}%`)
-// TIR: 72.5%
-
-console.log(`Very Low: ${result.veryLow.percentage}%`)
-// Very Low: 0.5%
-
-console.log(`Assessment: ${result.meetsTargets.overallAssessment}`)
-// Assessment: good
-
-console.log(result.meetsTargets.recommendations)
-// ['All metrics meet consensus targets.']
-```
-
-### Pregnancy TIR
-
-```typescript
-import { calculatePregnancyTIR } from 'diabetic-utils'
-
-const result = calculatePregnancyTIR(readings)
-
-console.log(`TIR (63-140 mg/dL): ${result.inRange.percentage}%`)
-// TIR (63-140 mg/dL): 85.2%
-
-console.log(`Meets pregnancy targets: ${result.meetsPregnancyTargets}`)
-// Meets pregnancy targets: true
-
-console.log(result.recommendations)
-// ['All metrics meet pregnancy consensus targets.', ...]
-```
-
-### AGP Metrics (All-in-One)
-
-```typescript
-import { calculateAGPMetrics } from 'diabetic-utils'
-import type { GlucoseReading } from 'diabetic-utils'
-
-const readings: GlucoseReading[] = [
-  { value: 120, unit: 'mg/dL', timestamp: '2024-01-01T08:00:00Z' },
-  { value: 95,  unit: 'mg/dL', timestamp: '2024-01-01T08:05:00Z' },
-  { value: 180, unit: 'mg/dL', timestamp: '2024-01-01T08:10:00Z' },
-  // ... more readings across multiple days
-]
-
-const agp = calculateAGPMetrics(readings)
-
-console.log(`Mean: ${agp.meanGlucose} mg/dL`)
-console.log(`SD: ${agp.sd}, CV: ${agp.cv}%`)
-console.log(`LBGI: ${agp.lbgi}, HBGI: ${agp.hbgi}`)
-console.log(`ADRR: ${agp.adrr}`)
-console.log(`GRADE: ${agp.grade.gradeScore}`)
-console.log(`GRI: ${agp.gri.gri} (Zone ${agp.gri.zone})`)
-console.log(`J-Index: ${agp.jIndex}`)
-console.log(`MODD: ${agp.modd} mg/dL`)
-console.log(`CONGA: ${agp.conga} mg/dL`)
-console.log(`Active: ${agp.activePercent.activePercent}%`)
-```
-
-### CGM Connector Adapters
-
-```typescript
-import {
-  normalizeDexcomEntries,
-  normalizeLibreEntries,
-  normalizeNightscoutEntries
-} from 'diabetic-utils'
-
-// Normalize vendor data into a canonical format
-const dexcomReadings = normalizeDexcomEntries(dexcomShareResponse)
-const libreReadings = normalizeLibreEntries(libreLinkUpResponse)
-const nightscoutReadings = normalizeNightscoutEntries(nightscoutSGVEntries)
-
-// All return NormalizedCGMReading[] with:
-//   { value, unit, timestamp, trend, source }
-// Ready to pass into any diabetic-utils analytics function
-```
-
-### FHIR & Open mHealth Export
-
-```typescript
-import {
-  buildFHIRCGMSummary,
-  buildFHIRSensorReading,
-  buildOMHDataPoint
-} from 'diabetic-utils'
-
-// Build a FHIR CGM summary observation
-const fhirSummary = buildFHIRCGMSummary(tirResult, {
-  start: '2024-01-01',
-  end: '2024-01-14'
-})
-
-// Build a FHIR sensor reading observation
-const fhirReading = buildFHIRSensorReading({
-  value: 120, unit: 'mg/dL', timestamp: '2024-01-01T08:00:00Z'
-})
-
-// Build an Open mHealth blood-glucose datapoint
-const omhPoint = buildOMHDataPoint(
-  { value: 120, unit: 'mg/dL', timestamp: '2024-01-01T08:00:00Z' },
-  'reading-001'
-)
-```
-
-### Glucose Labeling & Validation
-
-```typescript
-import {
-  getGlucoseLabel,
-  isHypo,
-  isHyper,
-  isValidGlucoseValue
-} from 'diabetic-utils'
-
-// Label glucose values
-getGlucoseLabel(60, 'mg/dL')   // → 'low'
-getGlucoseLabel(5.5, 'mmol/L') // → 'normal'
-getGlucoseLabel(200, 'mg/dL')  // → 'high'
-
-// Threshold checks
-isHypo(65, 'mg/dL')   // → true
-isHyper(180, 'mg/dL') // → false
-
-// Validation
-isValidGlucoseValue(120, 'mg/dL')  // → true
-isValidGlucoseValue(-10, 'mg/dL')  // → false
-```
-
-### Variability Analytics
-
-```typescript
-import {
-  glucoseStandardDeviation,
-  glucoseCoefficientOfVariation,
-  glucosePercentiles,
-  glucoseMAGE
-} from 'diabetic-utils'
-
-const data = [90, 100, 110, 120, 130, 140, 150, 160, 170, 180]
-
-// Standard deviation (unbiased sample SD, n-1)
-glucoseStandardDeviation(data)  // → 30.28
-
-// Coefficient of variation (CV%)
-glucoseCoefficientOfVariation(data)  // → 22.43
-
-// Percentiles (nearest-rank method)
-glucosePercentiles(data, [10, 50, 90])
-// → { 10: 90, 50: 130, 90: 170 }
-
-// MAGE (Mean Amplitude of Glycemic Excursions)
-const mage = glucoseMAGE([100, 120, 80, 160, 90, 140, 70, 180])
-console.log(`MAGE: ${mage} mg/dL`)
-```
-
-### Custom Thresholds
-
-```typescript
-import { getGlucoseLabel, isHypo, getA1CCategory } from 'diabetic-utils'
-
-// Custom hypoglycemia threshold
-isHypo(75, 'mg/dL', { mgdl: 80 })  // → true
-
-// Custom hyperglycemia threshold
-isHyper(9.0, 'mmol/L', { mmoll: 8.5 })  // → true
-
-// Custom glucose label thresholds
-getGlucoseLabel(75, 'mg/dL', {
-  hypo: { mgdl: 80 },
-  hyper: { mgdl: 160 }
-})  // → 'low'
-
-// Custom A1C category cutoffs
-getA1CCategory(6.5, {
-  normalMax: 6.0,
-  prediabetesMax: 7.0
-})  // → 'prediabetes'
+npm install @glucoseiq/core
 ```
 
 ---
 
-## 🌟 Features
+## 30-second demo
 
-### Core Utilities
-- ✅ **Glucose Conversions**: mg/dL ⇄ mmol/L
-- ✅ **A1C Calculations**: GMI, eAG, A1C estimation
-- ✅ **Time-in-Range**: Enhanced TIR (5 ranges), Pregnancy TIR
-- ✅ **HOMA-IR**: Insulin resistance calculation
-- ✅ **Variability Metrics**: SD, CV, MAGE, percentiles
-- ✅ **Validation**: Input guards, string parsing
-- ✅ **Labeling**: Glucose status (low/normal/high)
+```ts
+import { analyzeGlucose } from '@glucoseiq/core'
 
-### Advanced CGM Metrics
-- ✅ **LBGI / HBGI**: Low/High Blood Glucose Index (Kovatchev 2006)
-- ✅ **GRI**: Glycemia Risk Index with zone A-E classification (Klonoff 2023)
-- ✅ **MODD**: Mean of Daily Differences for day-to-day variability (Service 1980)
-- ✅ **ADRR**: Average Daily Risk Range (Kovatchev 2006)
-- ✅ **GRADE**: Glycemic Risk Assessment Diabetes Equation with partitioning (Hill 2007)
-- ✅ **J-Index**: Composite mean + variability score (Wojcicki 1995)
-- ✅ **CONGA**: Continuous Overall Net Glycemic Action (McDonnell 2005)
-- ✅ **Active Percent**: CGM wear-time tracking (Danne 2017)
-- ✅ **AGP Aggregate**: All Tier 1 metrics in a single call
+const report = analyzeGlucose(readings, { timeZone: 'America/New_York' })
 
-### CGM Connector Adapters
-- ✅ **Dexcom Share**: Normalize Dexcom Share API responses
-- ✅ **Libre LinkUp**: Normalize Libre LinkUp API responses
-- ✅ **Nightscout**: Normalize Nightscout SGV entries
-- ✅ **Canonical Type**: `NormalizedCGMReading` with trend + source metadata
-
-### Interoperability
-- ✅ **FHIR CGM IG**: Build HL7 FHIR-aligned CGM summary and sensor reading payloads
-- ✅ **Open mHealth**: Build OMH blood-glucose datapoints
-
-### Quality & DX
-- ✅ **TypeScript-First**: 100% strict mode, zero `any` types
-- ✅ **100% Test Coverage**: 337 tests, all edge cases covered
-- ✅ **Zero Dependencies**: No bloat, tree-shakable
-- ✅ **Published References**: ADA, CDC, ISPAD, PubMed citations
-- ✅ **TSDoc**: Complete API documentation
-- ✅ **ESM + CJS**: Works everywhere
-- ✅ **Type Predicates**: Better type narrowing
-- ✅ **Named Constants**: Self-documenting formulas
-
----
-
-## 🏆 Why Choose Diabetic Utils?
-
-### Referenced Formulas
-Every formula, threshold, and calculation references published guidelines:
-- **International Consensus on Time in Range (2019)** - TIR calculations
-- **ADA Standards of Care (2024)** - Pregnancy targets, A1C guidelines
-- **ISPAD Guidelines (2018)** - Glucose variability metrics
-- **NIH/NIDDK** - HOMA-IR, eAG formulas
-- **Kovatchev et al. (2006)** - LBGI, HBGI, ADRR
-- **Hill et al. (2007)** - GRADE
-- **Klonoff et al. (2023)** - GRI
-- **Wojcicki (1995)** - J-Index
-- **McDonnell et al. (2005)** - CONGA
-- **Danne et al. (2017)** - Active Percent
-
-### Production-Ready
-- **100% Test Coverage** - Every line tested
-- **Type-Safe** - Catch errors at compile time
-- **Zero Dependencies** - Small bundle, no supply chain risk
-- **Modern ESM** - Tree-shakable, works with Vite, Next.js, etc.
-
-### Developer-Friendly
-- **Clear API** - Predictable function signatures
-- **Great DX** - Autocomplete with literal types
-- **Working Examples** - Copy-paste ready code
-- **Test Helpers** - Utilities for your own tests
-
-### Unique Features
-**Only TypeScript/JavaScript library with:**
-- Full AGP metrics suite in a single call
-- Enhanced TIR (5-range breakdown) and Pregnancy TIR
-- MAGE calculation (Service 1970)
-- ADRR, GRADE, J-Index, CONGA, and Active Percent
-- CGM vendor adapters (Dexcom, Libre, Nightscout)
-- FHIR CGM IG-aligned export utilities
-- LBGI/HBGI, GRI, and MODD metrics
-- Type predicates for validation
-
----
-
-## 📚 Full API Reference
-
-### Glucose Conversions
-- `mgDlToMmolL(value)` - Convert mg/dL to mmol/L
-- `mmolLToMgDl(value)` - Convert mmol/L to mg/dL
-- `convertGlucoseUnit({ value, unit })` - Generic unit conversion
-
-### A1C & GMI
-- `estimateA1CFromAverage(glucose, unit)` - A1C from average glucose
-- `estimateGMI(input, unit?)` - GMI from average glucose
-- `a1cToGMI(a1c)` - Convert A1C to GMI
-- `estimateAvgGlucoseFromA1C(a1c)` - A1C to estimated average glucose (mg/dL)
-
-### Time-in-Range
-- `calculateTimeInRange(readings, low, high)` - Basic TIR
-- `calculateEnhancedTIR(readings, options?)` - 5-range TIR
-- `calculatePregnancyTIR(readings, options?)` - Pregnancy TIR
-
-### Glucose Analysis
-- `getGlucoseLabel(value, unit, thresholds?)` - Label as low/normal/high
-- `isHypo(value, unit, threshold?)` - Check hypoglycemia
-- `isHyper(value, unit, threshold?)` - Check hyperglycemia
-- `isValidGlucoseValue(value, unit)` - Validate glucose value
-
-### A1C Analysis
-- `getA1CCategory(a1c, cutoffs?)` - Categorize A1C
-- `isA1CInTarget(a1c, target?)` - Check if A1C meets target
-
-### Variability Metrics
-- `glucoseStandardDeviation(readings)` - SD (unbiased)
-- `glucoseCoefficientOfVariation(readings)` - CV%
-- `glucosePercentiles(readings, percentiles)` - Percentile ranks
-- `glucoseMAGE(readings, options?)` - Mean Amplitude of Glycemic Excursions
-
-### Insulin Metrics
-- `calculateHOMAIR(glucose, insulin, unit)` - HOMA-IR
-- `isValidInsulin(value)` - Validate insulin value
-
-### Advanced CGM Metrics
-- `calculateAGPMetrics(readings, options?)` - All Tier 1 metrics in a single call
-- `glucoseLBGI(readings)` - Low Blood Glucose Index (Kovatchev 2006)
-- `glucoseHBGI(readings)` - High Blood Glucose Index (Kovatchev 2006)
-- `calculateADRR(readings)` - Average Daily Risk Range (Kovatchev 2006)
-- `calculateGRADE(readings)` - Glycemic Risk Assessment Diabetes Equation (Hill 2007)
-- `calculateGRI(input)` - Glycemia Risk Index with zone A-E (Klonoff 2023)
-- `calculateJIndex(readings)` - J-Index composite score (Wojcicki 1995)
-- `calculateMODD(readings, options?)` - Mean of Daily Differences (Service 1980)
-- `calculateCONGA(readings, options?)` - Continuous Overall Net Glycemic Action (McDonnell 2005)
-- `calculateActivePercent(readings, options?)` - CGM wear-time percentage (Danne 2017)
-
-### CGM Connector Adapters
-- `normalizeDexcomEntries(entries)` - Dexcom Share → NormalizedCGMReading[]
-- `normalizeLibreEntries(entries)` - Libre LinkUp → NormalizedCGMReading[]
-- `normalizeNightscoutEntries(entries)` - Nightscout SGV → NormalizedCGMReading[]
-
-### Interoperability
-- `buildFHIRCGMSummary(tir, period, options?)` - FHIR CGM summary observation
-- `buildFHIRSensorReading(reading)` - FHIR sensor reading observation
-- `buildFHIRSensorReadings(readings)` - FHIR sensor reading observations from a list of readings
-- `buildOMHBloodGlucose(reading)` - Open mHealth blood-glucose body
-- `buildOMHBloodGlucoseList(readings)` - Open mHealth blood-glucose bodies from a list of readings
-- `buildOMHDataPoint(reading, id)` - Full OMH datapoint with header
-
-### Utilities
-- `parseGlucoseString(str)` - Parse "120 mg/dL" → { value, unit }
-- `formatGlucose(value, unit)` - Format glucose with unit
-- `isValidGlucoseString(str)` - Validate glucose string
-
-**[View Complete API Docs →](https://marklearst.github.io/diabetic-utils/)**
-
----
-
-## 🧪 Test Helpers
-
-The repository includes test utilities in `tests/test-helpers.ts` for contributors and downstream developers:
-
-```typescript
-// In your test files (not published to npm — copy as needed)
-import {
-  createGlucoseReadings,
-  COMMON_TEST_VALUES,
-  TEST_TIMESTAMP_BASE
-} from './tests/test-helpers'
-
-// Create test data easily
-const readings = createGlucoseReadings([100, 110, 120], 'mg/dL', 5)
-// → 3 readings at 5-minute intervals
-
-// Use common test values
-const { NORMAL_GLUCOSE_MGDL, HYPO_GLUCOSE_MGDL } = COMMON_TEST_VALUES
+report.gmi                            // 6.8   (estimated A1C)
+report.timeInRange.inRange.percentage // 72.5  (%)
+report.tightRange.inRange             // 58.1  (% in 70–140)
+report.risk.gri.zone                  // 'B'   (Glycemia Risk Index zone)
+report.episodes.summary.hypoCount     // 3     (≥15-min hypo events)
+report.agpProfile.bins                // 288 time-of-day percentile bins
 ```
 
----
-
-## 🔬 References
-
-All calculations reference peer-reviewed published sources:
-
-- **Time-in-Range**: [International Consensus (2019)](https://diabetesjournals.org/care/article/42/8/1593)
-- **Pregnancy TIR**: [ADA Standards of Care (2024)](https://diabetesjournals.org/care/article/47/Supplement_1/S282)
-- **ADA 2026 Standards**: [ADA Standards of Care (2026)](https://diabetesjournals.org/care/issue/49/Supplement_1)
-- **A1C/eAG**: [Nathan et al. (2008)](https://diabetesjournals.org/care/article/31/8/1473)
-- **HOMA-IR**: [Matthews et al. (1985)](https://diabetesjournals.org/diabetes/article/34/12/1212)
-- **MAGE**: [Service et al. (1970)](https://diabetesjournals.org/diabetes/article/19/9/644)
-- **LBGI/HBGI/ADRR**: [Kovatchev et al. (2006)](https://doi.org/10.2337/dc06-1085)
-- **GRI**: [Klonoff et al. (2023)](https://doi.org/10.1177/19322968221085273)
-- **MODD**: [Service & Nelson (1980)](https://doi.org/10.2337/diacare.3.1.58)
-- **GRADE**: [Hill et al. (2007)](https://doi.org/10.1111/j.1464-5491.2007.02119.x)
-- **J-Index**: [Wojcicki (1995)](https://doi.org/10.1055/s-2007-979906)
-- **CONGA**: [McDonnell et al. (2005)](https://doi.org/10.1089/dia.2005.7.253)
-- **Active Percent**: [Danne et al. (2017)](https://doi.org/10.2337/dc17-1600)
-- **Variability**: [ISPAD Guidelines (2018)](https://www.ncbi.nlm.nih.gov/pmc/articles/PMC7445493/)
-- **FHIR CGM IG**: [HL7 CGM IG v1.0.0](https://build.fhir.org/ig/HL7/cgm/index.html)
+One normalized pass → a clinician-grade report: summary scalars, enhanced 5-range TIR, tight range, the full risk-metric set, hypo/hyper episodes, data sufficiency, and the AGP band series.
 
 ---
 
-## 🏗️ Architecture
+## AGP-in-a-tag
 
-```
-diabetic-utils/
-├── src/
-│   ├── index.ts              # Main exports
-│   ├── constants.ts          # Clinical thresholds & formulas
-│   ├── types.ts              # TypeScript types
-│   ├── conversions.ts        # Glucose unit conversions
-│   ├── a1c.ts               # A1C & GMI calculations
-│   ├── tir.ts               # Basic time-in-range
-│   ├── tir-enhanced.ts      # Enhanced & pregnancy TIR
-│   ├── glucose.ts           # Glucose utilities
-│   ├── alignment.ts         # HOMA-IR
-│   ├── variability.ts       # SD, CV, percentiles
-│   ├── mage.ts              # MAGE calculation
-│   ├── formatters.ts        # String formatting
-│   ├── guards.ts            # Type guards
-│   ├── validators.ts        # Input validation
-│   ├── connectors/          # CGM vendor adapters
-│   │   ├── dexcom.ts        # Dexcom Share normalization
-│   │   ├── libre.ts         # Libre LinkUp normalization
-│   │   ├── nightscout.ts    # Nightscout SGV normalization
-│   │   └── types.ts         # Vendor & canonical types
-│   ├── interop/             # Health data interoperability
-│   │   ├── fhir.ts          # FHIR CGM IG payload builders
-│   │   ├── openmhealth.ts   # Open mHealth payload builders
-│   │   └── types.ts         # Interop payload types
-│   └── metrics/             # Advanced CGM metrics
-│       ├── agp.ts           # Aggregate AGP metrics
-│       ├── bgi.ts           # LBGI / HBGI
-│       ├── adrr.ts          # Average Daily Risk Range
-│       ├── grade.ts         # GRADE score
-│       ├── gri.ts           # Glycemia Risk Index
-│       ├── jindex.ts        # J-Index
-│       ├── modd.ts          # Mean of Daily Differences
-│       ├── conga.ts         # CONGA
-│       └── active-percent.ts # CGM wear time
-├── tests/
-│   ├── test-helpers.ts      # Shared test utilities
-│   └── *.test.ts            # 100% coverage tests (337 tests)
-└── dist/                    # Built output (ESM + CJS)
+The Ambulatory Glucose Profile — the chart every CGM dashboard renders — as a self-contained, dependency-free **SVG string** you can drop into a README, an email, a PDF, or any framework:
+
+```ts
+import { agpChartToSVG, tirBarToSVG, trendTileToSVG } from '@glucoseiq/core'
+
+element.innerHTML = agpChartToSVG(readings, { theme: 'dark' })
 ```
 
-**Key Principles:**
-- ✅ Zero dependencies
-- ✅ Tree-shakable modules
-- ✅ Strict TypeScript
-- ✅ 100% test coverage
-- ✅ Published references in TSDoc
+See [`examples/dashboard.html`](examples/dashboard.html) for a full dashboard composed entirely from `@glucoseiq/core` — no chart library, no framework. Regenerate it with `pnpm build && node examples/generate-dashboard.mjs`.
 
 ---
 
-## 🤝 Contributing
+## What's inside
 
-Contributions are welcome! Please follow these steps:
+**Analytics & series**
+`analyzeGlucose` (one-call report) · `buildAGPProfile` (time-of-day percentile bands) · enhanced 5-range TIR + pregnancy TIR · `calculateTITR` (time in tight range) · `glucoseMValue` · `calculateIGC` · `calculateGVIPGS` (Nightscout parity) · `aggregateCohort` · `detectGaps` / `splitDayNight` / `alignToGrid`
 
-1. **Fork** the repository
-2. **Create** your feature branch: `git checkout -b feat/my-feature`
-3. **Add tests** for any new functionality
-4. **Ensure** 100% coverage: `pnpm test:coverage`
-5. **Commit** with [conventional commits](https://www.conventionalcommits.org/): `git commit -m "feat: add new feature"`
-6. **Push** to your branch: `git push origin feat/my-feature`
-7. **Open** a pull request
+**Variability & risk** _(all cited, golden-tested)_
+GMI/eAG · SD/CV/percentiles · MAGE · LBGI/HBGI · ADRR · GRADE · GRI · J-Index · MODD · CONGA · **M-value** · **IGC** (Rodbard) · **GVI/PGS** (Nightscout parity) · **MAG** · **GVP** · `calculateAGPMetrics` (all at once)
 
-### Development Commands
+**Events & meals**
+`detectEpisodes` (consensus ≥15-min hypo/hyper events) · `analyzeMealResponse` · `glucoseAUC` / `incrementalAUC` (Wolever iAUC)
+
+**Live model**
+`computeGlucoseTrend` (rate-of-change + trend) · `latestReading` · `minutesSinceLastReading`
+
+**Score**
+`glucoseIQScore` — a 0–100 wellness score (100 − GRI) with an A–E zone
+
+**Render (zero-dependency SVG strings)**
+`agpChartToSVG` · `tirBarToSVG` · `trendTileToSVG`
+
+**Connectors & interop**
+Dexcom / Libre / Nightscout normalizers · FHIR CGM IG payloads (LOINC codes verified against v1.0.0) · Open mHealth
+
+**Ingestion**
+`parseGlucoseCSV` — point it at any Dexcom Clarity / LibreView / Nightscout / Tidepool export
+
+---
+
+## Everything is unit-aware
+
+Mixed mg/dL and mmol/L input is normalized correctly everywhere. Where a metric's formula is calibrated for mg/dL, values are converted first — so international (mmol/L) data never silently produces wrong numbers.
+
+---
+
+## 🔄 Migration
+
+`diabetic-utils@2` is the compatibility bridge from the 1.5.x package to
+`@glucoseiq/core@1`. Existing source imports stay the same:
+
+```ts
+import { calculateEnhancedTIR, estimateGMI } from 'diabetic-utils' // still works
+```
+
+New projects should depend on `@glucoseiq/core` directly. The compatibility
+major requires Node ≥24 and covers the package move, typed results on empty
+data, corrected FHIR LOINC codes, and the Libre unit fix. Clinical formulas
+keep their 1.5.x numeric behavior and cited results stay reproducible.
+
+---
+
+## Development
 
 ```bash
-# Install dependencies
 pnpm install
-
-# Run tests
-pnpm test
-
-# Run tests with coverage
-pnpm test:coverage
-
-# Build library
-pnpm build
+pnpm build          # turbo: builds all packages
+pnpm test           # turbo: runs all package tests
+pnpm test:coverage  # 100% enforced
 ```
 
----
-
-## 📝 Changelog
-
-See [CHANGELOG.md](CHANGELOG.md) for detailed release notes and version history.
+Node ≥24. Turborepo + pnpm workspaces.
 
 ---
 
-## 📄 License
+## References
 
-This project is licensed under the **MIT License**. See the [LICENSE](LICENSE) file for details.
-
-© 2024–2026 [Mark Learst](https://marklearst.com)
-
-Use it, fork it, build something that matters.
+TIR & episodes: Battelino 2019, Danne 2017 · A1C/eAG: Nathan 2008 · LBGI/HBGI/ADRR: Kovatchev 2006 · GRADE: Hill 2007 · GRI: Klonoff 2023 · MODD: Service 1980 · CONGA: McDonnell 2005 · MAGE: Service 1970 · M-value: Schlichtkrull 1965 · IGC: Rodbard 2009 · GVP: Peyser 2018 · MAG: Hermanides 2010 · iAUC: Wolever & Jenkins 1986 · FHIR: HL7 CGM IG v1.0.0
 
 ---
 
-## 🔗 Links
+## License
 
-- 📦 [NPM Package](https://www.npmjs.com/package/diabetic-utils)
-- 📚 [API Documentation](https://marklearst.github.io/diabetic-utils/)
-- 🐙 [GitHub Repository](https://github.com/marklearst/diabetic-utils)
-- 🌐 [Website](https://diabeticutils.com) _(coming soon)_
+MIT © [Mark Learst](https://marklearst.com)
 
----
-
-## 🙋‍♂️ Author
-
-**Mark Learst**
-Full-stack developer, diabetes advocate, and open source contributor.
-
-- 🐦 X (Twitter): [@marklearst](https://x.com/marklearst)
-- 💼 LinkedIn: [Mark Learst](https://linkedin.com/in/marklearst)
-- 🌐 Portfolio: [marklearst.com](https://marklearst.com)
-
-> 💬 Using diabetic-utils in your project? [Let me know](https://x.com/marklearst)—I'd love to feature it!
-> ⭐ Star the repo and help us build the best diabetes toolkit together!
-
----
-
-## 💬 Support
-
-- 🐛 **Bug Reports**: [Open an issue](https://github.com/marklearst/diabetic-utils/issues)
-- 💡 **Feature Requests**: [Start a discussion](https://github.com/marklearst/diabetic-utils/discussions)
-- 📧 **Email**: mark@marklearst.com
-
----
-
-## 📝 A Personal Note
-
-I built diabetic-utils because I believe in the power of data-driven diabetes management. As someone who's lived with diabetes, I know how hard it can be to make sense of the numbers.
-
-That's why I've poured my heart into creating a library that's both **accurate** and **easy to use**. Whether you're building an app, working on research, or just trying to understand your own data, I hope diabetic-utils can help.
-
-Let's work together to make diabetes management better, one data point at a time. 🩸
-
----
-
-**Built with ❤️ by the diabetes community, for the diabetes community.**
+Built with ❤️ for the diabetes community.

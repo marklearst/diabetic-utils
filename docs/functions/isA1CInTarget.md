@@ -8,7 +8,7 @@
 
 > **isA1CInTarget**(`a1c`, `target`, `thresholds?`): `boolean`
 
-Defined in: [a1c.ts:60](https://github.com/marklearst/diabetic-utils/blob/0d03b5cd2e2b5edbf58275075cc81d8df31ac230/src/a1c.ts#L60)
+Defined in: [a1c.ts:60](https://github.com/marklearst/glucoseiq/blob/0d03b5cd2e2b5edbf58275075cc81d8df31ac230/src/a1c.ts#L60)
 
 Checks if an A1C value is within a target range.
 

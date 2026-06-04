@@ -1,0 +1,253 @@
+---
+title: Data Quality
+description: Handle malformed records, coverage, gaps, interpolation, and non-computable results.
+---
+
+Good glucose analytics begin before the first metric is calculated. Preserve
+observed readings, make rejected records visible, assess coverage, and treat
+interpolation as derived data rather than new sensor evidence.
+
+## Choose strict or partial-success normalization
+
+The vendor array normalizers are strict at the batch level. If one entry throws,
+the array call throws and does not return the other normalized readings:
+
+```ts
+import { normalizeDexcomEntries } from '@glucoseiq/core/connectors'
+
+const readings = normalizeDexcomEntries(payload)
+```
+
+For long-running feeds and imported history, the safe variants retain valid
+entries and collect failures by original array index:
+
+```ts
+import { safeNormalizeDexcomEntries } from '@glucoseiq/core/connectors'
+
+const { readings, errors } = safeNormalizeDexcomEntries(payload)
+
+for (const error of errors) {
+  console.warn(`Rejected source row ${error.index}: ${error.message}`)
+}
+```
+
+The same pattern is available as `safeNormalizeLibreEntries` and
+`safeNormalizeNightscoutEntries`. Successful readings are returned in
+chronological order. Each error currently contains `index` and `message`.
+
+<Callout type="info" title="Do not hide partial failure">
+  A usable report and an imperfect import can both be true. Keep the returned
+  readings, but record or surface the rejected-row count so consumers know the
+  dataset was incomplete.
+</Callout>
+
+## Know what CSV ingestion skips
+
+`parseGlucoseCSV` throws a `ParseError` with code `CSV_COLUMN_NOT_FOUND` when a
+requested header is absent. After it finds the columns, it skips rows whose
+value is not positive and finite or whose timestamp cannot be parsed.
+
+```ts
+import { GlucoseIQError, parseGlucoseCSV } from '@glucoseiq/core'
+
+try {
+  const readings = parseGlucoseCSV(csvText, {
+    timestampColumn: 'Timestamp',
+    valueColumn: 'Glucose Value (mg/dL)',
+    unit: 'mg/dL',
+  })
+} catch (error) {
+  if (error instanceof GlucoseIQError && error.code === 'CSV_COLUMN_NOT_FOUND') {
+    // Ask the user to map the correct columns.
+  } else {
+    throw error
+  }
+}
+```
+
+The CSV result does not include per-row rejection details. If an import audit is
+required, compare the source row count with the returned reading count or
+validate rows in your ingestion layer before calling the parser.
+
+## Check report validity first
+
+`analyzeGlucose` performs its own cleaning pass. It keeps readings with a
+parseable timestamp and a positive, finite value no greater than 600 mg/dL
+after unit conversion. If no reading survives, it returns a non-throwing empty
+result:
+
+```ts
+import { analyzeGlucose } from '@glucoseiq/core'
+
+const report = analyzeGlucose(readings)
+
+if (!report.valid) {
+  // meanGlucose, gmi, cv, sd, and activePercent are NaN.
+  // timeInRange, tightRange, risk, agpProfile, and episodes are null.
+  renderEmptyState()
+  return
+}
+```
+
+Do not rely on truthiness for numeric metrics: zero can be meaningful and `NaN`
+is truthy. Use the result's `valid` field and `Number.isFinite` when reading a
+metric that may be non-computable.
+
+```ts
+const label = Number.isFinite(report.cv) ? `${report.cv}%` : 'Not computable'
+```
+
+Individual functions have their own documented behavior. For example,
+`calculateEnhancedTIR([])` throws `EmptyDatasetError`, `buildAGPProfile([])`
+returns `valid: false`, and `calculateActivePercent` returns `NaN` for active
+percent when fewer than two valid timestamps are available.
+
+## Measure sufficiency and wear time
+
+A valid report is not automatically a sufficient report. Inspect its
+`dataSufficiency` block:
+
+```ts
+const report = analyzeGlucose(readings, {
+  minDays: 14,
+  minActivePercent: 70,
+})
+
+const {
+  totalReadings,
+  daysOfData,
+  activePercent,
+  meetsCGMStandard,
+} = report.dataSufficiency
+```
+
+`daysOfData` is the span between the earliest and latest accepted readings.
+`activePercent` compares actual readings with the number expected across that
+span. `meetsCGMStandard` is true only when both configured thresholds are met.
+
+The report's active-percent calculation uses the default five-minute expected
+interval. For another sampling cadence, calculate wear time separately:
+
+```ts
+import { calculateActivePercent } from '@glucoseiq/core/metrics'
+
+const coverage = calculateActivePercent(readings, {
+  expectedIntervalMinutes: 1,
+})
+
+if (!coverage.meetsClinicalMinimum) {
+  showCoverageWarning(coverage.activePercent)
+}
+```
+
+`calculateActivePercent` caps the result at 100%. Duplicate readings can still
+inflate `actualReadings`, so deduplicate upstream when the same source record
+can arrive more than once. Normalized readings expose a `dedupKey` when the
+adapter can construct one.
+
+## Detect gaps explicitly
+
+Wear time is one aggregate number. `detectGaps` identifies the exact breaks a
+chart or review workflow may need to show:
+
+```ts
+import { detectGaps } from '@glucoseiq/core'
+
+const gaps = detectGaps(readings, { maxGapMinutes: 15 })
+
+for (const gap of gaps) {
+  console.log(gap.start, gap.end, gap.durationMinutes)
+}
+```
+
+The function sorts valid timestamps chronologically and reports intervals
+strictly longer than `maxGapMinutes`. Invalid timestamps are ignored.
+
+Choose the threshold for the source and surface you are building. Connector
+capability descriptors expose typical update and freshness intervals when you
+need a source-aware default:
+
+```ts
+import { DEXCOM_CAPABILITIES } from '@glucoseiq/core/connectors'
+
+const gaps = detectGaps(readings, {
+  maxGapMinutes: DEXCOM_CAPABILITIES.maxFreshnessSec / 60,
+})
+```
+
+## Interpolate without rewriting history
+
+`alignToGrid` creates a regular derived series for charting and time-aligned
+comparisons. It snaps observations to the nearest slot, interpolates only
+inside short bracketing gaps, and leaves longer gaps absent:
+
+```ts
+import { alignToGrid } from '@glucoseiq/core'
+
+const grid = alignToGrid(readings, {
+  intervalMin: 5,
+  maxInterpolateGapMin: 15,
+  unit: 'mg/dL',
+})
+
+const observed = grid.filter((point) => !point.interpolated)
+const inferred = grid.filter((point) => point.interpolated)
+```
+
+Each `GridPoint` contains `timestamp`, `value`, and `interpolated`; it is not a
+`GlucoseReading` because it does not carry a `unit`. Keep the selected output
+unit alongside the grid in your view model.
+
+Treat aligned points as presentation or comparison data. Keep the original
+observations for reports unless your application deliberately chooses to count
+interpolated values as data.
+
+## Handle typed errors by code
+
+Many validation and parsing paths throw a `GlucoseIQError` subclass with a
+stable `code`:
+
+```ts
+import { GlucoseIQError, buildAGPProfile } from '@glucoseiq/core'
+
+try {
+  const profile = buildAGPProfile(readings, {
+    timeZone: selectedTimeZone,
+  })
+} catch (error) {
+  if (error instanceof GlucoseIQError) {
+    switch (error.code) {
+      case 'INVALID_TIMEZONE':
+        showFieldError('Choose a valid IANA time zone.')
+        break
+      case 'INVALID_OPTION':
+        showFieldError(error.message)
+        break
+      default:
+        throw error
+    }
+  } else {
+    throw error
+  }
+}
+```
+
+Other public helpers may return a sentinel result, skip malformed rows, or
+throw a standard JavaScript `Error` or `RangeError`. Follow the contract of the
+specific function rather than assuming every quality problem has the same
+shape.
+
+## A practical quality gate
+
+Before rendering a retrospective dashboard:
+
+1. Normalize with a safe variant when partial success is acceptable.
+2. Record rejected source rows.
+3. Deduplicate repeated records using stable source identity where available.
+4. Detect gaps and calculate active percent with the source's expected cadence.
+5. Run `analyzeGlucose` and check `report.valid`.
+6. Show coverage warnings separately from the analytical values.
+7. Use aligned/interpolated data only where the UI explicitly needs it.
+
+This keeps data-quality policy visible to the application instead of hiding it
+inside a chart or metric.

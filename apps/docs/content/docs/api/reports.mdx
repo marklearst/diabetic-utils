@@ -1,0 +1,28 @@
+---
+title: Reports
+description: One-call clinical reports composed from the whole engine.
+---
+
+<Callout title="1 function">Generated from the source TSDoc — every signature, parameter, and example is the real thing.</Callout>
+
+### analyzeGlucose
+
+```ts
+analyzeGlucose(readings: GlucoseReading[], options?: AnalyzeGlucoseOptions): AnalyzeGlucoseResult
+```
+
+Produces a comprehensive clinical report from glucose readings in one call.
+
+| Parameter | Description |
+| --- | --- |
+| `readings` | Glucose readings with ISO 8601 timestamps |
+| `options` | Unit, time zone, profile toggle, and sufficiency thresholds |
+
+**Returns** — A typed report; `valid: false` when there are no in-range readings
+
+```ts
+const report = analyzeGlucose(readings, { timeZone: 'America/New_York' })
+report.timeInRange?.inRange.percentage // 72.5
+report.gmi                             // 6.8
+report.agpProfile?.bins                // 288 time-of-day bins
+```

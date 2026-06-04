@@ -1,83 +1,36 @@
 {
-  "name": "diabetic-utils",
-  "version": "1.5.0",
-  "description": "Zero-bloat TypeScript utilities for diabetes data: glucose, A1C, conversions, time-in-range, and more.",
-  "main": "dist/index.js",
-  "module": "dist/index.mjs",
-  "types": "dist/index.d.ts",
-  "exports": {
-    ".": {
-      "types": "./dist/index.d.ts",
-      "import": "./dist/index.mjs",
-      "require": "./dist/index.js"
-    }
-  },
+  "name": "glucoseiq",
+  "private": true,
+  "version": "0.0.0",
+  "description": "GlucoseIQ — the headless engine behind glucose on every screen. Zero-dependency TypeScript for CGM & diabetes analytics.",
   "repository": {
     "type": "git",
-    "url": "https://github.com/marklearst/diabetic-utils.git"
+    "url": "https://github.com/marklearst/glucoseiq.git"
   },
-  "homepage": "https://github.com/marklearst/diabetic-utils#readme",
+  "homepage": "https://glucoseiq.health",
   "bugs": {
-    "url": "https://github.com/marklearst/diabetic-utils/issues"
+    "url": "https://github.com/marklearst/glucoseiq/issues"
   },
-  "scripts": {
-    "dev": "tsup src/index.ts --watch",
-    "build": "tsup",
-    "test": "vitest run",
-    "test:ui": "vitest --ui",
-    "test:coverage": "vitest run --coverage",
-    "clean": "rm -rf dist",
-    "docs:api": "typedoc src --out docs",
-    "prepublishOnly": "pnpm build"
-  },
-  "keywords": [
-    "diabetes",
-    "glucose",
-    "a1c",
-    "cgm",
-    "continuous-glucose-monitor",
-    "dexcom",
-    "libre",
-    "nightscout",
-    "time-in-range",
-    "tir",
-    "gmi",
-    "hba1c",
-    "fhir",
-    "health",
-    "typescript",
-    "utilities",
-    "mgdl",
-    "mmol",
-    "lbgi",
-    "hbgi",
-    "mage",
-    "glycemic-variability"
-  ],
   "author": "Mark Learst",
   "license": "MIT",
-  "packageManager": "pnpm@10.10.0",
-  "devDependencies": {
-    "@types/node": "^22.15.3",
-    "@vitest/coverage-v8": "^3.1.2",
-    "@vitest/ui": "^3.1.2",
-    "tsup": "^8.4.0",
-    "typedoc": "0.28.4",
-    "typedoc-plugin-markdown": "^4.6.3",
-    "typescript": "^5.8.3",
-    "vitest": "^3.1.2"
+  "packageManager": "pnpm@11.12.0",
+  "scripts": {
+    "build": "turbo run build",
+    "dev": "turbo run dev",
+    "test": "turbo run test",
+    "test:coverage": "turbo run test:coverage",
+    "test:packages": "node scripts/package-contract-helpers.test.mjs && turbo run build --filter=@glucoseiq/core --filter=@glucoseiq/react --filter=@glucoseiq/tokens --filter=@glucoseiq/testing --filter=@glucoseiq/cli --filter=diabetic-utils && node scripts/test-package-contracts.mjs",
+    "test:launch": "node scripts/test-launch-changeset.mjs",
+    "clean": "turbo run clean",
+    "changeset": "changeset",
+    "version-packages": "changeset version",
+    "release": "turbo run build && changeset publish"
   },
-  "files": [
-    "dist/",
-    "package.json",
-    "README.md",
-    "LICENSE"
-  ],
-  "sideEffects": false,
-  "publishConfig": {
-    "access": "public"
+  "devDependencies": {
+    "@changesets/cli": "^2.27.0",
+    "turbo": "^2.5.0"
   },
   "engines": {
-    "node": ">=18"
+    "node": ">=24"
   }
 }

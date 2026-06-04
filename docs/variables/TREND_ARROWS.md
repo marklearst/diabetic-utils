@@ -8,7 +8,7 @@
 
 > `const` **TREND\_ARROWS**: `object`
 
-Defined in: [constants.ts:113](https://github.com/marklearst/diabetic-utils/blob/0d03b5cd2e2b5edbf58275075cc81d8df31ac230/src/constants.ts#L113)
+Defined in: [constants.ts:113](https://github.com/marklearst/glucoseiq/blob/0d03b5cd2e2b5edbf58275075cc81d8df31ac230/src/constants.ts#L113)
 
 Unicode arrows for glucose trend indication.
 

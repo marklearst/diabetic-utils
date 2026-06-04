@@ -1,0 +1,219 @@
+---
+title: CGM Connectors
+description: Normalize Dexcom Share, Libre LinkUp, and Nightscout payloads into one analytics-ready contract.
+---
+
+import { Callout } from 'fumadocs-ui/components/callout'
+
+The connector module translates vendor payloads into
+`NormalizedCGMReading`. The normalized result extends `GlucoseReading`, so the
+same value can feed `analyzeGlucose`, AGP builders, live helpers, renderers, or
+your own pipeline.
+
+```ts
+import {
+  normalizeDexcomEntries,
+  normalizeLibreEntries,
+  normalizeNightscoutEntries,
+} from '@glucoseiq/core/connectors'
+```
+
+<Callout type="warn" title="Normalization, not authenticated transport">
+  These functions do not sign in to a vendor, hold credentials, refresh
+  tokens, make network requests, poll, retry, backfill, cache, or persist data.
+  Fetch payloads with the authorized API or client appropriate to your
+  application, then pass those payloads to GlucoseIQ for deterministic
+  normalization.
+</Callout>
+
+## The normalized contract
+
+Every adapter returns the same shape:
+
+```ts
+interface NormalizedCGMReading {
+  readonly value: number
+  readonly unit: 'mg/dL' | 'mmol/L'
+  readonly timestamp: string
+  readonly trend:
+    | 'rapidRising'
+    | 'rising'
+    | 'slightlyRising'
+    | 'flat'
+    | 'slightlyFalling'
+    | 'falling'
+    | 'rapidFalling'
+    | 'unknown'
+  readonly source: 'dexcom' | 'libre' | 'nightscout' | 'unknown'
+  readonly vendorId?: string
+  readonly nativeUnit?: 'mg/dL' | 'mmol/L'
+  readonly dedupKey?: string
+}
+```
+
+Batch normalizers sort successful readings chronologically. Unknown or
+unsupported trend values become `unknown` instead of inventing a direction.
+
+`dedupKey` is a deterministic key you can use in your own cache or persistence
+layer. The normalizers create the key; they do not remove duplicate readings
+for you.
+
+## Dexcom Share
+
+Dexcom entries use `Value`, `Trend`, and `WT`. `WT` may be a Dexcom
+`Date(epochMs)` wrapper or an ISO timestamp.
+
+```ts
+import { normalizeDexcomEntry } from '@glucoseiq/core/connectors'
+
+const reading = normalizeDexcomEntry({
+  Value: 142,
+  Trend: 'FortyFiveUp',
+  WT: '/Date(1704096000000)/',
+  ST: 'record-42',
+})
+
+reading.value     // 142
+reading.unit      // 'mg/dL'
+reading.trend     // 'slightlyRising'
+reading.source    // 'dexcom'
+reading.vendorId  // 'record-42'
+reading.dedupKey  // 'dexcom:record-42'
+```
+
+Use `parseDexcomDate` when you only need the date conversion and
+`normalizeDexcomTrend` when normalizing a trend outside a full entry.
+
+## Libre LinkUp
+
+Libre normalization respects the account display unit. When
+`ValueInMgPerDl` exists, it is preferred for the normalized value; an account
+using mmol/L is recorded in `nativeUnit`.
+
+```ts
+import { normalizeLibreEntry } from '@glucoseiq/core/connectors'
+
+const reading = normalizeLibreEntry({
+  Value: 6.7,
+  ValueInMgPerDl: 121,
+  GlucoseUnits: 0,
+  TrendArrow: 4,
+  Timestamp: '2025-01-01T08:00:00Z',
+})
+
+reading.value       // 121
+reading.unit        // 'mg/dL'
+reading.nativeUnit  // 'mmol/L'
+reading.trend       // 'rising'
+reading.dedupKey    // 'libre:2025-01-01T08:00:00.000Z'
+```
+
+If `ValueInMgPerDl` is absent, `GlucoseUnits: 0` keeps `Value` in mmol/L and
+`GlucoseUnits: 1` uses mg/dL. Payloads with neither field default to mg/dL for
+backward compatibility.
+
+Libre trend arrows map from `1` (rapidly falling) through `5` (rapidly
+rising); `3` is flat. `normalizeLibreTrend` returns `unknown` for a missing or
+out-of-range value.
+
+## Nightscout
+
+Nightscout adapters accept the `/api/v1/entries` SGV shape. They prefer a
+valid `dateString`, fall back to the epoch-millisecond `date`, and preserve
+`_id` as `vendorId`.
+
+```ts
+import { normalizeNightscoutEntry } from '@glucoseiq/core/connectors'
+
+const reading = normalizeNightscoutEntry({
+  sgv: 108,
+  date: 1735718400000,
+  direction: 'Flat',
+  type: 'sgv',
+  _id: 'nightscout-7',
+})
+
+reading.timestamp  // '2025-01-01T08:00:00.000Z'
+reading.trend      // 'flat'
+reading.source     // 'nightscout'
+reading.dedupKey   // 'nightscout:nightscout-7'
+```
+
+`normalizeNightscoutDirection` recognizes the common Dexcom-style direction
+strings. Other strings normalize to `unknown`.
+
+## Keep valid readings from a mixed batch
+
+The strict batch functions throw if an entry cannot be normalized. Use the
+safe variants when one malformed record should not reject the rest of the
+batch:
+
+```ts
+import { safeNormalizeDexcomEntries } from '@glucoseiq/core/connectors'
+
+const result = safeNormalizeDexcomEntries([
+  { Value: 120, Trend: 'Flat', WT: 'Date(1700000000000)' },
+  { Value: 130, Trend: 'Flat', WT: 'not-a-date' },
+  { Value: 140, Trend: 'SingleUp', WT: 'Date(1700000600000)' },
+])
+
+result.readings.length // 2
+result.errors
+// [{ index: 1, message: 'Unable to parse Dexcom date: not-a-date' }]
+```
+
+`safeNormalizeLibreEntries` and `safeNormalizeNightscoutEntries` use the same
+`SafeNormalizeResult` contract. Successful readings are sorted by timestamp;
+each error reports the original input index and message.
+
+## Plan around source capabilities
+
+Capability descriptors expose source behavior without performing transport:
+
+```ts
+import {
+  DEXCOM_CAPABILITIES,
+  LIBRE_CAPABILITIES,
+  NIGHTSCOUT_CAPABILITIES,
+} from '@glucoseiq/core/connectors'
+
+DEXCOM_CAPABILITIES.updateIntervalSec // 300
+LIBRE_CAPABILITIES.trendVocabulary    // 'coarse'
+NIGHTSCOUT_CAPABILITIES.clockModel    // 'relay'
+```
+
+| Source | Tier | Typical update | Stale after | Trend vocabulary | History depth | Clock |
+| --- | ---: | ---: | ---: | --- | ---: | --- |
+| Dexcom | 1 | 300 s | 600 s | `full` | 1 day | `direct` |
+| Libre | 1 | 60 s | 300 s | `coarse` | 14 days | `direct` |
+| Nightscout | 2 | 300 s | 900 s | `full` | 90 days | `relay` |
+
+Tier 1 describes a full-fidelity vendor feed; tier 2 describes a community or
+relay source. Treat these values as declarative defaults for your scheduling,
+freshness, and gap policies—not as a polling engine or a guarantee from the
+upstream service.
+
+## A practical ingestion boundary
+
+Keep transport and analysis separate in application code:
+
+```ts
+import { analyzeGlucose } from '@glucoseiq/core'
+import { safeNormalizeNightscoutEntries } from '@glucoseiq/core/connectors'
+
+async function buildReport() {
+  const response = await fetch('/api/cgm/nightscout')
+  if (!response.ok) throw new Error(`CGM request failed: ${response.status}`)
+
+  const payload = await response.json()
+  const { readings, errors } = safeNormalizeNightscoutEntries(payload)
+
+  return {
+    report: analyzeGlucose(readings),
+    normalizationErrors: errors,
+  }
+}
+```
+
+Your server route owns authorization and network policy. GlucoseIQ owns the
+pure, testable translation into a vendor-neutral analytics contract.

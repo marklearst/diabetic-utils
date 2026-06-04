@@ -8,7 +8,7 @@
 
 > **getTIRSummary**(`result`): `string`
 
-Defined in: [tir.ts:49](https://github.com/marklearst/diabetic-utils/blob/0d03b5cd2e2b5edbf58275075cc81d8df31ac230/src/tir.ts#L49)
+Defined in: [tir.ts:49](https://github.com/marklearst/glucoseiq/blob/0d03b5cd2e2b5edbf58275075cc81d8df31ac230/src/tir.ts#L49)
 
 Generates a clinical summary string from a TIRResult object.
 Used for reporting and visualization of TIR analytics.

@@ -1,6 +1,9 @@
-# Diabetic Utils Documentation
+# diabetic-utils 1.5.x Documentation
 
-Welcome to the Diabetic Utils API reference site.
+This directory preserves the generated API reference for the legacy
+`diabetic-utils` 1.5.x line. New development belongs in the
+[`@glucoseiq` package ecosystem](https://glucoseiq.health/docs), and
+`diabetic-utils` 2.0 provides the compatibility path to `@glucoseiq/core` 1.0.
 
 ## Modules
 
@@ -38,7 +41,7 @@ Constants and clinical thresholds.
 
 ## Links
 
-- [GitHub Repository](https://github.com/marklearst/diabetic-utils)
+- [GitHub Repository](https://github.com/marklearst/glucoseiq)
 - [NPM Package](https://www.npmjs.com/package/diabetic-utils)
 
 ---

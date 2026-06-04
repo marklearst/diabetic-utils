@@ -1,0 +1,190 @@
+---
+title: Data Model
+description: Glucose readings, normalized vendor metadata, units, timestamps, and time zones.
+---
+
+GlucoseIQ deliberately keeps its analytical input small. A reading represents
+one glucose value at one instant; source-specific details are optional metadata
+on top of that common shape.
+
+## `GlucoseReading`
+
+```ts
+import type { GlucoseReading, GlucoseUnit } from '@glucoseiq/core'
+
+const reading: GlucoseReading = {
+  value: 112,
+  unit: 'mg/dL',
+  timestamp: '2024-01-15T13:05:00Z',
+}
+```
+
+| Field | Contract |
+| --- | --- |
+| `value` | A numeric glucose value in the accompanying unit |
+| `unit` | Exactly `'mg/dL'` or `'mmol/L'` |
+| `timestamp` | A string representing the measurement instant; use ISO 8601 with `Z` or an explicit offset |
+
+The properties are `readonly` in TypeScript. That prevents accidental mutation
+at compile time; it is not runtime validation of data received from JSON,
+forms, or a vendor service.
+
+For a single unknown value and unit, `isValidGlucoseValue` checks that the value
+is positive and finite and that the unit is supported:
+
+```ts
+import { isValidGlucoseValue } from '@glucoseiq/core'
+
+if (isValidGlucoseValue(input.value, input.unit)) {
+  // value and unit satisfy the runtime value check
+}
+```
+
+This helper does not validate a complete reading or its timestamp. Ingestion
+functions apply their own documented filtering and error behavior.
+
+## `NormalizedCGMReading`
+
+Vendor normalizers return a structural superset of `GlucoseReading`:
+
+```ts
+import type { NormalizedCGMReading } from '@glucoseiq/core/connectors'
+
+const reading: NormalizedCGMReading = {
+  value: 112,
+  unit: 'mg/dL',
+  timestamp: '2024-01-15T13:05:00.000Z',
+  trend: 'flat',
+  source: 'dexcom',
+  vendorId: 'record-123',
+  dedupKey: 'dexcom:record-123',
+}
+```
+
+The added fields are:
+
+| Field | Meaning |
+| --- | --- |
+| `trend` | Canonical direction from `rapidRising` through `rapidFalling`, or `unknown` |
+| `source` | `'dexcom'`, `'libre'`, `'nightscout'`, or `'unknown'` |
+| `vendorId` | Original stable identifier when the payload provides one |
+| `nativeUnit` | Vendor display unit when the normalized value is emitted in another unit |
+| `dedupKey` | Deterministic source-qualified key when the adapter can construct one |
+
+All analytics that accept `GlucoseReading[]` also accept normalized readings:
+
+```ts
+import { analyzeGlucose } from '@glucoseiq/core'
+import { normalizeLibreEntries } from '@glucoseiq/core/connectors'
+
+const readings = normalizeLibreEntries(payload)
+const report = analyzeGlucose(readings)
+```
+
+The array normalizers return readings in chronological order. They map source
+trend vocabularies to the canonical `CGMTrend` union and use `unknown` when a
+trend is absent or unmapped.
+
+## Units travel with every reading
+
+`GlucoseUnit` has two supported values:
+
+```ts
+type GlucoseUnit = 'mg/dL' | 'mmol/L'
+```
+
+Reading-based analytics inspect each reading's unit and normalize it for the
+calculation. A dataset may therefore contain both supported units:
+
+```ts
+import { analyzeGlucose, type GlucoseReading } from '@glucoseiq/core'
+
+const readings: GlucoseReading[] = [
+  { value: 108, unit: 'mg/dL', timestamp: '2024-01-15T13:00:00Z' },
+  { value: 6.2, unit: 'mmol/L', timestamp: '2024-01-15T13:05:00Z' },
+]
+
+const report = analyzeGlucose(readings)
+```
+
+Some low-level metric functions accept a `number[]` plus one separate unit
+instead of `GlucoseReading[]`. For those functions, all numbers must use the
+unit passed in their options or argument. Check the function signature before
+removing unit metadata.
+
+Use `convertGlucoseUnit` when you need to convert one value explicitly:
+
+```ts
+import { convertGlucoseUnit } from '@glucoseiq/core'
+
+convertGlucoseUnit({ value: 180, unit: 'mg/dL' })
+// { value: 10, unit: 'mmol/L' }
+```
+
+`buildAGPProfile` also accepts an output `unit`. It converts each input reading
+before returning percentile values and records the chosen unit on the result.
+
+## Timestamps represent instants
+
+Use ISO 8601 timestamps with a `Z` suffix or explicit UTC offset:
+
+```ts
+const utc = '2024-01-15T13:05:00Z'
+const sameInstant = '2024-01-15T08:05:00-05:00'
+```
+
+Avoid offset-free timestamps such as `2024-01-15T08:05:00`. JavaScript parses
+those relative to the runtime environment, which can make the same payload mean
+different instants on different machines.
+
+The vendor normalizers convert accepted timestamps to UTC ISO strings.
+`parseGlucoseCSV` does the same for rows it accepts.
+
+## A time zone is a view over an instant
+
+A timestamp identifies *when* a reading occurred. An IANA time zone controls
+how that instant is assigned to a local clock for time-of-day analysis.
+
+```ts
+import { buildAGPProfile, splitDayNight } from '@glucoseiq/core'
+
+const profile = buildAGPProfile(readings, {
+  timeZone: 'America/Detroit',
+})
+
+const { day, night } = splitDayNight(readings, {
+  timeZone: 'America/Detroit',
+  nightStartHour: 22,
+  nightEndHour: 6,
+})
+```
+
+`buildAGPProfile` and `splitDayNight` default to `UTC`. The `timeZone` option on
+`analyzeGlucose` is forwarded to its AGP profile; summary metrics such as mean,
+GMI, and Time in Range are not clock-bucketed by that option.
+
+Use a real IANA identifier such as `America/Detroit`, not an abbreviation such
+as `EST`. An invalid zone causes the time-zone-aware function to throw.
+
+## Keep identity outside the reading
+
+The current reading contracts do not include a person, account, device, sensor
+session, or tenant identifier. Keep that context in your own containing record
+and pass one subject's readings to the analytics call:
+
+```ts
+import { analyzeGlucose, type GlucoseReading } from '@glucoseiq/core'
+
+interface SubjectSeries {
+  subjectId: string
+  readings: GlucoseReading[]
+}
+
+const results = subjects.map(({ subjectId, readings }) => ({
+  subjectId,
+  report: analyzeGlucose(readings),
+}))
+```
+
+This prevents application identity and protected data from leaking into a
+portable analytical primitive.

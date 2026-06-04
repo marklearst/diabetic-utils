@@ -1,0 +1,25 @@
+{
+  "title": "Documentation",
+  "pages": [
+    "---Start here---",
+    "index",
+    "dashboard",
+    "---Learn GlucoseIQ---",
+    "core-concepts",
+    "data-model",
+    "data-quality",
+    "metrics",
+    "agp",
+    "live",
+    "---Use the ecosystem---",
+    "connectors",
+    "react",
+    "tokens",
+    "testing",
+    "cli",
+    "interoperability",
+    "---Reference---",
+    "api",
+    "migration"
+  ]
+}

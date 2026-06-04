@@ -1,0 +1,72 @@
+---
+title: Migrating from diabetic-utils
+description: Move from diabetic-utils 1.5.x to its 2.0 compatibility bridge or adopt @glucoseiq/core 1.0 directly.
+---
+
+## Choose a migration path
+
+GlucoseIQ 1.0 publishes the headless engine as `@glucoseiq/core`. The
+`diabetic-utils` 2.0 package re-exports that public API so projects on 1.5.x
+can upgrade without changing source imports:
+
+```ts
+import { calculateEnhancedTIR, estimateGMI } from 'diabetic-utils' // still works
+```
+
+Upgrade the existing dependency when you want the compatibility path:
+
+```bash
+npm install diabetic-utils@^2
+```
+
+New projects should install the scoped package:
+
+```bash
+npm install @glucoseiq/core@^1
+```
+
+```ts
+import { calculateEnhancedTIR, estimateGMI } from '@glucoseiq/core'
+```
+
+Use the scoped package for new subpath imports such as
+`@glucoseiq/core/connectors`, `@glucoseiq/core/metrics`,
+`@glucoseiq/core/interop`, and `@glucoseiq/core/render`.
+
+## Runtime requirement
+
+GlucoseIQ 1.0 and `diabetic-utils` 2.0 require Node 24 or newer. Projects that
+cannot upgrade Node can remain on `diabetic-utils` 1.5.x through the `legacy`
+dist-tag:
+
+```bash
+npm install diabetic-utils@legacy
+```
+
+## Clinical formula compatibility
+
+The clinical formulas keep their 1.5.x numeric behavior. Percentiles use
+nearest-rank by default, while interpolation remains opt-in. Golden-value
+tests preserve cited results across the package move.
+
+## Changes in the compatibility major
+
+1. **Node ≥24** for the GlucoseIQ package ecosystem and compatibility bridge.
+2. **Typed errors** — intentional throws are now `GlucoseIQError` subclasses
+   with stable `code`s. Messages are byte-identical; only `instanceof` narrows
+   differently (e.g. GRI's `RangeError` → `DomainError`).
+3. **Corrected FHIR LOINC codes** — earlier releases used transposed/invalid
+   codes; all codes are now verified against the HL7 CGM IG v1.0.0 value set.
+   If you stored Observations with the old codes, re-emit them.
+4. **Libre unit fix** — LinkUp payloads with `GlucoseUnits: 0` (mmol/L) are no
+   longer mislabeled as mg/dL.
+
+## Added since diabetic-utils 1.5.x
+
+`analyzeGlucose`, `buildAGPProfile`, `agpChartToSVG`/`tirBarToSVG`/`trendTileToSVG`,
+`detectEpisodes`, `analyzeMealResponse`, `glucoseAUC`/`incrementalAUC`,
+`computeGlucoseTrend`/`latestReading`/`minutesSinceLastReading`, `calculateTITR`,
+`glucoseMValue`, `calculateIGC`, `calculateGVIPGS`, `glucoseMAG`, `glucoseGVP`,
+`glucoseIQScore`, `parseGlucoseCSV`, `detectGaps`, `splitDayNight`,
+`alignToGrid`, `aggregateCohort`, connector capabilities + `safeNormalize*`,
+and the `@glucoseiq/react`, `/tokens`, `/testing`, `/cli` packages.

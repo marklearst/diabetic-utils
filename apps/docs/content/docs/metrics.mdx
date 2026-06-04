@@ -1,0 +1,64 @@
+---
+title: Metrics Reference
+description: Every metric in GlucoseIQ, with its function, formula source, and citation.
+---
+
+Every formula traces to a published source and is golden-tested against
+reference values (including the R `iglu` package and Nightscout). No invented
+math, no uncited thresholds.
+
+## Time in ranges
+
+| Function | What it computes | Source |
+| --- | --- | --- |
+| `calculateEnhancedTIR` | 5-range TIR (very low / low / in-range / high / very high) with consensus target assessment | Battelino 2019 |
+| `calculatePregnancyTIR` | Pregnancy TIR (63–140 mg/dL) | ADA Standards of Care |
+| `calculateTITR` | Time in Tight Range (70–140, target >50%) | Battelino 2019 (emerging consensus) |
+| `detectEpisodes` | ≥15-min hypo/hyper events with level, duration, nadir/peak | Danne 2017; Battelino 2019 |
+
+## Averages & estimation
+
+| Function | What it computes | Source |
+| --- | --- | --- |
+| `estimateGMI` | Glucose Management Indicator from mean glucose | Bergenstal 2018 |
+| `estimateA1CFromAverage` / `estimateAvgGlucoseFromA1C` | A1C ⇄ eAG | Nathan 2008 |
+| `calculateHOMAIR` | Insulin resistance | Matthews 1985 |
+
+## Variability & risk
+
+| Function | What it computes | Source |
+| --- | --- | --- |
+| `glucoseStandardDeviation` / `glucoseCoefficientOfVariation` | SD, CV% | ADA 2019 |
+| `glucoseMAGE` | Mean Amplitude of Glycemic Excursions | Service 1970 |
+| `glucoseLBGI` / `glucoseHBGI` | Low/High Blood Glucose Index | Kovatchev 2006 |
+| `calculateADRR` | Average Daily Risk Range | Kovatchev 2006 |
+| `calculateGRADE` | Glycemic Risk Assessment Diabetes Equation | Hill 2007 |
+| `calculateGRI` | Glycemia Risk Index with A–E zones | Klonoff 2023 |
+| `calculateJIndex` | Composite mean + variability | Wojcicki 1995 |
+| `calculateMODD` | Mean Of Daily Differences | Service 1980 |
+| `calculateCONGA` | Continuous Overall Net Glycemic Action | McDonnell 2005 |
+| `glucoseMValue` | Schlichtkrull M-value (with/without W correction) | Schlichtkrull 1965 |
+| `calculateIGC` | Rodbard hypo/hyper index + Index of Glycemic Control | Rodbard 2009 (+ erratum) |
+| `calculateGVIPGS` | GVI + Patient Glycemic Status (Nightscout parity) | Rodbard; Nightscout |
+| `glucoseMAG` | Mean Absolute Glucose change per hour | Hermanides 2010 |
+| `glucoseGVP` | Glycemic Variability Percentage | Peyser 2018 |
+| `calculateActivePercent` | CGM wear time | Danne 2017 |
+| `calculateAGPMetrics` | All of the above scalars in one call | — |
+
+## Series & events
+
+| Function | What it computes |
+| --- | --- |
+| `buildAGPProfile` | Time-of-day percentile bands (5/25/50/75/95) — the AGP chart's data |
+| `analyzeMealResponse` | Baseline, peak, delta, time-to-peak, return-to-baseline, iAUC |
+| `glucoseAUC` / `incrementalAUC` | Trapezoidal AUC; Wolever 4-case iAUC above baseline |
+| `computeGlucoseTrend` | Rate-of-change + trend classification (Dexcom-style thresholds) |
+| `detectGaps` / `splitDayNight` / `alignToGrid` | Sensor gaps, nocturnal split, uniform-grid resampling |
+| `aggregateCohort` | Population distributions of TIR/GMI/CV/mean across patients |
+
+## The unit-safety guarantee
+
+Metrics calibrated for mg/dL (LBGI/HBGI, GRADE, J-Index, M-value, IGC, GVI/PGS)
+accept a `unit` option and convert mmol/L input **before** applying the
+formula — passing mmol/L values can never silently produce clinically invalid
+output.

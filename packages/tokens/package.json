@@ -1,0 +1,47 @@
+{
+  "name": "@glucoseiq/tokens",
+  "version": "0.0.0",
+  "description": "GlucoseIQ design tokens — the canonical 5-zone glucose palette (colorblind-safe by redundancy), trend glyphs, and zone classification shared by web, watch, and native surfaces.",
+  "main": "dist/index.js",
+  "module": "dist/index.mjs",
+  "types": "dist/index.d.ts",
+  "exports": {
+    ".": {
+      "import": {
+        "types": "./dist/index.d.mts",
+        "default": "./dist/index.mjs"
+      },
+      "require": {
+        "types": "./dist/index.d.ts",
+        "default": "./dist/index.js"
+      }
+    }
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/marklearst/glucoseiq.git",
+    "directory": "packages/tokens"
+  },
+  "homepage": "https://glucoseiq.health",
+  "bugs": { "url": "https://github.com/marklearst/glucoseiq/issues" },
+  "scripts": {
+    "build": "tsup",
+    "test": "vitest run",
+    "test:coverage": "vitest run --coverage",
+    "clean": "rm -rf dist",
+    "prepublishOnly": "pnpm build"
+  },
+  "keywords": ["glucoseiq", "design-tokens", "glucose", "cgm", "palette"],
+  "author": "Mark Learst",
+  "license": "MIT",
+  "devDependencies": {
+    "@vitest/coverage-v8": "^3.1.2",
+    "tsup": "^8.4.0",
+    "typescript": "^5.8.3",
+    "vitest": "^3.1.2"
+  },
+  "files": ["dist/", "package.json", "README.md", "LICENSE"],
+  "sideEffects": false,
+  "publishConfig": { "access": "public" },
+  "engines": { "node": ">=24" }
+}

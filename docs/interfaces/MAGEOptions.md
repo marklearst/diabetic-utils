@@ -6,7 +6,7 @@
 
 # Interface: MAGEOptions
 
-Defined in: [mage.ts:118](https://github.com/marklearst/diabetic-utils/blob/0d03b5cd2e2b5edbf58275075cc81d8df31ac230/src/mage.ts#L118)
+Defined in: [mage.ts:118](https://github.com/marklearst/glucoseiq/blob/0d03b5cd2e2b5edbf58275075cc81d8df31ac230/src/mage.ts#L118)
 
 Configuration options for clinical-grade MAGE calculation.
 
@@ -16,7 +16,7 @@ Configuration options for clinical-grade MAGE calculation.
 
 > `optional` **direction**: `"auto"` \| `"ascending"` \| `"descending"`
 
-Defined in: [mage.ts:131](https://github.com/marklearst/diabetic-utils/blob/0d03b5cd2e2b5edbf58275075cc81d8df31ac230/src/mage.ts#L131)
+Defined in: [mage.ts:131](https://github.com/marklearst/glucoseiq/blob/0d03b5cd2e2b5edbf58275075cc81d8df31ac230/src/mage.ts#L131)
 
 Excursion direction: 'auto', 'ascending', or 'descending'
 
@@ -26,7 +26,7 @@ Excursion direction: 'auto', 'ascending', or 'descending'
 
 > `optional` **longWindow**: `number`
 
-Defined in: [mage.ts:123](https://github.com/marklearst/diabetic-utils/blob/0d03b5cd2e2b5edbf58275075cc81d8df31ac230/src/mage.ts#L123)
+Defined in: [mage.ts:123](https://github.com/marklearst/glucoseiq/blob/0d03b5cd2e2b5edbf58275075cc81d8df31ac230/src/mage.ts#L123)
 
 Long moving average window (default: 32)
 
@@ -36,6 +36,6 @@ Long moving average window (default: 32)
 
 > `optional` **shortWindow**: `number`
 
-Defined in: [mage.ts:120](https://github.com/marklearst/diabetic-utils/blob/0d03b5cd2e2b5edbf58275075cc81d8df31ac230/src/mage.ts#L120)
+Defined in: [mage.ts:120](https://github.com/marklearst/glucoseiq/blob/0d03b5cd2e2b5edbf58275075cc81d8df31ac230/src/mage.ts#L120)
 
 Short moving average window (default: 5)
