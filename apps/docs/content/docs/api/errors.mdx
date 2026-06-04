@@ -1,0 +1,78 @@
+---
+title: Error Classes
+description: Typed failures with stable machine-readable error codes.
+---
+
+<Callout title="5 exports">Generated from the public source TSDoc and TypeScript declarations.</Callout>
+
+### DomainError
+
+```ts
+class DomainError extends GlucoseIQError
+```
+
+A value or option is outside its valid domain.
+
+**Constructor**
+
+`new DomainError(message: string, code: GlucoseIQErrorCode)`
+
+
+---
+
+### EmptyDatasetError
+
+```ts
+class EmptyDatasetError extends GlucoseIQError
+```
+
+An operation requires data but the dataset is empty.
+
+**Constructor**
+
+`new EmptyDatasetError(message: string)`
+
+
+---
+
+### GlucoseIQError
+
+```ts
+class GlucoseIQError extends Error
+```
+
+Base class for all intentional @glucoseiq/core errors.
+
+**Constructor**
+
+`new GlucoseIQError(message: string, code: GlucoseIQErrorCode)`
+
+
+---
+
+### ParseError
+
+```ts
+class ParseError extends GlucoseIQError
+```
+
+Input text (CSV, glucose string, payload) could not be parsed.
+
+**Constructor**
+
+`new ParseError(message: string, code: GlucoseIQErrorCode)`
+
+
+---
+
+### TimestampError
+
+```ts
+class TimestampError extends GlucoseIQError
+```
+
+A timestamp could not be parsed.
+
+**Constructor**
+
+`new TimestampError(message: string)`

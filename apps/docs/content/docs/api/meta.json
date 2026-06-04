@@ -1,0 +1,24 @@
+{
+  "title": "API Reference",
+  "pages": [
+    "reports",
+    "agp",
+    "time-in-range",
+    "score",
+    "variability",
+    "meals",
+    "episodes",
+    "live",
+    "series",
+    "cohort",
+    "render",
+    "connectors",
+    "ingestion",
+    "interop",
+    "conversions",
+    "glucose",
+    "types",
+    "constants",
+    "errors"
+  ]
+}

@@ -8,7 +8,7 @@
 
 > `const` **GLUCOSE\_COLOR\_LOW**: `"#D32F2F"` = `'#D32F2F'`
 
-Defined in: [constants.ts:88](https://github.com/marklearst/diabetic-utils/blob/0d03b5cd2e2b5edbf58275075cc81d8df31ac230/src/constants.ts#L88)
+Defined in: [constants.ts:88](https://github.com/marklearst/glucoseiq/blob/0d03b5cd2e2b5edbf58275075cc81d8df31ac230/src/constants.ts#L88)
 
 Color codes for glucose zones.
 

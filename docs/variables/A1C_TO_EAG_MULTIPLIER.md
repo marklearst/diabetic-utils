@@ -8,7 +8,7 @@
 
 > `const` **A1C\_TO\_EAG\_MULTIPLIER**: `28.7` = `28.7`
 
-Defined in: [constants.ts:54](https://github.com/marklearst/diabetic-utils/blob/0d03b5cd2e2b5edbf58275075cc81d8df31ac230/src/constants.ts#L54)
+Defined in: [constants.ts:54](https://github.com/marklearst/glucoseiq/blob/0d03b5cd2e2b5edbf58275075cc81d8df31ac230/src/constants.ts#L54)
 
 Clinical multiplier for converting A1C to estimated average glucose (eAG).
 Used in eAG calculation per CDC/ADA guidelines.

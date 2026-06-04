@@ -1,0 +1,70 @@
+---
+title: Rendering (SVG)
+description: Zero-dependency SVG-string renderers for any surface.
+---
+
+<Callout title="3 functions">Generated from the source TSDoc — every signature, parameter, and example is the real thing.</Callout>
+
+### agpChartToSVG
+
+```ts
+agpChartToSVG(readings: GlucoseReading[], options?: AGPChartOptions): string
+```
+
+Renders an Ambulatory Glucose Profile chart as an SVG string.
+
+| Parameter | Description |
+| --- | --- |
+| `readings` | Glucose readings with ISO 8601 timestamps (mg/dL or mmol/L) |
+| `options` | Dimensions, theme, time zone, and title |
+
+**Returns** — A complete, self-contained SVG document string
+
+```ts
+const svg = agpChartToSVG(readings, { theme: 'dark' })
+// <svg ...>…</svg> — drop into HTML, a README, an email, or a PDF
+```
+
+
+---
+
+### tirBarToSVG
+
+```ts
+tirBarToSVG(readings: GlucoseReading[], options?: TIRBarOptions): string
+```
+
+Renders a Time-in-Range stacked bar as an SVG string.
+
+| Parameter | Description |
+| --- | --- |
+| `readings` | Glucose readings (mg/dL or mmol/L) |
+| `options` | Dimensions and theme |
+
+**Returns** — A self-contained SVG document string
+
+```ts
+const svg = tirBarToSVG(readings)
+```
+
+
+---
+
+### trendTileToSVG
+
+```ts
+trendTileToSVG(readings: GlucoseReading[], options?: TrendTileOptions): string
+```
+
+Renders a current-glucose trend tile as an SVG string.
+
+| Parameter | Description |
+| --- | --- |
+| `readings` | Glucose readings with ISO 8601 timestamps |
+| `options` | Dimensions and theme |
+
+**Returns** — A self-contained SVG document string
+
+```ts
+const svg = trendTileToSVG(readings) // 120 → IN RANGE
+```

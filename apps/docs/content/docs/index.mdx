@@ -1,0 +1,110 @@
+---
+title: Getting Started
+description: Install GlucoseIQ and get a clinician-grade glucose report in 30 seconds.
+---
+
+import { Cards, Card } from 'fumadocs-ui/components/card'
+import { Callout } from 'fumadocs-ui/components/callout'
+import { Tab, Tabs } from 'fumadocs-ui/components/tabs'
+
+**GlucoseIQ 1.0** is a zero-dependency TypeScript engine for CGM & diabetes
+analytics — the AGP series, Time-in-Range, 25+ cited metrics, meal response,
+and a live trend model. Pure functions in, render-ready data out.
+
+## Install
+
+<Tabs items={['npm', 'pnpm', 'yarn', 'bun']}>
+
+<Tab value="npm">
+
+```bash
+npm install @glucoseiq/core
+```
+
+</Tab>
+
+<Tab value="pnpm">
+
+```bash
+pnpm add @glucoseiq/core
+```
+
+</Tab>
+
+<Tab value="yarn">
+
+```bash
+yarn add @glucoseiq/core
+```
+
+</Tab>
+
+<Tab value="bun">
+
+```bash
+bun add @glucoseiq/core
+```
+
+</Tab>
+
+</Tabs>
+
+Zero runtime dependencies. Node ≥24, TypeScript-first, ESM + CJS, ~15 KB gzipped.
+
+## Your first report
+
+```ts
+import { analyzeGlucose } from '@glucoseiq/core'
+
+const readings = [
+  { value: 120, unit: 'mg/dL', timestamp: '2024-01-01T08:00:00Z' },
+  { value: 135, unit: 'mg/dL', timestamp: '2024-01-01T08:05:00Z' },
+  // ... your CGM data
+]
+
+const report = analyzeGlucose(readings, { timeZone: 'America/New_York' })
+
+report.gmi                            // 6.8  — Glucose Management Indicator
+report.timeInRange.inRange.percentage // 72.5 — % in 70–180 mg/dL
+report.tightRange.inRange             // 58.1 — % in 70–140 mg/dL
+report.risk.gri.zone                  // 'B'  — Glycemia Risk Index zone
+report.episodes.summary.hypoCount     // 3    — ≥15-min hypo events
+report.agpProfile.bins                // 288 time-of-day percentile bins
+```
+
+One normalized pass produces the whole report: summary scalars, enhanced
+5-range Time-in-Range, tight range, the full risk-metric set, hypo/hyper
+episodes, data sufficiency, and the AGP band series.
+
+## Draw it — with zero dependencies
+
+```ts
+import { agpChartToSVG, tirBarToSVG, trendTileToSVG } from '@glucoseiq/core'
+
+element.innerHTML = agpChartToSVG(readings, { theme: 'dark' })
+```
+
+Every renderer returns a self-contained SVG **string** — drop it into HTML,
+email, a PDF, a README, React Server Components, or any framework.
+
+## Choose your next step
+
+<Cards>
+  <Card title="Build a dashboard" href="/docs/dashboard" description="Go from readings to a complete AGP, Time-in-Range, and live-reading dashboard in about ten minutes." />
+  <Card title="Understand the engine" href="/docs/core-concepts" description="Learn the contracts and processing model that keep GlucoseIQ portable, deterministic, and headless." />
+  <Card title="Connect CGM data" href="/docs/connectors" description="Normalize Dexcom, Libre, and Nightscout payloads into one vendor-neutral reading model." />
+  <Card title="Use React" href="/docs/react" description="Add memoized analysis hooks and ready-made AGP, TIR, and trend components to React applications." />
+  <Card title="Design your own UI" href="/docs/tokens" description="Use shared glucose zones, colors, glyphs, and CSS variables across web and native surfaces." />
+  <Card title="Browse the API" href="/docs/api" description="Explore every public function, contract, constant, and typed error generated from source." />
+</Cards>
+
+<Callout type="warn" title="Not medical advice">
+  GlucoseIQ is for informational and educational purposes only. It does not
+  constitute medical advice, diagnosis, or treatment.
+</Callout>
+
+## Mixed units are safe
+
+mg/dL and mmol/L input can be mixed freely — every function normalizes
+correctly, and metrics whose published formulas are calibrated for mg/dL
+convert first. International data never silently produces wrong numbers.

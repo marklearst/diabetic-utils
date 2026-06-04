@@ -1,0 +1,192 @@
+---
+title: Connectors
+description: Dexcom, Libre, and Nightscout normalization, capabilities, and safe variants.
+---
+
+<Callout title="13 functions">Generated from the source TSDoc — every signature, parameter, and example is the real thing.</Callout>
+
+### normalizeDexcomEntries
+
+```ts
+normalizeDexcomEntries(entries: DexcomShareEntry[]): NormalizedCGMReading[]
+```
+
+Converts an array of Dexcom Share entries into NormalizedCGMReadings.
+
+| Parameter | Description |
+| --- | --- |
+| `entries` | Raw Dexcom Share entries from any Dexcom client library |
+
+**Returns** — Array of normalized readings, sorted chronologically
+
+
+---
+
+### normalizeDexcomEntry
+
+```ts
+normalizeDexcomEntry(entry: DexcomShareEntry): NormalizedCGMReading
+```
+
+Converts a single Dexcom Share entry into a NormalizedCGMReading.
+
+| Parameter | Description |
+| --- | --- |
+| `entry` | Raw Dexcom Share entry |
+
+**Returns** — Normalized reading compatible with all `@glucoseiq/core` analytics functions
+
+**Throws** — If the date string cannot be parsed
+
+
+---
+
+### normalizeDexcomTrend
+
+```ts
+normalizeDexcomTrend(trend: undefined | null | DexcomTrendString | string & { … }): CGMTrend
+```
+
+Normalizes a Dexcom Share trend string into a canonical CGMTrend.
+
+
+---
+
+### normalizeLibreEntries
+
+```ts
+normalizeLibreEntries(entries: LibreLinkUpEntry[]): NormalizedCGMReading[]
+```
+
+Converts an array of Libre LinkUp entries into NormalizedCGMReadings.
+
+| Parameter | Description |
+| --- | --- |
+| `entries` | Raw Libre LinkUp entries from any Libre client library |
+
+**Returns** — Array of normalized readings, sorted chronologically
+
+
+---
+
+### normalizeLibreEntry
+
+```ts
+normalizeLibreEntry(entry: LibreLinkUpEntry): NormalizedCGMReading
+```
+
+Converts a single Libre LinkUp entry into a NormalizedCGMReading.
+
+| Parameter | Description |
+| --- | --- |
+| `entry` | Raw Libre LinkUp entry |
+
+**Returns** — Normalized reading compatible with all `@glucoseiq/core` analytics functions
+
+**Throws** — If the timestamp cannot be parsed
+
+
+---
+
+### normalizeLibreTrend
+
+```ts
+normalizeLibreTrend(trend: undefined | null | number): CGMTrend
+```
+
+Normalizes a Libre LinkUp numeric trend value into a canonical CGMTrend.
+
+Accepts the raw API value (which may be null/undefined or out of range)
+and returns 'unknown' for any invalid or unmapped values.
+
+
+---
+
+### normalizeNightscoutDirection
+
+```ts
+normalizeNightscoutDirection(direction: undefined | NightscoutDirection): CGMTrend
+```
+
+Normalizes a Nightscout direction string into a canonical CGMTrend.
+
+
+---
+
+### normalizeNightscoutEntries
+
+```ts
+normalizeNightscoutEntries(entries: NightscoutEntry[]): NormalizedCGMReading[]
+```
+
+Converts an array of Nightscout SGV entries into NormalizedCGMReadings.
+
+| Parameter | Description |
+| --- | --- |
+| `entries` | Raw Nightscout entries from the `/api/v1/entries` endpoint |
+
+**Returns** — Array of normalized readings, sorted chronologically
+
+
+---
+
+### normalizeNightscoutEntry
+
+```ts
+normalizeNightscoutEntry(entry: NightscoutEntry): NormalizedCGMReading
+```
+
+Converts a single Nightscout SGV entry into a NormalizedCGMReading.
+
+| Parameter | Description |
+| --- | --- |
+| `entry` | Raw Nightscout SGV entry |
+
+**Returns** — Normalized reading compatible with all `@glucoseiq/core` analytics functions
+
+
+---
+
+### parseDexcomDate
+
+```ts
+parseDexcomDate(raw: string): string
+```
+
+Parses a Dexcom date string into an ISO 8601 string.
+
+Dexcom Share returns dates in the format `"Date(epochMs)"` or
+`"/Date(epochMs)/"`. This helper handles both, plus plain ISO strings.
+
+
+---
+
+### safeNormalizeDexcomEntries
+
+```ts
+safeNormalizeDexcomEntries(entries: DexcomShareEntry[]): SafeNormalizeResult
+```
+
+Safe (partial-success) variant of normalizeDexcomEntries.
+
+
+---
+
+### safeNormalizeLibreEntries
+
+```ts
+safeNormalizeLibreEntries(entries: LibreLinkUpEntry[]): SafeNormalizeResult
+```
+
+Safe (partial-success) variant of normalizeLibreEntries.
+
+
+---
+
+### safeNormalizeNightscoutEntries
+
+```ts
+safeNormalizeNightscoutEntries(entries: NightscoutEntry[]): SafeNormalizeResult
+```
+
+Safe (partial-success) variant of normalizeNightscoutEntries.

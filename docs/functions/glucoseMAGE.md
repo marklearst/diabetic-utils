@@ -8,7 +8,7 @@
 
 > **glucoseMAGE**(`readings`, `options?`): `number`
 
-Defined in: [variability.ts:104](https://github.com/marklearst/diabetic-utils/blob/0d03b5cd2e2b5edbf58275075cc81d8df31ac230/src/variability.ts#L104)
+Defined in: [variability.ts:104](https://github.com/marklearst/glucoseiq/blob/0d03b5cd2e2b5edbf58275075cc81d8df31ac230/src/variability.ts#L104)
 
 Calculates Mean Amplitude of Glycemic Excursions (MAGE) for glucose values.
 Implements gold-standard Service FJ et al. (1970) clinical methodology, validated to 1.4% median error vs manual calculations.

@@ -1,0 +1,217 @@
+---
+title: Export FHIR and Open mHealth
+description: Build portable CGM reading and summary payloads from the same normalized glucose data.
+---
+
+import { Callout } from 'fumadocs-ui/components/callout'
+
+GlucoseIQ can turn normalized readings and Time-in-Range results into plain,
+serializable health-data objects. The builders are stateless, dependency-free,
+and do not require a FHIR SDK.
+
+Use this guide when you need to hand glucose data to a clinical system,
+research pipeline, personal data store, or another standards-aware service.
+
+<Callout type="info" title="Builders, not a transport client">
+  GlucoseIQ builds payloads. Your application still owns authentication,
+  patient and device references, consent, server-specific profiles, network
+  requests, retries, and validation against the receiving system.
+</Callout>
+
+## Choose an output
+
+| Goal | Builder | Result |
+| --- | --- | --- |
+| Export one CGM reading as FHIR | `buildFHIRSensorReading` | A lightweight `Observation` |
+| Export many CGM readings as FHIR | `buildFHIRSensorReadings` | An array of `Observation` objects |
+| Export aggregate CGM metrics as FHIR | `buildFHIRCGMSummary` | A CGM summary `Observation` |
+| Export an Open mHealth body | `buildOMHBloodGlucose` | A blood-glucose body |
+| Export several Open mHealth bodies | `buildOMHBloodGlucoseList` | An array of bodies |
+| Export a wrapped Open mHealth datapoint | `buildOMHDataPoint` | A header plus blood-glucose body |
+
+All builders are available from `@glucoseiq/core` and the
+`@glucoseiq/core/interop` subpath.
+
+## 1. Start with normalized readings
+
+```ts
+import type { GlucoseReading } from '@glucoseiq/core'
+
+const readings: GlucoseReading[] = [
+  { value: 104, unit: 'mg/dL', timestamp: '2026-07-12T12:00:00Z' },
+  { value: 5.9, unit: 'mmol/L', timestamp: '2026-07-12T12:05:00Z' },
+]
+```
+
+FHIR and Open mHealth builders preserve the value and unit supplied for each
+reading. Normalize vendor payloads and validate timestamps before export; these
+builders intentionally do not discard or repair input.
+
+## Export FHIR sensor readings
+
+```ts
+import { buildFHIRSensorReadings } from '@glucoseiq/core/interop'
+
+const observations = buildFHIRSensorReadings(readings)
+
+observations[0]
+// {
+//   resourceType: 'Observation',
+//   status: 'final',
+//   code: { coding: [{ system: 'http://loinc.org', code: '99504-3', ... }] },
+//   effectiveDateTime: '2026-07-12T12:00:00Z',
+//   valueQuantity: {
+//     value: 104,
+//     unit: 'mg/dL',
+//     system: 'http://unitsofmeasure.org',
+//     code: 'mg/dL'
+//   }
+// }
+```
+
+The builder selects the interstitial-fluid LOINC code for the reading's unit:
+mass-per-volume for `mg/dL`, or molar concentration for `mmol/L`. It emits one
+Observation per reading and does not wrap the array in a FHIR Bundle.
+
+## Export a FHIR CGM summary
+
+Build the analytics once, then pass its five-range Time-in-Range result into
+the summary builder:
+
+```ts
+import {
+  analyzeGlucose,
+  buildFHIRCGMSummary,
+  type GlucoseReading,
+} from '@glucoseiq/core'
+
+export function buildSummaryObservation(
+  readings: GlucoseReading[],
+  period: { start: string; end: string },
+) {
+  const report = analyzeGlucose(readings, { includeProfile: false })
+
+  if (!report.valid || !report.timeInRange) {
+    throw new Error('A CGM summary requires valid glucose readings')
+  }
+
+  return buildFHIRCGMSummary(report.timeInRange, period, {
+    meanGlucose: report.meanGlucose,
+    gmi: report.gmi,
+    cv: report.cv,
+  })
+}
+
+const summary = buildSummaryObservation(readings, {
+  start: '2026-06-29T00:00:00Z',
+  end: '2026-07-12T23:59:59Z',
+})
+```
+
+The result is a CGM summary `Observation` with LOINC-coded components for very
+low, low, target, high, and very high percentages. The optional mean glucose,
+GMI, and coefficient of variation become additional components.
+
+<Callout type="warn" title="Complete the resource for your server">
+  The lightweight output is aligned with the HL7 CGM Implementation Guide, but
+  a receiving server may require fields such as `subject`, `device`, resource
+  identifiers, provenance, or a particular profile URL. Add those in your
+  integration layer and validate the final resource against that server.
+</Callout>
+
+## Send an Observation
+
+After adding the references and metadata required by your FHIR server, transmit
+the resource using that server's authentication and error-handling policy:
+
+```ts
+async function createObservation(
+  baseUrl: string,
+  accessToken: string,
+  observation: object,
+) {
+  const response = await fetch(`${baseUrl}/Observation`, {
+    method: 'POST',
+    headers: {
+      authorization: `Bearer ${accessToken}`,
+      'content-type': 'application/fhir+json',
+      accept: 'application/fhir+json',
+    },
+    body: JSON.stringify(observation),
+  })
+
+  if (!response.ok) {
+    throw new Error(`FHIR server rejected the resource: ${response.status}`)
+  }
+
+  return response.json()
+}
+```
+
+For bulk ingestion, construct the Bundle type required by your server around
+the output of `buildFHIRSensorReadings`.
+
+## Export Open mHealth bodies
+
+Use body-only builders when another system supplies its own headers or storage
+envelope:
+
+```ts
+import { buildOMHBloodGlucoseList } from '@glucoseiq/core/interop'
+
+const bodies = buildOMHBloodGlucoseList(readings)
+
+bodies[0]
+// {
+//   blood_glucose: { value: 104, unit: 'mg/dL' },
+//   effective_time_frame: { date_time: '2026-07-12T12:00:00Z' },
+//   specimen_source: 'interstitial fluid'
+// }
+```
+
+Use `buildOMHDataPoint` when you want the Open mHealth header and schema
+identifier as well:
+
+```ts
+import { buildOMHDataPoint } from '@glucoseiq/core/interop'
+
+const dataPoints = readings.map((reading) =>
+  buildOMHDataPoint(reading, crypto.randomUUID()),
+)
+
+dataPoints[0].header.schema_id
+// { namespace: 'omh', name: 'blood-glucose', version: '3.0' }
+```
+
+The builder generates `creation_date_time` when called. Supply and persist your
+own stable IDs when repeated exports must refer to the same datapoints.
+
+## Test exports as contracts
+
+The payloads are plain objects, so contract tests do not need a FHIR runtime:
+
+```ts
+import { describe, expect, it } from 'vitest'
+import { buildFHIRSensorReading } from '@glucoseiq/core/interop'
+
+describe('CGM export', () => {
+  it('emits a UCUM-coded FHIR quantity', () => {
+    const observation = buildFHIRSensorReading({
+      value: 104,
+      unit: 'mg/dL',
+      timestamp: '2026-07-12T12:00:00Z',
+    })
+
+    expect(observation.valueQuantity).toEqual({
+      value: 104,
+      unit: 'mg/dL',
+      system: 'http://unitsofmeasure.org',
+      code: 'mg/dL',
+    })
+  })
+})
+```
+
+Also run representative payloads through the validator or sandbox supplied by
+the receiving system. A stable local shape and acceptance by a specific server
+are two different contracts; production integrations need both.

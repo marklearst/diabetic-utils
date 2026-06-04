@@ -1,0 +1,26 @@
+---
+title: Cohort
+description: Population metric distributions across many patients.
+---
+
+<Callout title="1 function">Generated from the source TSDoc — every signature, parameter, and example is the real thing.</Callout>
+
+### aggregateCohort
+
+```ts
+aggregateCohort(patients: GlucoseReading[][], options?: CohortOptions): CohortResult
+```
+
+Aggregates per-patient glucose metrics across a cohort.
+
+| Parameter | Description |
+| --- | --- |
+| `patients` | One reading array per patient |
+| `options` | Unit for TIR validation |
+
+**Returns** — Distributions of TIR, GMI, CV, and mean glucose across the cohort
+
+```ts
+const cohort = aggregateCohort([patientA, patientB, patientC])
+cohort.tir.median // 68.5 — median in-range % across the population
+```

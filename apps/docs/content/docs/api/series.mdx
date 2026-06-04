@@ -1,0 +1,64 @@
+---
+title: Time-Series Primitives
+description: Gap detection, day/night split, and uniform-grid resampling.
+---
+
+<Callout title="3 functions">Generated from the source TSDoc — every signature, parameter, and example is the real thing.</Callout>
+
+### alignToGrid
+
+```ts
+alignToGrid(readings: GlucoseReading[], options?: AlignOptions): GridPoint[]
+```
+
+Resamples readings onto a fixed time grid.
+
+| Parameter | Description |
+| --- | --- |
+| `readings` | Glucose readings with ISO 8601 timestamps |
+| `options` | Interval, interpolation window, and output unit |
+
+**Returns** — Grid points from the first to the last reading; genuine gaps are holes
+
+```ts
+const grid = alignToGrid(readings) // 5-min slots, gaps ≤15 min interpolated
+```
+
+
+---
+
+### detectGaps
+
+```ts
+detectGaps(readings: GlucoseReading[], options?: GapDetectionOptions): GlucoseGap[]
+```
+
+Finds gaps (sensor dropouts) between consecutive readings.
+
+| Parameter | Description |
+| --- | --- |
+| `readings` | Glucose readings with ISO 8601 timestamps |
+| `options` | Gap threshold |
+
+**Returns** — Gaps in chronological order (empty if none)
+
+
+---
+
+### splitDayNight
+
+```ts
+splitDayNight(readings: GlucoseReading[], options?: DayNightOptions): DayNightSplit
+```
+
+Splits readings into daytime and nighttime by local hour. The night window
+may wrap past midnight (e.g. 22:00–06:00).
+
+| Parameter | Description |
+| --- | --- |
+| `readings` | Glucose readings with ISO 8601 timestamps |
+| `options` | Time zone and night window |
+
+**Returns** — Readings partitioned into `day` and `night`
+
+**Throws** — If the time zone is invalid

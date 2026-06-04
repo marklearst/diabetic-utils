@@ -1,0 +1,76 @@
+---
+title: Meals & AUC
+description: Postprandial meal response and area-under-the-curve.
+---
+
+<Callout title="3 functions">Generated from the source TSDoc — every signature, parameter, and example is the real thing.</Callout>
+
+### analyzeMealResponse
+
+```ts
+analyzeMealResponse(readings: GlucoseReading[], mealTime: string, options?: MealResponseOptions): MealResponseResult
+```
+
+Analyzes the glucose response to a meal.
+
+| Parameter | Description |
+| --- | --- |
+| `readings` | Glucose readings with ISO 8601 timestamps |
+| `mealTime` | ISO 8601 timestamp of the meal (t=0) |
+| `options` | Window length and output unit |
+
+**Returns** — Meal-response metrics; `valid: false` if the window has fewer than two readings
+
+```ts
+const r = analyzeMealResponse(readings, '2024-01-01T12:30:00Z')
+// { baseline: 98, peakValue: 162, delta: 64, timeToPeakMin: 45, ... }
+```
+
+
+---
+
+### glucoseAUC
+
+```ts
+glucoseAUC(readings: GlucoseReading[], options?: AUCOptions): number
+```
+
+Total area under the glucose-time curve (trapezoidal rule).
+
+| Parameter | Description |
+| --- | --- |
+| `readings` | Glucose readings with ISO 8601 timestamps |
+| `options` | Output unit |
+
+**Returns** — Area in (unit × minutes), or NaN if fewer than two valid readings
+
+```ts
+glucoseAUC(readings) // e.g. 18240 (mg/dL·min)
+```
+
+
+---
+
+### incrementalAUC
+
+```ts
+incrementalAUC(readings: GlucoseReading[], baseline: number, options?: AUCOptions): number
+```
+
+Incremental area under the curve above a baseline (Wolever iAUC).
+
+Only above-baseline area is counted; a segment crossing the baseline
+contributes only its above-baseline triangle, and fully-below segments
+contribute zero. For a meal response, pass the pre-meal value as `baseline`.
+
+| Parameter | Description |
+| --- | --- |
+| `readings` | Glucose readings with ISO 8601 timestamps |
+| `baseline` | Baseline value in the output unit (e.g. the pre-meal reading) |
+| `options` | Output unit (must match the unit of `baseline`) |
+
+**Returns** — Incremental area in (unit × minutes), or NaN if fewer than two valid readings
+
+```ts
+incrementalAUC(readings, preMealValue) // e.g. 4120 (mg/dL·min above baseline)
+```

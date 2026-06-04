@@ -1,0 +1,238 @@
+---
+title: Build a Dashboard in 10 Minutes
+description: Turn normalized CGM readings into a complete React dashboard with live glucose, Time in Range, and an AGP profile.
+---
+
+import { Callout } from 'fumadocs-ui/components/callout'
+import { Tab, Tabs } from 'fumadocs-ui/components/tabs'
+
+This guide builds a useful dashboard from one input: an array of normalized
+glucose readings. GlucoseIQ owns the analytics and renderers; your application
+owns the data source, layout, and visual system.
+
+By the end, you will have a current-glucose tile, Time-in-Range summary, AGP
+profile, GMI, and data-sufficiency state without adding a charting library.
+
+## 1. Install the engine and React adapter
+
+<Tabs items={['npm', 'pnpm', 'yarn', 'bun']}>
+
+<Tab value="npm">
+
+```bash
+npm install @glucoseiq/core @glucoseiq/react
+```
+
+</Tab>
+
+<Tab value="pnpm">
+
+```bash
+pnpm add @glucoseiq/core @glucoseiq/react
+```
+
+</Tab>
+
+<Tab value="yarn">
+
+```bash
+yarn add @glucoseiq/core @glucoseiq/react
+```
+
+</Tab>
+
+<Tab value="bun">
+
+```bash
+bun add @glucoseiq/core @glucoseiq/react
+```
+
+</Tab>
+
+</Tabs>
+
+`@glucoseiq/core` contains the dependency-free analytics engine.
+`@glucoseiq/react` adds memoized hooks and thin wrappers around the built-in
+SVG renderers. React 18 or newer is the only peer dependency.
+
+## 2. Normalize readings at the boundary
+
+Every analytics function accepts the same small contract:
+
+```ts
+import type { GlucoseReading } from '@glucoseiq/core'
+
+const readings: GlucoseReading[] = [
+  { value: 112, unit: 'mg/dL', timestamp: '2026-07-12T12:00:00Z' },
+  { value: 118, unit: 'mg/dL', timestamp: '2026-07-12T12:05:00Z' },
+  { value: 126, unit: 'mg/dL', timestamp: '2026-07-12T12:10:00Z' },
+]
+```
+
+Keep vendor authentication and payload handling on the server. Convert the
+result to `GlucoseReading[]` once, then pass that array through the rest of your
+application. Mixed `mg/dL` and `mmol/L` input is supported.
+
+<Callout type="info" title="Start with enough history">
+  A current-glucose surface can work with a few recent readings. A meaningful
+  AGP profile and data-sufficiency assessment need multiple days of CGM data;
+  the default sufficiency target is at least 14 days and 70% active time.
+</Callout>
+
+## 3. Build the dashboard
+
+Create a client component and pass it the normalized readings. The option
+objects live outside the component so their references remain stable across
+renders.
+
+```tsx title="GlucoseDashboard.tsx"
+'use client'
+
+import type {
+  AGPChartOptions,
+  AnalyzeGlucoseOptions,
+  GlucoseReading,
+  TIRBarOptions,
+  TrendTileOptions,
+} from '@glucoseiq/core'
+import {
+  AgpChart,
+  TirBar,
+  TrendTile,
+  useGlucoseAnalysis,
+} from '@glucoseiq/react'
+
+const analysisOptions: AnalyzeGlucoseOptions = {
+  timeZone: 'America/Detroit',
+}
+
+const agpOptions: AGPChartOptions = {
+  theme: 'dark',
+  timeZone: 'America/Detroit',
+  title: 'Last 14 days',
+}
+
+const tirOptions: TIRBarOptions = { theme: 'dark' }
+const trendOptions: TrendTileOptions = { theme: 'dark' }
+
+interface GlucoseDashboardProps {
+  readings: GlucoseReading[]
+}
+
+export function GlucoseDashboard({ readings }: GlucoseDashboardProps) {
+  const report = useGlucoseAnalysis(readings, analysisOptions)
+
+  if (!report.valid || !report.timeInRange) {
+    return <p>No valid glucose readings are available yet.</p>
+  }
+
+  const tir = report.timeInRange
+
+  return (
+    <main>
+      <header>
+        <p>Glucose overview</p>
+        <h1>Today and the last 14 days</h1>
+      </header>
+
+      <section aria-label="Current glucose">
+        <TrendTile readings={readings} options={trendOptions} />
+      </section>
+
+      <section aria-label="Glucose summary">
+        <article>
+          <h2>Time in range</h2>
+          <strong>{tir.inRange.percentage.toFixed(1)}%</strong>
+          <p>70–180 mg/dL</p>
+        </article>
+
+        <article>
+          <h2>GMI</h2>
+          <strong>{report.gmi.toFixed(1)}%</strong>
+          <p>From a mean of {report.meanGlucose.toFixed(0)} mg/dL</p>
+        </article>
+
+        <article>
+          <h2>Variability</h2>
+          <strong>{report.cv.toFixed(1)}%</strong>
+          <p>Coefficient of variation</p>
+        </article>
+      </section>
+
+      <section aria-labelledby="tir-heading">
+        <h2 id="tir-heading">Time in ranges</h2>
+        <TirBar readings={readings} options={tirOptions} />
+      </section>
+
+      <section aria-labelledby="agp-heading">
+        <h2 id="agp-heading">Daily glucose pattern</h2>
+        <AgpChart readings={readings} options={agpOptions} />
+      </section>
+
+      <footer>
+        {report.dataSufficiency.meetsCGMStandard
+          ? 'Data meets the configured sufficiency target.'
+          : `${report.dataSufficiency.daysOfData} days and ${report.dataSufficiency.activePercent.toFixed(1)}% active time available.`}
+      </footer>
+    </main>
+  )
+}
+```
+
+The component deliberately contains almost no design opinion. Replace the
+semantic HTML, typography, spacing, and surrounding layout with your design
+system. The analytics result remains unchanged.
+
+## 4. Load it from your application
+
+Fetch readings in a server component or route, then hand the normalized array
+to the dashboard:
+
+```tsx title="app/dashboard/page.tsx"
+import type { GlucoseReading } from '@glucoseiq/core'
+import { GlucoseDashboard } from './GlucoseDashboard'
+
+async function getReadings(): Promise<GlucoseReading[]> {
+  const response = await fetch('https://example.com/api/glucose', {
+    cache: 'no-store',
+  })
+
+  if (!response.ok) {
+    throw new Error(`Unable to load glucose readings: ${response.status}`)
+  }
+
+  return response.json() as Promise<GlucoseReading[]>
+}
+
+export default async function DashboardPage() {
+  const readings = await getReadings()
+  return <GlucoseDashboard readings={readings} />
+}
+```
+
+Validate untrusted JSON before returning it from your API. If the upstream is
+Dexcom Share, Libre LinkUp, or Nightscout, use the matching connector adapter
+to normalize its vendor-specific payload first.
+
+## 5. Choose how headless you want to be
+
+The example uses GlucoseIQ's ready-made SVG renderers for the shortest path.
+You can stop one level earlier whenever you need complete drawing control:
+
+- `useGlucoseAnalysis` returns the full typed report for cards and summaries.
+- `useAGPProfile` returns percentile bins for D3, Visx, Canvas, or a native
+  charting layer.
+- `useGlucoseLive` returns the latest reading, derived trend, and staleness for
+  a custom current-glucose surface.
+
+The engine is the contract. The interface is yours.
+
+## Production checklist
+
+- Keep credentials and vendor sessions out of the browser.
+- Validate and normalize source payloads at ingestion.
+- Pass stable `readings` and option references to memoized hooks.
+- Show an explicit empty state when `report.valid` is `false`.
+- Surface `dataSufficiency` instead of implying that sparse data is complete.
+- Treat every result as informational, not medical advice or an alerting
+  system.
