@@ -20,7 +20,7 @@
     "test": "turbo run test",
     "test:coverage": "turbo run test:coverage",
     "test:packages": "node scripts/package-contract-helpers.test.mjs && turbo run build --filter=@glucoseiq/core --filter=@glucoseiq/react --filter=@glucoseiq/tokens --filter=@glucoseiq/testing --filter=@glucoseiq/cli --filter=diabetic-utils && node scripts/test-package-contracts.mjs",
-    "test:launch": "node scripts/test-launch-changeset.mjs",
+    "test:launch": "node scripts/test-launch-changeset.mjs && node scripts/release-metadata.test.mjs",
     "clean": "turbo run clean",
     "changeset": "changeset",
     "version-packages": "changeset version",
