@@ -86,6 +86,13 @@ jobs:
           NPM_TOKEN: ${{ secrets.NPM_TOKEN }}
           NPM_CONFIG_PROVENANCE: true
 
+      - name: Set release PR body
+        if: steps.changesets.outputs.hasChangesets == 'true' && steps.changesets.outputs.pullRequestNumber != ''
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          PR_NUMBER: ${{ steps.changesets.outputs.pullRequestNumber }}
+        run: gh pr edit "$PR_NUMBER" --body-file .github/release-pr-body.md
+
       - name: Preserve legacy npm release
         if: always() && steps.changesets.outcome != 'skipped' && steps.changesets.outputs.hasChangesets != 'true'
         env:
