@@ -226,8 +226,8 @@ try {
     assert.equal(compatibility.gmi, 7, `${consumer.label} compatibility GMI`)
 
     const cliOutput = run(
-      'node',
-      [join(consumerRoot, 'node_modules/@glucoseiq/cli/dist/bin.js'), '--help'],
+      join(consumerRoot, 'node_modules/.bin/glucoseiq'),
+      ['--help'],
       { cwd: consumerRoot },
     )
     assert.match(cliOutput, /Usage:\s+glucoseiq report/, `${consumer.label} CLI help`)

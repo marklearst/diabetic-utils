@@ -121,7 +121,7 @@ jobs:
           NPM_CONFIG_PROVENANCE: true
 
       - name: Preserve legacy npm release
-        if: always() && steps.release-mode.outputs.has_changesets == 'false' && steps.changesets.outcome != 'skipped'
+        if: steps.changesets.outcome == 'success'
         env:
           NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
         run: |
@@ -137,15 +137,17 @@ jobs:
           for _ in 1 2 3 4 5 6; do
             LEGACY_VERSION=$(npm view diabetic-utils dist-tags.legacy \
               --registry=https://registry.npmjs.org 2>/dev/null || true)
+            LATEST_VERSION=$(npm view diabetic-utils dist-tags.latest \
+              --registry=https://registry.npmjs.org 2>/dev/null || true)
 
-            if [ "$LEGACY_VERSION" = "1.5.0" ]; then
+            if [ "$LEGACY_VERSION" = "1.5.0" ] && [ "$LATEST_VERSION" = "2.0.0" ]; then
               exit 0
             fi
 
             sleep 5
           done
 
-          echo "::error::The legacy npm tag does not resolve to diabetic-utils@1.5.0"
+          echo "::error::Expected diabetic-utils dist-tags legacy=1.5.0 and latest=2.0.0; received legacy=${LEGACY_VERSION:-<missing>} and latest=${LATEST_VERSION:-<missing>}"
           exit 1
 
       - name: Run CI for release PR
