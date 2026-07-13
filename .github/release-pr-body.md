@@ -1,20 +1,13 @@
 ## Summary
 
-- publish the five new `@glucoseiq/*` packages at 1.0.0
-- publish `diabetic-utils` 2.0.0 as the compatibility bridge from 1.5.x
-- update package manifests, changelogs, and internal dependency ranges
+Prepare the next GlucoseIQ package release from the approved release entries.
 
-## Packages
+## Review
 
-- `@glucoseiq/core@1.0.0`
-- `@glucoseiq/react@1.0.0`
-- `@glucoseiq/tokens@1.0.0`
-- `@glucoseiq/testing@1.0.0`
-- `@glucoseiq/cli@1.0.0`
-- `diabetic-utils@2.0.0`
+- confirm package versions and changelogs
+- confirm internal dependency ranges
+- confirm packed package contracts and release checks
 
-## Release gate
+## Publishing
 
-- review versions, changelogs, dependency ranges, and packed manifests before merging
-- merge only after `glucoseiq.health` is live and the npm bootstrap credential is ready
-- merging publishes the public packages with provenance
+Merging this PR publishes the approved public package versions after all required checks pass.
