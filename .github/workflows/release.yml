@@ -87,7 +87,7 @@ jobs:
           NPM_CONFIG_PROVENANCE: true
 
       - name: Preserve legacy npm release
-        if: always() && steps.changesets.outcome != 'skipped'
+        if: always() && steps.changesets.outcome != 'skipped' && steps.changesets.outputs.hasChangesets != 'true'
         env:
           NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
         run: |
