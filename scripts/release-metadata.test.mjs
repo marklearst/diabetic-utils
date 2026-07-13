@@ -26,6 +26,25 @@ assert.match(
   workflow,
   /- name: Publish packages[\s\S]*if: steps\.release-mode\.outputs\.has_changesets == 'false'[\s\S]*uses: changesets\/action@a45c4d594aa4e2c509dc14a9f2b3b67ba3780d0d/,
 )
+const legacyDistTagStep = workflow.match(
+  /      - name: Preserve legacy npm release\n[\s\S]*?(?=\n      - name: |\s*$)/,
+)?.[0]
+assert.ok(legacyDistTagStep, 'release workflow must preserve the legacy npm release')
+assert.match(
+  legacyDistTagStep,
+  /^        if: steps\.changesets\.outcome == 'success'$/m,
+  'legacy dist-tag step must run only after a successful publish',
+)
+assert.match(legacyDistTagStep, /npm view diabetic-utils dist-tags\.legacy/)
+assert.match(legacyDistTagStep, /npm view diabetic-utils dist-tags\.latest/)
+assert.match(
+  legacyDistTagStep,
+  /if \[ "\$LEGACY_VERSION" = "1\.5\.0" \] && \[ "\$LATEST_VERSION" = "2\.0\.0" \]; then/,
+)
+assert.match(
+  legacyDistTagStep,
+  /::error::Expected diabetic-utils dist-tags legacy=1\.5\.0 and latest=2\.0\.0; received legacy=\$\{LEGACY_VERSION:-<missing>\} and latest=\$\{LATEST_VERSION:-<missing>\}/,
+)
 assert.doesNotMatch(workflow, /branch:\s*(?:changeset-release|create-pull-request)\//i)
 assert.doesNotMatch(pullRequestBody, /\b(?:opened|generated) by\b/i)
 assert.doesNotMatch(pullRequestBody, /\d+\.\d+\.\d+/)
