@@ -1,0 +1,315 @@
+---
+title: Conversions, A1C & GMI
+description: Unit conversions and A1C / eAG / GMI estimation.
+---
+
+<Callout title="15 functions">Generated from the source TSDoc — every signature, parameter, and example is the real thing.</Callout>
+
+### a1cDelta
+
+```ts
+a1cDelta(current: number, previous: number): number
+```
+
+Calculates the change (delta) between two A1C values.
+
+| Parameter | Description |
+| --- | --- |
+| `current` | Current A1C |
+| `previous` | Previous A1C |
+
+**Returns** — Delta (current - previous)
+
+**Throws** — If either value is invalid
+
+
+---
+
+### a1cToGMI
+
+```ts
+a1cToGMI(a1c: number): number
+```
+
+Converts A1C to Glucose Management Indicator (GMI).
+
+| Parameter | Description |
+| --- | --- |
+| `a1c` | A1C value |
+
+**Returns** — GMI value
+
+See: https://diatribe.org/glucose-management-indicator-gmi
+
+
+---
+
+### a1cTrend
+
+```ts
+a1cTrend(readings: number[]): "increasing" | "decreasing" | "stable" | "insufficient data"
+```
+
+Determines the trend of A1C values over time.
+
+| Parameter | Description |
+| --- | --- |
+| `readings` | Array of A1C values (chronological order) |
+
+**Returns** — 'increasing' | 'decreasing' | 'stable' | 'insufficient data'
+
+
+---
+
+### convertGlucoseUnit
+
+```ts
+convertGlucoseUnit(__namedParameters: { … }): ConversionResult
+```
+
+Converts clinical glucose value between mg/dL and mmol/L.
+Used for clinical interoperability and analytics.
+
+**Returns** — Object with converted value and new unit
+
+**Throws** — If value is not a finite number or is negative/zero
+
+**Throws** — If unit is not a supported glucose unit
+
+See: https://www.diabetes.co.uk/diabetes_care/blood-sugar-conversion.html
+
+
+---
+
+### estimateA1CFromAverage
+
+```ts
+estimateA1CFromAverage(avgGlucose: number, unit?: GlucoseUnit): number
+```
+
+Estimates A1C from average glucose.
+
+| Parameter | Description |
+| --- | --- |
+| `avgGlucose` | Average glucose value |
+| `unit` | Glucose unit (mg/dL or mmol/L) |
+
+**Returns** — Estimated A1C
+
+See: https://www.cdc.gov/diabetes/managing/managing-blood-sugar/a1c.html
+
+
+---
+
+### estimateA1CFromAvgGlucose
+
+```ts
+estimateA1CFromAvgGlucose(avgMgDl: number): number
+```
+
+Converts clinical average glucose (mg/dL) to estimated A1C (percentage).
+Used for clinical analytics and patient reporting.
+
+| Parameter | Description |
+| --- | --- |
+| `avgMgDl` | Average glucose in mg/dL |
+
+**Returns** — Estimated A1C value (percentage)
+
+See: https://www.cdc.gov/diabetes/managing/managing-blood-sugar/a1c.html
+
+
+---
+
+### estimateAvgGlucoseFromA1C
+
+```ts
+estimateAvgGlucoseFromA1C(a1c: number): number
+```
+
+Converts clinical A1C value (percentage) to estimated average glucose (mg/dL).
+Used for clinical analytics and patient reporting.
+
+| Parameter | Description |
+| --- | --- |
+| `a1c` | A1C value (percentage) |
+
+**Returns** — Estimated average glucose in mg/dL
+
+See: https://www.cdc.gov/diabetes/managing/managing-blood-sugar/a1c.html
+
+
+---
+
+### estimateEAG
+
+```ts
+estimateEAG(a1c: number): number
+```
+
+Estimates eAG (estimated average glucose, mg/dL) from clinical A1C value.
+Throws if input is negative. Used for clinical and research reporting.
+
+| Parameter | Description |
+| --- | --- |
+| `a1c` | A1C value (percentage) |
+
+**Returns** — Estimated average glucose (mg/dL)
+
+**Throws** — If a1c is negative
+
+See: https://www.cdc.gov/diabetes/managing/managing-blood-sugar/a1c.html
+
+
+---
+
+### estimateGMI
+
+```ts
+estimateGMI(valueOrOptions: string | number | EstimateGMIOptions, unit?: GlucoseUnit): number
+```
+
+Estimate Glucose Management Indicator (GMI) from average glucose.
+
+| Parameter | Description |
+| --- | --- |
+| `valueOrOptions` | Glucose value, string, or options object |
+| `unit` | Glucose unit (if value is a number) |
+
+**Returns** — GMI value
+
+**Throws** — If unit is required but not provided when input is a number.
+
+**Throws** — If the glucose unit is unsupported.
+
+**Throws** — If the glucose value is not a positive number.
+
+See: https://diatribe.org/glucose-management-indicator-gmi
+
+
+---
+
+### formatA1C
+
+```ts
+formatA1C(val: number): string
+```
+
+Formats a clinical A1C value as a percent string (e.g., "7.2%").
+Used for clinical reporting and display.
+
+| Parameter | Description |
+| --- | --- |
+| `val` | A1C value (percentage) |
+
+**Returns** — A1C as string with percent sign
+
+
+---
+
+### getA1CCategory
+
+```ts
+getA1CCategory(a1c: number, thresholds?: { … }): "normal" | "prediabetes" | "diabetes" | "invalid"
+```
+
+Returns the clinical category for an A1C value (normal, prediabetes, diabetes, or invalid).
+Uses ADA thresholds by default, but allows custom cutoffs for research or population-specific use.
+
+| Parameter | Description |
+| --- | --- |
+| `a1c` | A1C value (percentage) |
+| `thresholds` | Optional custom thresholds: &#123; normalMax?: number; prediabetesMax?: number &#125; |
+
+**Returns** — 'normal' | 'prediabetes' | 'diabetes' | 'invalid'
+
+
+---
+
+### isA1CInTarget
+
+```ts
+isA1CInTarget(a1c: number, target?: [number, number], thresholds?: { … }): boolean
+```
+
+Checks if an A1C value is within a target range.
+
+| Parameter | Description |
+| --- | --- |
+| `a1c` | A1C value |
+| `target` | [min, max] range (default: [6.5, 7.0]) |
+| `thresholds` | Optional custom thresholds: &#123; min?: number; max?: number &#125; |
+
+**Returns** — True if in target range
+
+
+---
+
+### isValidA1C
+
+```ts
+isValidA1C(value: unknown): boolean
+```
+
+Validates a clinical A1C value (percentage).
+Ensures value is within physiologically plausible range for clinical analytics.
+
+| Parameter | Description |
+| --- | --- |
+| `value` | Candidate A1C value |
+
+**Returns** — True if value is a valid A1C percentage
+
+
+---
+
+### mgDlToMmolL
+
+```ts
+mgDlToMmolL(val: number): number
+```
+
+Converts clinical glucose value from mg/dL to mmol/L.
+Used for international interoperability and reporting.
+
+| Parameter | Description |
+| --- | --- |
+| `val` | Glucose value in mg/dL |
+
+**Returns** — Value in mmol/L
+
+**Throws** — If val is not a finite number or is negative/zero
+
+```typescript
+const result = mgDlToMmolL(180)
+console.log(result) // 10.0
+```
+
+See: https://www.diabetes.co.uk/diabetes_care/blood-sugar-conversion.html
+
+
+---
+
+### mmolLToMgDl
+
+```ts
+mmolLToMgDl(val: number): number
+```
+
+Converts clinical glucose value from mmol/L to mg/dL.
+Used for international interoperability and reporting.
+
+| Parameter | Description |
+| --- | --- |
+| `val` | Glucose value in mmol/L |
+
+**Returns** — Value in mg/dL
+
+**Throws** — If val is not a finite number or is negative/zero
+
+```typescript
+const result = mmolLToMgDl(5.5)
+console.log(result) // 99
+```
+
+See: https://www.diabetes.co.uk/diabetes_care/blood-sugar-conversion.html

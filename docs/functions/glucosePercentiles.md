@@ -8,7 +8,7 @@
 
 > **glucosePercentiles**(`readings`, `percentiles`): `Record`\<`number`, `number`\>
 
-Defined in: [variability.ts:73](https://github.com/marklearst/diabetic-utils/blob/0d03b5cd2e2b5edbf58275075cc81d8df31ac230/src/variability.ts#L73)
+Defined in: [variability.ts:73](https://github.com/marklearst/glucoseiq/blob/0d03b5cd2e2b5edbf58275075cc81d8df31ac230/src/variability.ts#L73)
 
 Calculates specified percentiles from an array of glucose values using the nearest-rank method.
 Used for clinical analytics and glucose variability assessment.

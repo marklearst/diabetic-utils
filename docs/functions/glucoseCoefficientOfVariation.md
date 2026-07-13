@@ -8,7 +8,7 @@
 
 > **glucoseCoefficientOfVariation**(`readings`): `number`
 
-Defined in: [variability.ts:48](https://github.com/marklearst/diabetic-utils/blob/0d03b5cd2e2b5edbf58275075cc81d8df31ac230/src/variability.ts#L48)
+Defined in: [variability.ts:48](https://github.com/marklearst/glucoseiq/blob/0d03b5cd2e2b5edbf58275075cc81d8df31ac230/src/variability.ts#L48)
 
 Calculates the coefficient of variation (CV) for glucose values.
 CV = (SD / mean) × 100. Used to assess glycemic variability.

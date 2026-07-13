@@ -1,0 +1,83 @@
+---
+title: Live Model
+description: Rate-of-change, trend derivation, and sensor staleness.
+---
+
+<Callout title="4 functions">Generated from the source TSDoc — every signature, parameter, and example is the real thing.</Callout>
+
+### classifyGlucoseTrend
+
+```ts
+classifyGlucoseTrend(rocPerMin: number): CGMTrend
+```
+
+Classifies a rate-of-change (mg/dL per minute) into a CGM trend using
+Dexcom-style thresholds: &lt;1 flat, 1–2 slight, 2–3 single, ≥3 rapid.
+
+| Parameter | Description |
+| --- | --- |
+| `rocPerMin` | Rate of change in mg/dL per minute |
+
+**Returns** — The corresponding CGMTrend
+
+
+---
+
+### computeGlucoseTrend
+
+```ts
+computeGlucoseTrend(readings: GlucoseReading[], options?: GlucoseTrendOptions): GlucoseTrendResult
+```
+
+Computes glucose rate-of-change and derives a trend from recent readings.
+
+Fits a least-squares slope over readings in the trailing window, normalizing
+mixed units to mg/dL. Useful for feeding a live trend arrow, and for
+back-filling a trend when a feed (e.g. Nightscout) does not provide one.
+
+| Parameter | Description |
+| --- | --- |
+| `readings` | Glucose readings with ISO 8601 timestamps |
+| `options` | Trailing window configuration |
+
+**Returns** — Rate-of-change (mg/dL/min) and derived trend
+
+```ts
+const { rocPerMin, trend } = computeGlucoseTrend(readings)
+// rocPerMin: 2.1, trend: 'rising'
+```
+
+
+---
+
+### latestReading
+
+```ts
+latestReading(readings: GlucoseReading[]): null | GlucoseReading
+```
+
+Returns the most recent reading by timestamp (readings need not be sorted).
+
+| Parameter | Description |
+| --- | --- |
+| `readings` | Glucose readings |
+
+**Returns** — The latest reading, or `null` if none have a valid timestamp
+
+
+---
+
+### minutesSinceLastReading
+
+```ts
+minutesSinceLastReading(readings: GlucoseReading[], now?: string | number | Date): null | number
+```
+
+Returns minutes elapsed since the most recent reading (sensor staleness).
+
+| Parameter | Description |
+| --- | --- |
+| `readings` | Glucose readings |
+| `now` | Reference time (ISO string, epoch ms, or Date); defaults to the current time |
+
+**Returns** — Minutes since the latest reading, or `null` if there are none

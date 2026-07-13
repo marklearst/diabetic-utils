@@ -8,7 +8,7 @@
 
 > **a1cDelta**(`current`, `previous`): `number`
 
-Defined in: [a1c.ts:77](https://github.com/marklearst/diabetic-utils/blob/0d03b5cd2e2b5edbf58275075cc81d8df31ac230/src/a1c.ts#L77)
+Defined in: [a1c.ts:77](https://github.com/marklearst/glucoseiq/blob/0d03b5cd2e2b5edbf58275075cc81d8df31ac230/src/a1c.ts#L77)
 
 Calculates the change (delta) between two A1C values.
 

@@ -1,0 +1,45 @@
+---
+title: AGP & Rendering
+description: The Ambulatory Glucose Profile series and the zero-dependency SVG renderers.
+---
+
+## The AGP series
+
+`buildAGPProfile` pools readings by minute-of-day (time-zone aware) across all
+days and reduces each bin to percentile bands — the exact data behind the AGP
+chart clinicians read:
+
+```ts
+import { buildAGPProfile } from '@glucoseiq/core'
+
+const profile = buildAGPProfile(readings, {
+  timeZone: 'America/New_York', // local clock, DST-correct
+  binMinutes: 5,                // 288 bins/day
+  percentiles: [5, 25, 50, 75, 95],
+})
+
+profile.bins[96]
+// { minuteOfDay: 480, percentiles: { 5: 92, 25: 104, 50: 118, 75: 134, 95: 161 }, n: 14 }
+```
+
+Draw it with any chart library as two shaded areas (5–95, 25–75) plus a median
+line — or don't draw it yourself at all:
+
+## AGP-in-a-tag
+
+```ts
+import { agpChartToSVG } from '@glucoseiq/core'
+
+const svg = agpChartToSVG(readings, { theme: 'dark', title: 'Last 14 days' })
+// A complete, self-contained <svg> string — no DOM, no canvas, no framework.
+```
+
+It renders anywhere a string does: `innerHTML`, email, PDF, a GitHub README,
+React Server Components. Companions: `tirBarToSVG` (the five-zone stacked bar)
+and `trendTileToSVG` (the glanceable current-value tile).
+
+## Reproducibility
+
+Nearest-rank percentiles are the default — matching `glucosePercentiles` and
+keeping cited results reproducible. Interpolated (type-7) percentiles are an
+explicit opt-in via `method: 'linear'`.

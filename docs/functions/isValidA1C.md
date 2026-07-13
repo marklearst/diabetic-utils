@@ -8,7 +8,7 @@
 
 > **isValidA1C**(`value`): `boolean`
 
-Defined in: [a1c.ts:19](https://github.com/marklearst/diabetic-utils/blob/0d03b5cd2e2b5edbf58275075cc81d8df31ac230/src/a1c.ts#L19)
+Defined in: [a1c.ts:19](https://github.com/marklearst/glucoseiq/blob/0d03b5cd2e2b5edbf58275075cc81d8df31ac230/src/a1c.ts#L19)
 
 Validates a clinical A1C value (percentage).
 Ensures value is within physiologically plausible range for clinical analytics.

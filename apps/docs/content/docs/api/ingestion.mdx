@@ -1,0 +1,30 @@
+---
+title: Ingestion
+description: Parse any Dexcom/Libre/Nightscout/Tidepool CSV export.
+---
+
+<Callout title="1 function">Generated from the source TSDoc — every signature, parameter, and example is the real thing.</Callout>
+
+### parseGlucoseCSV
+
+```ts
+parseGlucoseCSV(text: string, options: CSVParseOptions): GlucoseReading[]
+```
+
+Parses CSV text into glucose readings.
+
+| Parameter | Description |
+| --- | --- |
+| `text` | The CSV document |
+| `options` | Column names, unit, and delimiter |
+
+**Returns** — Parsed readings (rows with an unparseable value or timestamp are skipped)
+
+**Throws** — If a named column is not present in the header
+
+```ts
+const readings = parseGlucoseCSV(csv, {
+  timestampColumn: 'Timestamp (YYYY-MM-DDThh:mm:ss)',
+  valueColumn: 'Glucose Value (mg/dL)',
+})
+```

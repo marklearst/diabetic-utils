@@ -1,0 +1,233 @@
+---
+title: Build a Live Glucose Surface
+description: Combine current readings, derived trend, and sensor staleness without coupling your interface to a CGM vendor.
+---
+
+import { Callout } from 'fumadocs-ui/components/callout'
+
+A live glucose experience has two separate jobs:
+
+1. Your data layer receives new CGM readings through polling, a subscription,
+   or a server-side connector.
+2. GlucoseIQ turns recent normalized readings into a current-reading view model.
+
+Keeping those jobs separate lets the same interface work with Dexcom, Libre,
+Nightscout, a simulator, or a future source.
+
+<Callout type="warn" title="Descriptive, not predictive">
+  The live model describes readings already received. It does not forecast
+  glucose, trigger alarms, replace the source device, or provide medical
+  advice.
+</Callout>
+
+## The live view model
+
+Four functions in `@glucoseiq/core` cover the essential workflow:
+
+| Function | Use it for |
+| --- | --- |
+| `latestReading` | Find the newest valid timestamp without pre-sorting input |
+| `computeGlucoseTrend` | Fit rate-of-change over a trailing window and classify the trend |
+| `minutesSinceLastReading` | Measure sensor staleness against now or a supplied clock |
+| `classifyGlucoseTrend` | Classify an existing mg/dL-per-minute rate |
+
+For React, `useGlucoseLive` combines the first three into one view model.
+
+## 1. Keep a rolling history
+
+Trend derivation needs at least two valid readings inside its trailing window.
+Keep a small immutable history rather than replacing the array with only the
+newest value.
+
+```ts title="merge-readings.ts"
+import type { GlucoseReading } from '@glucoseiq/core'
+
+export function mergeReadings(
+  current: GlucoseReading[],
+  incoming: GlucoseReading[],
+  limit = 48,
+): GlucoseReading[] {
+  const byTimestamp = new Map(
+    current.map((reading) => [reading.timestamp, reading]),
+  )
+
+  for (const reading of incoming) {
+    byTimestamp.set(reading.timestamp, reading)
+  }
+
+  return [...byTimestamp.values()]
+    .sort((a, b) => Date.parse(a.timestamp) - Date.parse(b.timestamp))
+    .slice(-limit)
+}
+```
+
+At a five-minute sensor cadence, 48 readings retain roughly four hours. The
+default trend fit uses only the trailing 15 minutes.
+
+## 2. Feed it from your data layer
+
+The transport is intentionally yours. This polling hook shows the boundary:
+the endpoint returns normalized readings, and the client maintains a rolling
+window.
+
+```tsx title="use-reading-feed.ts"
+'use client'
+
+import { useEffect, useState } from 'react'
+import type { GlucoseReading } from '@glucoseiq/core'
+import { mergeReadings } from './merge-readings'
+
+export function useReadingFeed() {
+  const [readings, setReadings] = useState<GlucoseReading[]>([])
+  const [error, setError] = useState<Error | null>(null)
+
+  useEffect(() => {
+    const controller = new AbortController()
+
+    async function refresh() {
+      try {
+        const response = await fetch('/api/glucose/current', {
+          cache: 'no-store',
+          signal: controller.signal,
+        })
+
+        if (!response.ok) {
+          throw new Error(`Glucose feed returned ${response.status}`)
+        }
+
+        const incoming = (await response.json()) as GlucoseReading[]
+        setReadings((current) => mergeReadings(current, incoming))
+        setError(null)
+      } catch (cause) {
+        if (!controller.signal.aborted) {
+          setError(cause instanceof Error ? cause : new Error('Feed failed'))
+        }
+      }
+    }
+
+    void refresh()
+    const interval = window.setInterval(() => void refresh(), 60_000)
+
+    return () => {
+      controller.abort()
+      window.clearInterval(interval)
+    }
+  }, [])
+
+  return { readings, error }
+}
+```
+
+Validate the response in the API route before it reaches this hook. For a
+push-based feed, call the same `mergeReadings` helper when a WebSocket or event
+subscription delivers a new batch.
+
+## 3. Render current glucose, trend, and freshness
+
+```tsx title="CurrentGlucose.tsx"
+'use client'
+
+import type { CGMTrend, GlucoseReading } from '@glucoseiq/core'
+import { useGlucoseLive } from '@glucoseiq/react'
+
+const liveOptions = {
+  windowMin: 15,
+  refreshMs: 30_000,
+} as const
+
+const arrows: Record<CGMTrend, string> = {
+  rapidRising: '⇈',
+  rising: '↑',
+  slightlyRising: '↗',
+  flat: '→',
+  slightlyFalling: '↘',
+  falling: '↓',
+  rapidFalling: '⇊',
+  unknown: '·',
+}
+
+interface CurrentGlucoseProps {
+  readings: GlucoseReading[]
+}
+
+export function CurrentGlucose({ readings }: CurrentGlucoseProps) {
+  const live = useGlucoseLive(readings, liveOptions)
+
+  if (!live.latest || live.minutesSince === null) {
+    return <p>No current glucose reading is available.</p>
+  }
+
+  const age = Math.max(0, Math.round(live.minutesSince))
+  const isStale = age > 10
+  const rate = Number.isFinite(live.trend.rocPerMin)
+    ? `${live.trend.rocPerMin.toFixed(1)} mg/dL/min`
+    : 'Rate unavailable'
+
+  return (
+    <section aria-label="Current glucose" aria-live="polite">
+      <p>{isStale ? 'Sensor data may be stale' : 'Current glucose'}</p>
+      <strong>
+        {live.latest.value} {live.latest.unit} {arrows[live.trend.trend]}
+      </strong>
+      <p>{rate}</p>
+      <time dateTime={live.latest.timestamp}>{age} min ago</time>
+    </section>
+  )
+}
+```
+
+Then connect the feed to the surface:
+
+```tsx
+export function LiveGlucose() {
+  const { readings, error } = useReadingFeed()
+
+  return (
+    <>
+      {error && <p role="status">The feed could not be refreshed.</p>}
+      <CurrentGlucose readings={readings} />
+    </>
+  )
+}
+```
+
+<Callout type="info" title="What refreshMs actually does">
+  `refreshMs` updates the staleness clock so “minutes ago” continues to tick
+  while the sensor is quiet. It does not fetch data. New readings must still
+  arrive through your polling, subscription, or server-data layer.
+</Callout>
+
+## Use the core without React
+
+The same model works in a server, worker, native bridge, or another UI
+framework:
+
+```ts
+import {
+  computeGlucoseTrend,
+  latestReading,
+  minutesSinceLastReading,
+} from '@glucoseiq/core'
+
+const current = {
+  latest: latestReading(readings),
+  trend: computeGlucoseTrend(readings, { windowMin: 15 }),
+  minutesSince: minutesSinceLastReading(readings, new Date()),
+}
+```
+
+Pass a fixed `now` value in tests to make staleness deterministic.
+
+## Failure states to design deliberately
+
+| State | Suggested behavior |
+| --- | --- |
+| No valid timestamp | Show “No reading” instead of a zero value |
+| Fewer than two recent readings | Show the value with an unknown trend |
+| Reading older than your product threshold | Keep the last value visible and label it stale |
+| Feed request fails | Preserve the last reading and show connection status separately |
+| New reading arrives | Replace or merge by your stable source identifier, then cap history |
+
+Staleness is product policy, not a hard-coded GlucoseIQ rule. Choose the
+threshold that fits the source cadence and the claims your product is allowed
+to make.

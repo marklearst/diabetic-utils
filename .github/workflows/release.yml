@@ -1,0 +1,124 @@
+name: Release
+
+# Changesets-based publishing. On a push to main this opens or updates the
+# release PR; merging that PR publishes to npm with provenance.
+
+on:
+  push:
+    branches: [main]
+
+permissions:
+  actions: write
+  contents: write
+  pull-requests: write
+  id-token: write # npm provenance
+
+concurrency:
+  group: release-${{ github.ref }}
+  cancel-in-progress: false
+
+jobs:
+  release:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@93cb6efe18208431cddfb8368fd83d5badbf9bfd # v5
+        with:
+          fetch-depth: 0
+
+      - name: Prepare Changesets base branch
+        run: |
+          git show-ref --verify --quiet refs/heads/main ||
+            git branch --track main origin/main
+
+      - name: Install pnpm
+        uses: pnpm/action-setup@b906affcce14559ad1aafd4ab0e942779e9f58b1 # v4
+        with:
+          version: 11.12.0
+
+      - name: Setup Node
+        uses: actions/setup-node@48b55a011bda9f5d6aeb4c2d9c7362e8dae4041e # v6
+        with:
+          node-version: 24
+          cache: pnpm
+          registry-url: https://registry.npmjs.org
+
+      - name: Pin npm
+        run: npm install --global npm@11.17.0
+
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile
+
+      - name: Build
+        run: pnpm build
+
+      - name: Validate launch changeset
+        run: pnpm test:launch
+
+      - name: Test with coverage (100% enforced)
+        run: pnpm test:coverage
+
+      - name: Bundle-size guard (core stays lean)
+        run: |
+          SIZE=$(gzip -c packages/core/dist/index.mjs | wc -c)
+          echo "core ESM gzipped: ${SIZE} bytes (budget 20000)"
+          if [ "$SIZE" -gt 20000 ]; then
+            echo "::error::@glucoseiq/core exceeds the 20KB gzipped budget (${SIZE} bytes)"
+            exit 1
+          fi
+
+      - name: Test packed packages
+        run: pnpm test:packages
+
+      - name: Build documentation
+        run: pnpm --filter docs build
+
+      - name: Create Release PR or publish to npm
+        id: changesets
+        uses: changesets/action@a45c4d594aa4e2c509dc14a9f2b3b67ba3780d0d # v1.9.0
+        with:
+          publish: pnpm changeset publish
+          version: pnpm changeset version
+          commit: 'chore(release): version packages'
+          title: 'chore(release): version packages'
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          NPM_TOKEN: ${{ secrets.NPM_TOKEN }}
+          NPM_CONFIG_PROVENANCE: true
+
+      - name: Preserve legacy npm release
+        if: always() && steps.changesets.outcome != 'skipped'
+        env:
+          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
+        run: |
+          SHIM_VERSION=$(node -p "require('./packages/diabetic-utils/package.json').version")
+
+          if [ "$SHIM_VERSION" != "2.0.0" ] || [ -z "${NODE_AUTH_TOKEN:-}" ]; then
+            exit 0
+          fi
+
+          npm dist-tag add diabetic-utils@1.5.0 legacy \
+            --registry=https://registry.npmjs.org
+
+          for _ in 1 2 3 4 5 6; do
+            LEGACY_VERSION=$(npm view diabetic-utils dist-tags.legacy \
+              --registry=https://registry.npmjs.org 2>/dev/null || true)
+
+            if [ "$LEGACY_VERSION" = "1.5.0" ]; then
+              exit 0
+            fi
+
+            sleep 5
+          done
+
+          echo "::error::The legacy npm tag does not resolve to diabetic-utils@1.5.0"
+          exit 1
+
+      - name: Run CI for release PR
+        if: steps.changesets.outputs.hasChangesets == 'true' && steps.changesets.outputs.pullRequestNumber != ''
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          PR_NUMBER: ${{ steps.changesets.outputs.pullRequestNumber }}
+        run: |
+          HEAD_REF=$(gh pr view "$PR_NUMBER" --json headRefName --jq .headRefName)
+          gh workflow run ci.yml --ref "$HEAD_REF"

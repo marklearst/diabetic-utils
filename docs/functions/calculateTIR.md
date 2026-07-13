@@ -8,7 +8,7 @@
 
 > **calculateTIR**(`readings`, `target`): [`TIRResult`](../interfaces/TIRResult.md)
 
-Defined in: [tir.ts:13](https://github.com/marklearst/diabetic-utils/blob/0d03b5cd2e2b5edbf58275075cc81d8df31ac230/src/tir.ts#L13)
+Defined in: [tir.ts:13](https://github.com/marklearst/glucoseiq/blob/0d03b5cd2e2b5edbf58275075cc81d8df31ac230/src/tir.ts#L13)
 
 Calculates clinical Time in Range (TIR) metrics for glucose readings.
 Returns the percentage of readings in, below, and above the specified clinical target range.

@@ -1,0 +1,25 @@
+---
+title: Glucose IQ Score
+description: A single 0–100 wellness score derived from the peer-reviewed GRI.
+---
+
+<Callout title="1 function">Generated from the source TSDoc — every signature, parameter, and example is the real thing.</Callout>
+
+### glucoseIQScore
+
+```ts
+glucoseIQScore(readings: GlucoseReading[], options?: GlucoseIQOptions): GlucoseIQScore
+```
+
+Computes the Glucose IQ score (100 − GRI) from glucose readings.
+
+| Parameter | Description |
+| --- | --- |
+| `readings` | Glucose readings with ISO 8601 timestamps |
+| `options` | Unit for validation |
+
+**Returns** — Score, underlying GRI, zone, and a qualitative rating
+
+```ts
+glucoseIQScore(readings).score // 82  → 'good'
+```

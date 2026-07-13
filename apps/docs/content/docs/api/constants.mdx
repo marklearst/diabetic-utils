@@ -1,0 +1,509 @@
+---
+title: Constants
+description: Exported thresholds, goals, conversion factors, colors, and connector capabilities.
+---
+
+<Callout title="44 exports">Generated from the public source TSDoc and TypeScript declarations.</Callout>
+
+### A1C_TO_EAG_CONSTANT
+
+```ts
+const A1C_TO_EAG_CONSTANT: 46.7
+```
+
+Constant for converting A1C to estimated average glucose (eAG).
+Used in eAG calculation per CDC/ADA guidelines.
+
+
+---
+
+### A1C_TO_EAG_MULTIPLIER
+
+```ts
+const A1C_TO_EAG_MULTIPLIER: 28.7
+```
+
+Multiplier for converting A1C to estimated average glucose (eAG).
+Used in eAG calculation per CDC/ADA guidelines.
+
+
+---
+
+### AllowedGlucoseUnits
+
+```ts
+const AllowedGlucoseUnits: GlucoseUnit[]
+```
+
+List of allowed clinical glucose units.
+Used for input validation and unit conversion.
+
+
+---
+
+### DEXCOM_CAPABILITIES
+
+```ts
+const DEXCOM_CAPABILITIES: ConnectorCapabilities
+```
+
+Dexcom Share / G7-G8 feeds.
+
+
+---
+
+### GLUCOSE_COLOR_ELEVATED
+
+```ts
+const GLUCOSE_COLOR_ELEVATED: "#FBC02D"
+```
+
+
+---
+
+### GLUCOSE_COLOR_HIGH
+
+```ts
+const GLUCOSE_COLOR_HIGH: "#F57C00"
+```
+
+
+---
+
+### GLUCOSE_COLOR_LOW
+
+```ts
+const GLUCOSE_COLOR_LOW: "#D32F2F"
+```
+
+Color codes for glucose zones.
+
+
+---
+
+### GLUCOSE_COLOR_NORMAL
+
+```ts
+const GLUCOSE_COLOR_NORMAL: "#388E3C"
+```
+
+
+---
+
+### GLUCOSE_COLOR_NORMAL_DOWN
+
+```ts
+const GLUCOSE_COLOR_NORMAL_DOWN: "#2E7D32"
+```
+
+
+---
+
+### GLUCOSE_COLOR_NORMAL_UP
+
+```ts
+const GLUCOSE_COLOR_NORMAL_UP: "#4CAF50"
+```
+
+
+---
+
+### GLUCOSE_ZONE_COLORS
+
+```ts
+const GLUCOSE_ZONE_COLORS: { … }
+```
+
+Glucose zone color mapping for different statuses and trends.
+
+
+---
+
+### GMI_COEFFICIENTS
+
+```ts
+const GMI_COEFFICIENTS: { … }
+```
+
+GMI (Glucose Management Indicator) calculation coefficients.
+Used for estimating GMI from average glucose values.
+
+
+---
+
+### HOMA_IR_CUTOFFS
+
+```ts
+const HOMA_IR_CUTOFFS: { … }
+```
+
+Interpretation cutoffs for HOMA-IR (insulin resistance assessment).
+These are general categories, not diagnostic.
+
+
+---
+
+### HOMA_IR_DENOMINATOR
+
+```ts
+const HOMA_IR_DENOMINATOR: 405
+```
+
+Denominator constant for HOMA-IR calculation.
+HOMA-IR = (glucose [mg/dL] × insulin [µIU/mL]) / HOMA_IR_DENOMINATOR
+
+
+---
+
+### HYPER_THRESHOLD_MGDL
+
+```ts
+const HYPER_THRESHOLD_MGDL: 180
+```
+
+Hyperglycemia threshold (mg/dL).
+Used for detecting high glucose events.
+
+
+---
+
+### HYPER_THRESHOLD_MMOLL
+
+```ts
+const HYPER_THRESHOLD_MMOLL: 10
+```
+
+Hyperglycemia threshold (mmol/L).
+Used for high glucose detection in international/metric contexts.
+
+
+---
+
+### HYPO_THRESHOLD_MGDL
+
+```ts
+const HYPO_THRESHOLD_MGDL: 70
+```
+
+Hypoglycemia threshold (mg/dL).
+Used for detecting low glucose events.
+
+
+---
+
+### HYPO_THRESHOLD_MMOLL
+
+```ts
+const HYPO_THRESHOLD_MMOLL: 3.9
+```
+
+Hypoglycemia threshold (mmol/L).
+Used for low glucose detection in international/metric contexts.
+
+
+---
+
+### LIBRE_CAPABILITIES
+
+```ts
+const LIBRE_CAPABILITIES: ConnectorCapabilities
+```
+
+Libre LinkUp feeds.
+
+
+---
+
+### MG_DL
+
+```ts
+const MG_DL: "mg/dL"
+```
+
+String literal for mg/dL glucose unit.
+Used for data interoperability and formatting.
+
+
+---
+
+### MGDL_MMOLL_CONVERSION
+
+```ts
+const MGDL_MMOLL_CONVERSION: 18.0182
+```
+
+Conversion factor between mg/dL and mmol/L.
+Used for unit conversion.
+
+
+---
+
+### MMOL_L
+
+```ts
+const MMOL_L: "mmol/L"
+```
+
+String literal for mmol/L unit.
+
+
+---
+
+### NIGHTSCOUT_CAPABILITIES
+
+```ts
+const NIGHTSCOUT_CAPABILITIES: ConnectorCapabilities
+```
+
+Nightscout community relays.
+
+
+---
+
+### PREGNANCY_TARGET_HIGH_MGDL
+
+```ts
+const PREGNANCY_TARGET_HIGH_MGDL: 140
+```
+
+Upper bound of target glucose range during pregnancy (mg/dL).
+Applies to Type 1, Type 2, and gestational diabetes.
+
+
+---
+
+### PREGNANCY_TARGET_HIGH_MMOLL
+
+```ts
+const PREGNANCY_TARGET_HIGH_MMOLL: 7.8
+```
+
+Upper bound of target glucose range during pregnancy (mmol/L).
+Applies to Type 1, Type 2, and gestational diabetes.
+
+
+---
+
+### PREGNANCY_TARGET_LOW_MGDL
+
+```ts
+const PREGNANCY_TARGET_LOW_MGDL: 63
+```
+
+Lower bound of target glucose range during pregnancy (mg/dL).
+Applies to Type 1, Type 2, and gestational diabetes.
+
+
+---
+
+### PREGNANCY_TARGET_LOW_MMOLL
+
+```ts
+const PREGNANCY_TARGET_LOW_MMOLL: 3.5
+```
+
+Lower bound of target glucose range during pregnancy (mmol/L).
+Applies to Type 1, Type 2, and gestational diabetes.
+
+
+---
+
+### TAR_LEVEL1_GOAL
+
+```ts
+const TAR_LEVEL1_GOAL: 25
+```
+
+Maximum acceptable percentage for Level 1 hyperglycemia (181-250 mg/dL).
+Clinical goal: &lt;25% of readings in this range.
+
+
+---
+
+### TAR_LEVEL2_GOAL
+
+```ts
+const TAR_LEVEL2_GOAL: 5
+```
+
+Maximum acceptable percentage for Level 2 hyperglycemia (>250 mg/dL).
+Clinical goal: &lt;5% of readings in this range.
+
+
+---
+
+### TBR_LEVEL1_GOAL
+
+```ts
+const TBR_LEVEL1_GOAL: 4
+```
+
+Maximum acceptable percentage for Level 1 hypoglycemia (54-69 mg/dL).
+Clinical goal: &lt;4% of readings in this range.
+
+
+---
+
+### TBR_LEVEL1_GOAL_OLDER_ADULTS
+
+```ts
+const TBR_LEVEL1_GOAL_OLDER_ADULTS: 1
+```
+
+Maximum acceptable percentage for Level 1 hypoglycemia for older/high-risk adults.
+More stringent goal: &lt;1% of readings in this range.
+
+
+---
+
+### TBR_LEVEL2_GOAL
+
+```ts
+const TBR_LEVEL2_GOAL: 1
+```
+
+Maximum acceptable percentage for Level 2 hypoglycemia (&lt;54 mg/dL).
+Clinical goal: &lt;1% of readings in this range.
+
+
+---
+
+### TBR_LEVEL2_GOAL_OLDER_ADULTS
+
+```ts
+const TBR_LEVEL2_GOAL_OLDER_ADULTS: 0.5
+```
+
+Maximum acceptable percentage for Level 2 hypoglycemia for older/high-risk adults.
+More stringent goal: &lt;0.5% of readings in this range.
+
+
+---
+
+### TIR_GOAL_OLDER_ADULTS
+
+```ts
+const TIR_GOAL_OLDER_ADULTS: 50
+```
+
+Target percentage for time-in-range for older/high-risk adults.
+More lenient goal: ≥50% of readings in target range.
+
+
+---
+
+### TIR_GOAL_STANDARD
+
+```ts
+const TIR_GOAL_STANDARD: 70
+```
+
+Target percentage for time-in-range (70-180 mg/dL).
+Clinical goal: ≥70% of readings in target range.
+
+
+---
+
+### TIR_HIGH_THRESHOLD_MGDL
+
+```ts
+const TIR_HIGH_THRESHOLD_MGDL: 180
+```
+
+Level 1 hyperglycemia threshold (mg/dL).
+Target range ends at this value.
+
+
+---
+
+### TIR_HIGH_THRESHOLD_MMOLL
+
+```ts
+const TIR_HIGH_THRESHOLD_MMOLL: 10
+```
+
+Level 1 hyperglycemia threshold (mmol/L).
+Target range ends at this value.
+
+
+---
+
+### TIR_LOW_THRESHOLD_MGDL
+
+```ts
+const TIR_LOW_THRESHOLD_MGDL: 70
+```
+
+Level 1 hypoglycemia threshold (mg/dL).
+Target range begins at this value.
+
+
+---
+
+### TIR_LOW_THRESHOLD_MMOLL
+
+```ts
+const TIR_LOW_THRESHOLD_MMOLL: 3.9
+```
+
+Level 1 hypoglycemia threshold (mmol/L).
+Target range begins at this value.
+
+
+---
+
+### TIR_VERY_HIGH_THRESHOLD_MGDL
+
+```ts
+const TIR_VERY_HIGH_THRESHOLD_MGDL: 250
+```
+
+Level 2 hyperglycemia threshold (mg/dL).
+Readings above this value indicate significant hyperglycemia.
+
+
+---
+
+### TIR_VERY_HIGH_THRESHOLD_MMOLL
+
+```ts
+const TIR_VERY_HIGH_THRESHOLD_MMOLL: 13.9
+```
+
+Level 2 hyperglycemia threshold (mmol/L).
+Readings above this value indicate significant hyperglycemia.
+
+
+---
+
+### TIR_VERY_LOW_THRESHOLD_MGDL
+
+```ts
+const TIR_VERY_LOW_THRESHOLD_MGDL: 54
+```
+
+Level 2 hypoglycemia threshold (mg/dL).
+Readings below this value indicate significant hypoglycemia.
+
+
+---
+
+### TIR_VERY_LOW_THRESHOLD_MMOLL
+
+```ts
+const TIR_VERY_LOW_THRESHOLD_MMOLL: 3
+```
+
+Level 2 hypoglycemia threshold (mmol/L).
+Readings below this value indicate significant hypoglycemia.
+
+
+---
+
+### TREND_ARROWS
+
+```ts
+const TREND_ARROWS: { … }
+```
+
+Unicode arrows for glucose trend indication.

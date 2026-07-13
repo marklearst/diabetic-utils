@@ -8,7 +8,7 @@
 
 > **formatDate**(`iso`, `timeZone?`): `string`
 
-Defined in: [formatters.ts:44](https://github.com/marklearst/diabetic-utils/blob/0d03b5cd2e2b5edbf58275075cc81d8df31ac230/src/formatters.ts#L44)
+Defined in: [formatters.ts:44](https://github.com/marklearst/glucoseiq/blob/0d03b5cd2e2b5edbf58275075cc81d8df31ac230/src/formatters.ts#L44)
 
 Formats a UTC ISO 8601 timestamp to a local-readable date/time string.
 Used for clinical charting, logs, and reports. Supports optional IANA time zone.

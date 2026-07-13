@@ -1,0 +1,46 @@
+---
+title: CLI
+description: Zero-code CGM analysis with npx @glucoseiq/cli.
+---
+
+Point the CLI at any CGM CSV export — Dexcom Clarity, LibreView, Nightscout,
+Tidepool — and get a clinician-grade report with no code:
+
+```bash
+npx @glucoseiq/cli report data.csv
+```
+
+```
+GlucoseIQ report
+────────────────────────────────
+Readings        4032 over 14 days
+Glucose IQ      84 (good, zone A)
+Mean / GMI      126 mg/dL · GMI 6.3%
+Variability     SD 32.4 · CV 25.7%
+Time in range   82.4% (70-180) · tight 61.2% (70-140)
+Below range     2.1% low · 0.4% very low
+Above range     13.8% high · 1.3% very high
+Episodes        3 hypo · 11 hyper
+────────────────────────────────
+Informational only — not medical advice.
+```
+
+## Options
+
+```bash
+npx @glucoseiq/cli report clarity.csv \
+  --timestamp-col "Timestamp (YYYY-MM-DDThh:mm:ss)" \
+  --value-col "Glucose Value (mg/dL)" \
+  --timezone America/New_York \
+  --agp-svg agp.svg \
+  --json
+```
+
+| Flag | Meaning |
+| --- | --- |
+| `--timestamp-col`, `--value-col` | CSV column names |
+| `--unit` | `mg/dL` (default) or `mmol/L` |
+| `--delimiter` | Field delimiter (default `,`) |
+| `--timezone` | IANA zone for the AGP profile |
+| `--json` | Full report as JSON |
+| `--agp-svg <file>` | Also write the AGP chart as a self-contained SVG |

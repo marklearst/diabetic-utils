@@ -1,6 +1,7 @@
 packages:
-  - docs-site
-  - '*'
+  - 'packages/*'
+  - 'apps/*'
 
-onlyBuiltDependencies:
-  - esbuild
+allowBuilds:
+  esbuild: true
+  sharp: true

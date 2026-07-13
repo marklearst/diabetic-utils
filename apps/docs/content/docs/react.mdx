@@ -1,0 +1,161 @@
+---
+title: React Adapter
+description: Memoized analytics hooks and ready-made SVG components from @glucoseiq/react.
+---
+
+import { Callout } from 'fumadocs-ui/components/callout'
+
+`@glucoseiq/react` is a thin adapter over the pure engine. Use the hooks when
+you want typed data for your own interface, or the SVG components when you want
+the shortest path to a complete chart.
+
+```bash
+npm install @glucoseiq/react @glucoseiq/core
+```
+
+React 18 or newer is the only peer dependency.
+
+## Choose the smallest API that fits
+
+| API | Returns | Best for |
+| --- | --- | --- |
+| `useGlucoseAnalysis` | Complete `AnalyzeGlucoseResult` | Dashboard summaries and retrospective reports |
+| `useAGPProfile` | Percentile bins across a 24-hour clock | Custom AGP charts in D3, Visx, Canvas, or another renderer |
+| `useGlucoseIQScore` | Score, rating, and zone | A compact wellness summary |
+| `useMealResponse` | Baseline, peak, delta, timing, and iAUC | Post-meal detail views |
+| `useGlucoseLive` | Latest reading, derived trend, and staleness | Current-glucose surfaces |
+| `AgpChart`, `TirBar`, `TrendTile` | Inline SVG inside a wrapper element | Ready-made, dependency-free visuals |
+
+All hooks accept the same `GlucoseReading[]` contract as `@glucoseiq/core`.
+
+## Build a report-driven component
+
+```tsx
+'use client'
+
+import type { AnalyzeGlucoseOptions, GlucoseReading } from '@glucoseiq/core'
+import { useGlucoseAnalysis } from '@glucoseiq/react'
+
+const options: AnalyzeGlucoseOptions = {
+  timeZone: 'America/Detroit',
+}
+
+export function Summary({ readings }: { readings: GlucoseReading[] }) {
+  const report = useGlucoseAnalysis(readings, options)
+
+  if (!report.valid || !report.timeInRange) {
+    return <p>No valid glucose readings are available.</p>
+  }
+
+  return (
+    <dl>
+      <div>
+        <dt>Time in range</dt>
+        <dd>{report.timeInRange.inRange.percentage.toFixed(1)}%</dd>
+      </div>
+      <div>
+        <dt>GMI</dt>
+        <dd>{report.gmi.toFixed(1)}%</dd>
+      </div>
+      <div>
+        <dt>Variability</dt>
+        <dd>{report.cv.toFixed(1)}%</dd>
+      </div>
+    </dl>
+  )
+}
+```
+
+The hooks memoize their corresponding core computation. Keep the `readings`
+array and options object stable when their contents have not changed; recreating
+either reference on every render causes the analysis to run again.
+
+## Add a live view model
+
+`useGlucoseLive` combines `latestReading`, `computeGlucoseTrend`, and
+`minutesSinceLastReading`:
+
+```tsx
+import type { GlucoseReading } from '@glucoseiq/core'
+import { useGlucoseLive } from '@glucoseiq/react'
+
+function CurrentGlucose({ readings }: { readings: GlucoseReading[] }) {
+  const live = useGlucoseLive(readings, {
+    windowMin: 15,
+    refreshMs: 30_000,
+  })
+
+  if (!live.latest || live.minutesSince === null) {
+    return <p>No current reading.</p>
+  }
+
+  return (
+    <section aria-live="polite">
+      <strong>{live.latest.value} {live.latest.unit}</strong>
+      <span>{live.trend.trend}</span>
+      <time dateTime={live.latest.timestamp}>
+        {Math.max(0, Math.round(live.minutesSince))} min ago
+      </time>
+    </section>
+  )
+}
+```
+
+`refreshMs` only advances the staleness clock. It does not poll a CGM source or
+add readings. Your application remains responsible for transport and for
+updating the array when data arrives.
+
+See [Build a Live Glucose Surface](/docs/live) for a complete polling boundary
+and failure-state model.
+
+## Use the ready-made SVG components
+
+```tsx
+import type { GlucoseReading, TIRBarOptions } from '@glucoseiq/core'
+import { AgpChart, TirBar, TrendTile } from '@glucoseiq/react'
+
+const tirOptions: TIRBarOptions = { theme: 'dark' }
+const agpOptions = {
+  theme: 'dark',
+  timeZone: 'America/Detroit',
+  title: 'Last 14 days',
+} as const
+
+export function Charts({ readings }: { readings: GlucoseReading[] }) {
+  return (
+    <>
+      <TrendTile readings={readings} />
+      <TirBar readings={readings} options={tirOptions} />
+      <AgpChart
+        readings={readings}
+        options={agpOptions}
+        className="dashboard-chart"
+      />
+    </>
+  )
+}
+```
+
+Each component memoizes a zero-dependency renderer from `@glucoseiq/core` and
+inlines the returned SVG inside a `div`. `className` and `style` apply to that
+wrapper. Dimensions, theme, time zone, and titles belong in the renderer's
+`options` object.
+
+<Callout type="info" title="Choose data APIs for complete design control">
+  The SVG components are batteries-included renderers, not an unstyled chart
+  primitive system. Use `useAGPProfile`, `useGlucoseAnalysis`, or the core APIs
+  directly when your design needs custom axes, tooltips, interaction, Canvas,
+  native charts, or a different accessibility model.
+</Callout>
+
+## Where React fits in the architecture
+
+Keep normalization, credentials, and long-running data access outside the UI
+component. A typical application:
+
+1. Fetches and normalizes source payloads on the server or data layer.
+2. Passes `GlucoseReading[]` into a client-facing component.
+3. Uses hooks to derive immutable view data.
+4. Renders that data with its own design system or the optional SVG components.
+
+For the complete path, follow [Build a Dashboard in 10 Minutes](/docs/dashboard).

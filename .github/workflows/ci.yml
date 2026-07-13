@@ -1,0 +1,75 @@
+name: CI
+
+on:
+  push:
+    branches: ['**']
+  pull_request:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: ci-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  test:
+    name: Build & test (Node 24)
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@93cb6efe18208431cddfb8368fd83d5badbf9bfd # v5
+        with:
+          fetch-depth: 0
+
+      - name: Prepare Changesets base branch
+        run: |
+          git show-ref --verify --quiet refs/heads/main ||
+            git branch --track main origin/main
+
+      - name: Install pnpm
+        uses: pnpm/action-setup@b906affcce14559ad1aafd4ab0e942779e9f58b1 # v4
+        with:
+          version: 11.12.0
+
+      - name: Setup Node
+        uses: actions/setup-node@48b55a011bda9f5d6aeb4c2d9c7362e8dae4041e # v6
+        with:
+          node-version: 24
+          cache: pnpm
+
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile
+
+      - name: Build
+        run: pnpm build
+
+      - name: Validate launch changeset
+        run: pnpm test:launch
+
+      - name: Test with coverage (100% enforced)
+        run: pnpm test:coverage
+
+      - name: Bundle-size guard (core stays lean)
+        run: |
+          SIZE=$(gzip -c packages/core/dist/index.mjs | wc -c)
+          echo "core ESM gzipped: ${SIZE} bytes (budget 20000)"
+          if [ "$SIZE" -gt 20000 ]; then
+            echo "::error::@glucoseiq/core exceeds the 20KB gzipped budget (${SIZE} bytes)"
+            exit 1
+          fi
+
+      - name: Test packed packages
+        run: pnpm test:packages
+
+      - name: Build documentation
+        run: pnpm --filter docs build
+
+      - name: Upload coverage to Codecov
+        uses: codecov/codecov-action@0fb7174895f61a3b6b78fc075e0cd60383518dac # v5
+        continue-on-error: true
+        with:
+          token: ${{ secrets.CODECOV_TOKEN }}
+          files: ./packages/core/coverage/lcov.info
+          flags: unittests

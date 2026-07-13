@@ -1,0 +1,148 @@
+{
+  "name": "@glucoseiq/core",
+  "version": "0.0.0",
+  "description": "Zero-dependency headless engine for glucose & CGM analytics: AGP, TIR, variability, risk indices, meal response, live trend, and interoperability.",
+  "main": "dist/index.js",
+  "module": "dist/index.mjs",
+  "types": "dist/index.d.ts",
+  "exports": {
+    ".": {
+      "import": {
+        "types": "./dist/index.d.mts",
+        "default": "./dist/index.mjs"
+      },
+      "require": {
+        "types": "./dist/index.d.ts",
+        "default": "./dist/index.js"
+      }
+    },
+    "./metrics": {
+      "import": {
+        "types": "./dist/metrics/index.d.mts",
+        "default": "./dist/metrics/index.mjs"
+      },
+      "require": {
+        "types": "./dist/metrics/index.d.ts",
+        "default": "./dist/metrics/index.js"
+      }
+    },
+    "./connectors": {
+      "import": {
+        "types": "./dist/connectors/index.d.mts",
+        "default": "./dist/connectors/index.mjs"
+      },
+      "require": {
+        "types": "./dist/connectors/index.d.ts",
+        "default": "./dist/connectors/index.js"
+      }
+    },
+    "./interop": {
+      "import": {
+        "types": "./dist/interop/index.d.mts",
+        "default": "./dist/interop/index.mjs"
+      },
+      "require": {
+        "types": "./dist/interop/index.d.ts",
+        "default": "./dist/interop/index.js"
+      }
+    },
+    "./render": {
+      "import": {
+        "types": "./dist/render/index.d.mts",
+        "default": "./dist/render/index.mjs"
+      },
+      "require": {
+        "types": "./dist/render/index.d.ts",
+        "default": "./dist/render/index.js"
+      }
+    },
+    "./package.json": "./package.json"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/marklearst/glucoseiq.git",
+    "directory": "packages/core"
+  },
+  "homepage": "https://glucoseiq.health",
+  "bugs": {
+    "url": "https://github.com/marklearst/glucoseiq/issues"
+  },
+  "scripts": {
+    "dev": "tsup src/index.ts --watch",
+    "build": "tsup",
+    "test": "vitest run",
+    "test:ui": "vitest --ui",
+    "test:coverage": "vitest run --coverage",
+    "clean": "rm -rf dist",
+    "docs:api": "typedoc src --out docs",
+    "prepublishOnly": "pnpm build"
+  },
+  "keywords": [
+    "diabetes",
+    "glucose",
+    "a1c",
+    "cgm",
+    "continuous-glucose-monitor",
+    "glucoseiq",
+    "dexcom",
+    "libre",
+    "nightscout",
+    "time-in-range",
+    "tir",
+    "titr",
+    "agp",
+    "gmi",
+    "hba1c",
+    "fhir",
+    "health",
+    "typescript",
+    "headless",
+    "mgdl",
+    "mmol",
+    "lbgi",
+    "hbgi",
+    "mage",
+    "glycemic-variability"
+  ],
+  "author": "Mark Learst",
+  "license": "MIT",
+  "devDependencies": {
+    "@types/node": "^22.15.3",
+    "@vitest/coverage-v8": "^3.1.2",
+    "@vitest/ui": "^3.1.2",
+    "tsup": "^8.4.0",
+    "typedoc": "0.28.4",
+    "typedoc-plugin-markdown": "^4.6.3",
+    "typescript": "^5.8.3",
+    "vitest": "^3.1.2"
+  },
+  "files": [
+    "dist/",
+    "package.json",
+    "README.md",
+    "LICENSE"
+  ],
+  "sideEffects": false,
+  "publishConfig": {
+    "access": "public"
+  },
+  "engines": {
+    "node": ">=24"
+  },
+  "typesVersions": {
+    "*": {
+      "metrics": [
+        "./dist/metrics/index.d.ts"
+      ],
+      "connectors": [
+        "./dist/connectors/index.d.ts"
+      ],
+      "interop": [
+        "./dist/interop/index.d.ts"
+      ],
+      "render": [
+        "./dist/render/index.d.ts"
+      ]
+    }
+  }
+}

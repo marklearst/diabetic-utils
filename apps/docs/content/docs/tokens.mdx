@@ -1,0 +1,120 @@
+---
+title: Design Tokens
+description: Use the canonical GlucoseIQ zones, palettes, trend glyphs, and CSS variables in any interface.
+---
+
+import { Callout } from 'fumadocs-ui/components/callout'
+
+`@glucoseiq/tokens` gives every GlucoseIQ surface the same semantic glucose
+zones and visual language. It has no runtime dependencies and does not require
+React, a CSS framework, or a browser.
+
+```bash
+npm install @glucoseiq/tokens
+```
+
+## Classify a glucose value
+
+Pass a value in **mg/dL** to `classifyGlucoseZone`:
+
+```ts
+import { classifyGlucoseZone, zoneColor } from '@glucoseiq/tokens'
+
+const zone = classifyGlucoseZone(186) // 'high'
+const color = zoneColor(zone, 'dark') // '#fbbf24'
+```
+
+The five zones follow the international consensus boundaries:
+
+| Zone | mg/dL boundary |
+| --- | --- |
+| `veryLow` | &lt;54 |
+| `low` | 54–&lt;70 |
+| `inRange` | 70–180, inclusive |
+| `high` | &gt;180–250, inclusive |
+| `veryHigh` | &gt;250 |
+
+The ordered `GLUCOSE_ZONES` array and `ZONE_THRESHOLDS_MGDL` object are
+exported when you need to build legends, scales, or controls from the same
+model.
+
+<Callout title="mg/dL only">
+  `classifyGlucoseZone` does not inspect or convert units. Convert mmol/L input
+  to mg/dL with `mmolLToMgDl` from `@glucoseiq/core` before classifying it.
+</Callout>
+
+## Build a themed legend
+
+`ZONE_PALETTE` contains a color for every zone in both supported themes.
+Position or text should carry the meaning alongside color.
+
+```ts
+import {
+  GLUCOSE_ZONES,
+  ZONE_PALETTE,
+  type Theme,
+} from '@glucoseiq/tokens'
+
+function glucoseLegend(theme: Theme) {
+  return GLUCOSE_ZONES.map((zone) => ({
+    zone,
+    color: ZONE_PALETTE[theme][zone],
+  }))
+}
+```
+
+Use `zoneColor(zone, theme)` when you only need one value. The theme defaults
+to `dark`.
+
+## Add the CSS variables
+
+`cssVariables` returns declarations rather than a complete rule, so you choose
+where the theme lives:
+
+```ts
+import { cssVariables } from '@glucoseiq/tokens'
+
+const style = `:root { ${cssVariables('dark')} }`
+```
+
+The generated declarations include:
+
+```css
+--giq-zone-verylow: #b91c1c;
+--giq-zone-low: #f87171;
+--giq-zone-inrange: #22c55e;
+--giq-zone-high: #fbbf24;
+--giq-zone-veryhigh: #f97316;
+--giq-bg: #0a0a0a;
+--giq-drop: #ef4444;
+--giq-surface: #111318;
+--giq-border: #1e232c;
+--giq-muted: #94a3b8;
+```
+
+Scope them to a component or a `[data-theme]` selector instead of `:root` when
+an application needs multiple themes at once.
+
+## Render a trend glyph
+
+`TREND_GLYPHS` covers the eight normalized trend states used by
+`@glucoseiq/core` connectors and live analysis:
+
+```ts
+import { TREND_GLYPHS, type TrendKey } from '@glucoseiq/tokens'
+
+function trendLabel(trend: TrendKey) {
+  return `${TREND_GLYPHS[trend]} ${trend}`
+}
+
+trendLabel('slightlyRising') // '↗ slightlyRising'
+```
+
+The exported `BRAND` object supplies the GlucoseIQ canvas, accent, surface,
+border, and muted-text colors for surfaces that want the default brand theme.
+
+<Callout type="info" title="Tokens are presentation primitives">
+  The zone thresholds in this package are the fixed consensus defaults. Use
+  the configurable analytics options in `@glucoseiq/core` for personalized,
+  pregnancy-specific, or research ranges.
+</Callout>

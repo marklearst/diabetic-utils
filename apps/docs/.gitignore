@@ -1,0 +1,4 @@
+.source/
+.next/
+out/
+scripts/api-model.json
