@@ -131,7 +131,7 @@ export function estimateGMI(
  * @param val - Glucose value in mg/dL
  * @returns Value in mmol/L
  * @throws {Error} If val is not a finite number or is negative/zero
- * @see https://www.diabetes.co.uk/diabetes_care/blood-sugar-conversion.html
+ * @see https://wwwn.cdc.gov/Nchs/Data/Nhanes/Public/2021/DataFiles/BIOPRO_L.htm
  *
  * @example
  * ```typescript
@@ -151,7 +151,7 @@ export function mgDlToMmolL(val: number): number {
  * @param val - Glucose value in mmol/L
  * @returns Value in mg/dL
  * @throws {Error} If val is not a finite number or is negative/zero
- * @see https://www.diabetes.co.uk/diabetes_care/blood-sugar-conversion.html
+ * @see https://wwwn.cdc.gov/Nchs/Data/Nhanes/Public/2021/DataFiles/BIOPRO_L.htm
  *
  * @example
  * ```typescript
@@ -173,7 +173,7 @@ export function mmolLToMgDl(val: number): number {
  * @returns Object with converted value and new unit
  * @throws {Error} If value is not a finite number or is negative/zero
  * @throws {Error} If unit is not a supported glucose unit
- * @see https://www.diabetes.co.uk/diabetes_care/blood-sugar-conversion.html
+ * @see https://wwwn.cdc.gov/Nchs/Data/Nhanes/Public/2021/DataFiles/BIOPRO_L.htm
  */
 export function convertGlucoseUnit({
   value,

@@ -81,7 +81,7 @@ export function getGlucoseLabel(
  * @throws {Error} If input string is invalid or not in expected format
  * @example
  * parseGlucoseString("100 mg/dL") // { value: 100, unit: "mg/dL" }
- * @see https://www.diabetes.co.uk/diabetes_care/blood-sugar-conversion.html
+ * @see https://wwwn.cdc.gov/Nchs/Data/Nhanes/Public/2021/DataFiles/BIOPRO_L.htm
  */
 export function parseGlucoseString(input: string): {
   value: number

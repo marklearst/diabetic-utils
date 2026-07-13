@@ -9,7 +9,7 @@ import { GlucoseUnit } from './types'
  * @param unit - Glucose unit ('mg/dL' or 'mmol/L')
  * @param options - Formatting options: { digits?: number; suffix?: boolean } (default: { digits: 0, suffix: true })
  * @returns Formatted glucose string (e.g., '5.5 mmol/L', '120 mg/dL')
- * @see https://www.diabetes.co.uk/diabetes_care/blood-sugar-conversion.html
+ * @see https://wwwn.cdc.gov/Nchs/Data/Nhanes/Public/2021/DataFiles/BIOPRO_L.htm
  */
 export function formatGlucose(
   val: number,

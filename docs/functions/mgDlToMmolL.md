@@ -33,4 +33,4 @@ If val is not a finite number or is negative/zero
 
 ## See
 
-https://www.diabetes.co.uk/diabetes_care/blood-sugar-conversion.html
+https://wwwn.cdc.gov/Nchs/Data/Nhanes/Public/2021/DataFiles/BIOPRO_L.htm
