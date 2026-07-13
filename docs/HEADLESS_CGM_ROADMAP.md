@@ -2,7 +2,10 @@
 
 ## North-Star Goal
 
-Build `diabetic-utils` into the **premier headless CGM TypeScript library**: UI-agnostic, protocol-first, and strong enough to power everything from indie dashboards to enterprise-grade products.
+Build **GlucoseIQ** into the premier headless CGM TypeScript framework:
+UI-agnostic, protocol-first, and capable of powering independent dashboards
+and large product platforms. The `diabetic-utils` package remains the
+compatibility bridge for existing projects.
 
 The strategy is not to ship a full vertical platform; it is to ship a world-class **headless core** that any product team can compose into their own experience.
 

@@ -8,7 +8,7 @@
 
 > **a1cToGMI**(`a1c`): `number`
 
-Defined in: [conversions.ts:75](https://github.com/marklearst/diabetic-utils/blob/0d03b5cd2e2b5edbf58275075cc81d8df31ac230/src/conversions.ts#L75)
+Defined in: [conversions.ts:75](https://github.com/marklearst/glucoseiq/blob/0d03b5cd2e2b5edbf58275075cc81d8df31ac230/src/conversions.ts#L75)
 
 Converts A1C to Glucose Management Indicator (GMI).
 

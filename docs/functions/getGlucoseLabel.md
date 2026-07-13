@@ -8,7 +8,7 @@
 
 > **getGlucoseLabel**(`val`, `unit`, `thresholds?`): `"normal"` \| `"low"` \| `"high"`
 
-Defined in: [glucose.ts:62](https://github.com/marklearst/diabetic-utils/blob/0d03b5cd2e2b5edbf58275075cc81d8df31ac230/src/glucose.ts#L62)
+Defined in: [glucose.ts:62](https://github.com/marklearst/glucoseiq/blob/0d03b5cd2e2b5edbf58275075cc81d8df31ac230/src/glucose.ts#L62)
 
 Returns a clinical glucose status label ('low', 'normal', or 'high') based on thresholds for the given unit.
 Used for clinical charting, alerts, and reporting.

@@ -1,0 +1,182 @@
+---
+title: Core Concepts
+description: The mental model for composing GlucoseIQ from ingestion to analysis and presentation.
+---
+
+GlucoseIQ is a collection of pure, composable building blocks. The core does
+not own a database, fetch a vendor account, or choose a UI framework. It accepts
+plain glucose readings and returns plain analytics, series, or SVG strings.
+
+That boundary is what makes the same engine useful in a script, server route,
+web application, or report generator.
+
+## The five-stage mental model
+
+Most applications move data through the same stages:
+
+1. **Ingest** a CSV or receive a vendor payload.
+2. **Normalize** it into `GlucoseReading` or `NormalizedCGMReading` objects.
+3. **Inspect** coverage, gaps, ordering, and freshness.
+4. **Analyze** with one comprehensive report or focused metric functions.
+5. **Present** the returned scalars and series with your own UI or the optional
+   SVG and React adapters.
+
+The stages are regular function calls, not hidden framework lifecycle hooks:
+
+```ts
+import {
+  analyzeGlucose,
+  buildAGPProfile,
+  detectGaps,
+  parseGlucoseCSV,
+} from '@glucoseiq/core'
+
+const readings = parseGlucoseCSV(csvText, {
+  timestampColumn: 'Timestamp',
+  valueColumn: 'Glucose Value (mg/dL)',
+  unit: 'mg/dL',
+})
+
+const gaps = detectGaps(readings, { maxGapMinutes: 15 })
+const report = analyzeGlucose(readings, {
+  timeZone: 'America/New_York',
+})
+const profile = buildAGPProfile(readings, {
+  timeZone: 'America/New_York',
+})
+```
+
+Each result can be stored, serialized, tested, or handed to another layer of
+your application. No global configuration is required.
+
+## Start with the smallest stable contract
+
+The common input boundary is `GlucoseReading`:
+
+```ts
+interface GlucoseReading {
+  readonly value: number
+  readonly unit: 'mg/dL' | 'mmol/L'
+  readonly timestamp: string
+}
+```
+
+Vendor adapters return `NormalizedCGMReading`, which extends that shape with a
+canonical trend, source, and optional vendor metadata. Because it is a
+structural superset, normalized vendor readings can be passed directly to
+functions that accept `GlucoseReading[]`.
+
+See [Data Model](/docs/data-model) for units, timestamps, and the normalized
+connector contract.
+
+## One-call report or focused primitives
+
+Use `analyzeGlucose` when a surface needs a coherent overview from one cleaned
+reading set:
+
+```ts
+const report = analyzeGlucose(readings, {
+  timeZone: 'America/New_York',
+  includeProfile: true,
+})
+
+if (!report.valid) {
+  // Render an empty state. Scalar fields are NaN and computed blocks are null.
+} else {
+  console.log(report.gmi)
+  console.log(report.timeInRange?.inRange.percentage)
+  console.log(report.episodes?.summary.hypoCount)
+}
+```
+
+The result includes mean glucose, GMI, SD, CV, five-zone Time in Range, Time in
+Tight Range, risk metrics, episode detection, data sufficiency, and—unless
+disabled—the AGP percentile series.
+
+Use focused functions when you need a smaller computation or different
+options. Examples include `calculateEnhancedTIR`, `detectEpisodes`,
+`analyzeMealResponse`, `computeGlucoseTrend`, `splitDayNight`, and
+`alignToGrid`.
+
+```ts
+import { computeGlucoseTrend, detectEpisodes } from '@glucoseiq/core'
+
+const trend = computeGlucoseTrend(readings.slice(-12))
+const episodes = detectEpisodes(readings)
+```
+
+Focused calls are also useful when two surfaces need different policies. A
+live tile can derive a short-window trend while a retrospective report analyzes
+fourteen days of observed data.
+
+## Headless output comes in two forms
+
+Most core APIs return **presentation-ready data**, not markup. For example,
+`buildAGPProfile` returns a full-day grid of percentile bins, and
+`calculateEnhancedTIR` returns five labeled range blocks. These structures can
+drive any charting or component system.
+
+The render subpath adds optional **presentation conveniences**:
+
+```ts
+import { agpChartToSVG, tirBarToSVG } from '@glucoseiq/core/render'
+
+const agpSvg = agpChartToSVG(readings, { theme: 'dark' })
+const tirSvg = tirBarToSVG(readings, { theme: 'dark' })
+```
+
+These functions return self-contained SVG strings. They do not replace the
+underlying data APIs; use the data primitives when your design needs complete
+control.
+
+## Purity makes policy visible
+
+GlucoseIQ does not keep a current patient, current unit, or current time zone.
+Pass the policy that matters to the function that needs it:
+
+```ts
+const profile = buildAGPProfile(readings, {
+  timeZone: user.profileTimeZone,
+  unit: user.displayUnit,
+  binMinutes: 5,
+})
+```
+
+The same input and options produce the same analytical result. One notable live
+helper, `minutesSinceLastReading`, uses the current clock when its `now`
+argument is omitted; pass `now` explicitly in tests or reproducible jobs.
+
+```ts
+import { minutesSinceLastReading } from '@glucoseiq/core'
+
+const age = minutesSinceLastReading(
+  readings,
+  '2024-01-15T12:00:00Z',
+)
+```
+
+## Keep transport and analytics separate
+
+The Dexcom, Libre, and Nightscout APIs in `@glucoseiq/core/connectors` normalize
+payloads that your application already obtained. They do not authenticate,
+poll, retry, or persist vendor data.
+
+That separation keeps credentials and network policy in your application while
+the analytical path remains deterministic:
+
+```ts
+import { normalizeDexcomEntries } from '@glucoseiq/core/connectors'
+import { analyzeGlucose } from '@glucoseiq/core'
+
+const payload = await yourDexcomClient.getReadings()
+const readings = normalizeDexcomEntries(payload)
+const report = analyzeGlucose(readings)
+```
+
+For feeds where one malformed record should not discard the whole batch, use a
+safe normalizer and surface its per-entry errors. See [Data Quality](/docs/data-quality).
+
+<Callout type="warn" title="Informational use">
+  GlucoseIQ produces descriptive analytics for informational and educational
+  use. It does not provide medical advice, diagnosis, or treatment.
+</Callout>

@@ -8,7 +8,7 @@
 
 > **estimateA1CFromAverage**(`avgGlucose`, `unit`): `number`
 
-Defined in: [conversions.ts:60](https://github.com/marklearst/diabetic-utils/blob/0d03b5cd2e2b5edbf58275075cc81d8df31ac230/src/conversions.ts#L60)
+Defined in: [conversions.ts:60](https://github.com/marklearst/glucoseiq/blob/0d03b5cd2e2b5edbf58275075cc81d8df31ac230/src/conversions.ts#L60)
 
 Estimates A1C from average glucose.
 

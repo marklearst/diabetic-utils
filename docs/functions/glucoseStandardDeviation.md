@@ -8,7 +8,7 @@
 
 > **glucoseStandardDeviation**(`readings`): `number`
 
-Defined in: [variability.ts:23](https://github.com/marklearst/diabetic-utils/blob/0d03b5cd2e2b5edbf58275075cc81d8df31ac230/src/variability.ts#L23)
+Defined in: [variability.ts:23](https://github.com/marklearst/glucoseiq/blob/0d03b5cd2e2b5edbf58275075cc81d8df31ac230/src/variability.ts#L23)
 
 Calculates the unbiased sample standard deviation (SD) of glucose values.
 Uses n-1 in the denominator (sample SD), as recommended in clinical research and guidelines.

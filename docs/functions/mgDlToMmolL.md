@@ -8,7 +8,7 @@
 
 > **mgDlToMmolL**(`val`): `number`
 
-Defined in: [conversions.ts:130](https://github.com/marklearst/diabetic-utils/blob/0d03b5cd2e2b5edbf58275075cc81d8df31ac230/src/conversions.ts#L130)
+Defined in: [conversions.ts:130](https://github.com/marklearst/glucoseiq/blob/0d03b5cd2e2b5edbf58275075cc81d8df31ac230/src/conversions.ts#L130)
 
 Converts clinical glucose value from mg/dL to mmol/L.
 Used for international interoperability and reporting.

@@ -1,0 +1,54 @@
+---
+title: AGP & Metrics Aggregate
+description: The Ambulatory Glucose Profile series and the all-in-one metrics call.
+---
+
+<Callout title="2 functions">Generated from the source TSDoc — every signature, parameter, and example is the real thing.</Callout>
+
+### buildAGPProfile
+
+```ts
+buildAGPProfile(readings: GlucoseReading[], options?: AGPProfileOptions): AGPProfileResult
+```
+
+Builds the AGP time-of-day percentile-band series from glucose readings.
+
+| Parameter | Description |
+| --- | --- |
+| `readings` | Glucose readings with ISO 8601 timestamps |
+| `options` | Bin width, percentiles, time zone, output unit, and method |
+
+**Returns** — Render-ready AGP profile (full-day bin grid + per-bin percentiles)
+
+**Throws** — If `binMinutes` is not an integer in [1, 1440]
+
+**Throws** — If `timeZone` is not a valid IANA time zone
+
+```ts
+const profile = buildAGPProfile(readings, { timeZone: 'America/New_York' })
+// profile.bins[i] = { minuteOfDay, percentiles: { 5, 25, 50, 75, 95 }, n }
+```
+
+
+---
+
+### calculateAGPMetrics
+
+```ts
+calculateAGPMetrics(readings: GlucoseReading[], options?: AGPMetricsOptions): AGPMetricsResult
+```
+
+Calculates a comprehensive set of AGP metrics from glucose readings.
+
+This is a convenience function that computes all Tier 1 metrics in a
+single call. Individual metric functions are also available for
+selective computation.
+
+| Parameter | Description |
+| --- | --- |
+| `readings` | Array of GlucoseReading objects with timestamps |
+| `options` | Optional configuration for individual metrics |
+
+**Returns** — Comprehensive AGP metrics result
+
+**Throws** — If readings array is empty

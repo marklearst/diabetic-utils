@@ -8,7 +8,7 @@
 
 > **isHyper**(`val`, `unit`, `thresholds?`): `boolean`
 
-Defined in: [glucose.ts:43](https://github.com/marklearst/diabetic-utils/blob/0d03b5cd2e2b5edbf58275075cc81d8df31ac230/src/glucose.ts#L43)
+Defined in: [glucose.ts:43](https://github.com/marklearst/glucoseiq/blob/0d03b5cd2e2b5edbf58275075cc81d8df31ac230/src/glucose.ts#L43)
 
 Checks if a glucose value is clinically hyperglycemic for the given unit.
 Used for detecting high glucose events in clinical analytics and reporting.

@@ -8,7 +8,7 @@
 
 > **parseGlucoseString**(`input`): `object`
 
-Defined in: [glucose.ts:85](https://github.com/marklearst/diabetic-utils/blob/0d03b5cd2e2b5edbf58275075cc81d8df31ac230/src/glucose.ts#L85)
+Defined in: [glucose.ts:85](https://github.com/marklearst/glucoseiq/blob/0d03b5cd2e2b5edbf58275075cc81d8df31ac230/src/glucose.ts#L85)
 
 Parses a clinical glucose string (e.g., "100 mg/dL", "5.5 mmol/L") into value and unit.
 Used for robust input validation and clinical data ingestion.

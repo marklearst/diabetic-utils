@@ -1,0 +1,120 @@
+---
+title: Testing
+description: Generate deterministic CGM series and scenario fixtures with @glucoseiq/testing.
+---
+
+import { Callout } from 'fumadocs-ui/components/callout'
+
+`@glucoseiq/testing` produces repeatable CGM data for unit tests, Storybook
+stories, product demos, screenshots, and documentation. Give it the same
+options and seed, and it returns the same chronological readings every time.
+
+```bash
+npm install --save-dev @glucoseiq/testing
+```
+
+## Generate a series
+
+```ts
+import { generateCGMSeries } from '@glucoseiq/testing'
+
+const readings = generateCGMSeries({
+  days: 14,
+  seed: 7,
+  start: '2025-01-01T00:00:00Z',
+})
+
+readings[0]
+// {
+//   value: 96,
+//   unit: 'mg/dL',
+//   timestamp: '2025-01-01T00:00:00.000Z'
+// }
+```
+
+The generator combines a circadian baseline, three default meal responses,
+seeded noise, and optional nocturnal hypoglycemia. Values are clamped to
+40–400 mg/dL before output conversion.
+
+| Option | Default | Purpose |
+| --- | --- | --- |
+| `days` | `1` | Number of days to generate |
+| `intervalMin` | `5` | Minutes between readings |
+| `seed` | `42` | Deterministic random seed |
+| `start` | `2024-01-01T00:00:00Z` | ISO timestamp for the first reading |
+| `basal` | `110` | Baseline in mg/dL |
+| `mealTimes` | `07:00`, `13:00`, `19:00` | Meal times as minutes from midnight |
+| `mealAmplitude` | `70` | Peak meal-excursion amplitude in mg/dL |
+| `noise` | `8` | Noise amplitude in mg/dL |
+| `nocturnalHypoDays` | `[]` | Zero-based day indexes with a 02:00–04:00 dip |
+| `unit` | `mg/dL` | Output as `mg/dL` or `mmol/L` |
+
+## Test an analysis
+
+Generated readings use the `GlucoseReading` contract from `@glucoseiq/core`,
+so they can go directly into any analytic:
+
+```ts
+import { analyzeGlucose } from '@glucoseiq/core'
+import { generateCGMSeries } from '@glucoseiq/testing'
+
+const readings = generateCGMSeries({ days: 14, seed: 19 })
+const report = analyzeGlucose(readings)
+
+expect(report.valid).toBe(true)
+expect(report.dataSufficiency.totalReadings).toBe(14 * 288)
+expect(report.agpProfile?.bins).toHaveLength(288)
+```
+
+Use a fixed `start` in tests that group by calendar date or local time. The
+default starts at midnight UTC.
+
+## Start from a scenario
+
+The `scenarios` collection provides four named, deterministic fixtures:
+
+```ts
+import { scenarios } from '@glucoseiq/testing'
+
+const steady = scenarios.steadyDay()
+const hypo = scenarios.hypoNight()
+const volatile = scenarios.rollercoaster()
+const withDropout = scenarios.gappyTrace()
+```
+
+| Scenario | Shape |
+| --- | --- |
+| `steadyDay()` | A calm, mostly in-range day with smaller meals and less noise |
+| `hypoNight()` | A day with a 02:00–04:00 nocturnal dip |
+| `rollercoaster()` | Larger post-meal excursions and more noise |
+| `gappyTrace()` | A day with readings removed from 15:00 through 16:30 UTC |
+
+Scenarios return fresh arrays, so a test can safely derive a variant without
+changing the next fixture:
+
+```ts
+const sparseHypo = scenarios.hypoNight().filter((_, index) => index % 2 === 0)
+```
+
+## Produce mmol/L fixtures
+
+```ts
+import { generateCGMSeries } from '@glucoseiq/testing'
+
+const readings = generateCGMSeries({
+  unit: 'mmol/L',
+  days: 2,
+  seed: 23,
+})
+
+readings[0].unit // 'mmol/L'
+```
+
+The underlying curve is generated in mg/dL and converted to one decimal place
+for mmol/L output.
+
+<Callout type="warn" title="Synthetic data is not clinical validation">
+  These fixtures are designed for deterministic software testing and visual
+  demos. They do not model a specific person, sensor, therapy, or clinical
+  outcome, and they are not a substitute for validated reference datasets.
+</Callout>

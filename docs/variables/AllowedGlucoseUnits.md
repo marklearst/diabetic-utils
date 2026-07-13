@@ -8,7 +8,7 @@
 
 > `const` **AllowedGlucoseUnits**: [`GlucoseUnit`](../type-aliases/GlucoseUnit.md)[]
 
-Defined in: [types.ts:17](https://github.com/marklearst/diabetic-utils/blob/0d03b5cd2e2b5edbf58275075cc81d8df31ac230/src/types.ts#L17)
+Defined in: [types.ts:17](https://github.com/marklearst/glucoseiq/blob/0d03b5cd2e2b5edbf58275075cc81d8df31ac230/src/types.ts#L17)
 
 List of allowed clinical glucose units.
 Used for input validation and unit conversion.

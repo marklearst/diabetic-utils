@@ -1,0 +1,293 @@
+---
+title: Glucose Values & Formatting
+description: Labeling, validation, parsing, and formatting helpers.
+---
+
+<Callout title="13 functions">Generated from the source TSDoc — every signature, parameter, and example is the real thing.</Callout>
+
+### calculateHOMAIR
+
+```ts
+calculateHOMAIR(glucose: number, insulin: number): { … }
+```
+
+Calculates HOMA-IR (Homeostatic Model Assessment for Insulin Resistance) from fasting glucose and insulin.
+
+Formula: HOMA-IR = (fasting glucose [mg/dL] × fasting insulin [µIU/mL]) / 405
+
+Used for estimating insulin resistance. Not a diagnostic tool.
+
+| Parameter | Description |
+| --- | --- |
+| `glucose` | Fasting glucose value in mg/dL. Must be a positive finite number. |
+| `insulin` | Fasting insulin value in µIU/mL. Must be a positive finite number. |
+
+**Returns** — Object with numeric HOMA-IR value and interpretation label.
+
+**Throws** — If glucose or insulin are invalid (non-finite, zero, or negative).
+
+See: - https://pubmed.ncbi.nlm.nih.gov/3899825/ (Original HOMA-IR publication)
+ - https://diabetesjournals.org/care/article/26/1/118/22567/Prevalence-and-Concomitants-of-Glucose-Intolerance (ADA: Glucose Intolerance and HOMA-IR context)
+
+
+---
+
+### checkGlycemicAlignment
+
+```ts
+checkGlycemicAlignment(a1c: number, glucose: number, insulin: number): { … }
+```
+
+Checks consistency among A1C, fasting glucose, and fasting insulin markers.
+
+Returns:
+  - Estimated average glucose (mg/dL), calculated per CDC formula
+  - HOMA-IR result (value and interpretation)
+  - Flags for potential inconsistencies
+  - Informational note and disclaimer
+
+Used for high-level insight and trend alignment, not for diagnosis.
+
+| Parameter | Description |
+| --- | --- |
+| `a1c` | A1C value (percentage). Must be a positive finite number. |
+| `glucose` | Fasting glucose value in mg/dL. Must be a positive finite number. |
+| `insulin` | Fasting insulin value in µIU/mL. Must be a positive finite number. |
+
+**Returns** — Object with estimated average glucose (mg/dL), HOMA-IR result object, flags array, recommendation string, and disclaimer.
+
+**Throws** — If any input value is invalid (non-finite, zero, or negative).
+
+See: https://www.cdc.gov/diabetes/diabetes-testing/prediabetes-a1c-test.html (CDC: eAG formula)
+
+
+---
+
+### formatDate
+
+```ts
+formatDate(iso: string, timeZone?: string): string
+```
+
+Formats a UTC ISO 8601 timestamp to a local-readable date/time string.
+Used for clinical charting, logs, and reports. Supports optional IANA time zone.
+
+| Parameter | Description |
+| --- | --- |
+| `iso` | ISO 8601 timestamp string (e.g., '2024-03-20T10:00:00Z') |
+| `timeZone` | Optional IANA time zone (e.g., 'America/New_York') |
+
+**Returns** — Localized date/time string (e.g., 'Mar 20, 2024, 06:00 AM')
+
+**Throws** — If the ISO string is invalid or cannot be parsed
+
+
+---
+
+### formatGlucose
+
+```ts
+formatGlucose(val: number, unit: GlucoseUnit, options?: { … }): string
+```
+
+Formats a clinical glucose value with unit and optional rounding.
+Used for clinical reporting, charting, and data export.
+
+| Parameter | Description |
+| --- | --- |
+| `val` | Glucose value (number) |
+| `unit` | Glucose unit ('mg/dL' or 'mmol/L') |
+| `options` | Formatting options: &#123; digits?: number; suffix?: boolean &#125; (default: &#123; digits: 0, suffix: true &#125;) |
+
+**Returns** — Formatted glucose string (e.g., '5.5 mmol/L', '120 mg/dL')
+
+See: https://www.diabetes.co.uk/diabetes_care/blood-sugar-conversion.html
+
+
+---
+
+### formatPercentage
+
+```ts
+formatPercentage(val: number, digits?: number): string
+```
+
+Formats a value as a clinical percentage string (e.g., '85.0%').
+Used for reporting TIR, CV, and other clinical metrics.
+
+| Parameter | Description |
+| --- | --- |
+| `val` | Value to format (fraction or percent) |
+| `digits` | Number of decimal places (default: 1) |
+
+**Returns** — Formatted percentage string (e.g., '85.0%')
+
+
+---
+
+### getGlucoseLabel
+
+```ts
+getGlucoseLabel(val: number, unit?: GlucoseUnit, thresholds?: { … }): "normal" | "low" | "high"
+```
+
+Returns a glucose status label ('low', 'normal', or 'high') based on thresholds for the given unit.
+Used for charting, alerts, and reporting.
+
+| Parameter | Description |
+| --- | --- |
+| `val` | Glucose value (number) |
+| `unit` | Glucose unit ('mg/dL' or 'mmol/L'), default: 'mg/dL' |
+| `thresholds` | Optional custom thresholds for hypo/hyper (&#123; hypo?: &#123; mgdl?: number; mmoll?: number &#125;, hyper?: &#123; mgdl?: number; mmoll?: number &#125; &#125;) |
+
+**Returns** — 'low', 'normal', or 'high' based on configured thresholds
+
+See: https://www.diabetes.co.uk/diabetes_care/blood-sugar-level-ranges.html
+
+
+---
+
+### isEstimateGMIOptions
+
+```ts
+isEstimateGMIOptions(input: unknown): input
+```
+
+Clinical type guard for EstimateGMIOptions.
+Validates that the input matches the required shape for GMI estimation options (numeric value, string unit).
+Useful for ensuring safe handling of clinical glucose data and interoperability with analytics functions.
+
+| Parameter | Description |
+| --- | --- |
+| `input` | Candidate value to validate. |
+
+**Returns** — True if input is a valid EstimateGMIOptions object.
+
+
+---
+
+### isHyper
+
+```ts
+isHyper(val: number, unit?: GlucoseUnit, thresholds?: { … }): boolean
+```
+
+Checks if a glucose value is above the hyperglycemia threshold for the given unit.
+Used for detecting high glucose events.
+
+| Parameter | Description |
+| --- | --- |
+| `val` | Glucose value (number) |
+| `unit` | Glucose unit ('mg/dL' or 'mmol/L'), default: 'mg/dL' |
+| `thresholds` | Optional custom thresholds (&#123; mgdl?: number; mmoll?: number &#125;) |
+
+**Returns** — True if value is above the hyperglycemia threshold
+
+See: https://www.diabetes.co.uk/diabetes_care/blood-sugar-level-ranges.html
+
+
+---
+
+### isHypo
+
+```ts
+isHypo(val: number, unit?: GlucoseUnit, thresholds?: { … }): boolean
+```
+
+Checks if a glucose value is below the hypoglycemia threshold for the given unit.
+Used for detecting low glucose events.
+
+| Parameter | Description |
+| --- | --- |
+| `val` | Glucose value (number) |
+| `unit` | Glucose unit ('mg/dL' or 'mmol/L'), default: 'mg/dL' |
+| `thresholds` | Optional custom thresholds (&#123; mgdl?: number; mmoll?: number &#125;) |
+
+**Returns** — True if value is below the hypoglycemia threshold
+
+See: https://www.diabetes.co.uk/diabetes_care/blood-sugar-level-ranges.html
+
+
+---
+
+### isValidGlucoseString
+
+```ts
+isValidGlucoseString(input: unknown): input
+```
+
+Validates a clinical glucose string (e.g., "100 mg/dL", "5.5 mmol/L").
+Ensures the string is in a recognized clinical format for glucose values, supporting safe parsing and conversion.
+
+| Parameter | Description |
+| --- | --- |
+| `input` | Value to check as a clinical glucose string. |
+
+**Returns** — True if input is a valid glucose string for clinical use.
+
+See: https://www.diabetes.co.uk/diabetes_care/blood-sugar-conversion.html
+
+
+---
+
+### isValidGlucoseValue
+
+```ts
+isValidGlucoseValue(value: unknown, unit: unknown): boolean
+```
+
+Validates a glucose value and unit.
+Ensures value is a positive finite number and unit is supported.
+
+| Parameter | Description |
+| --- | --- |
+| `value` | Glucose value to validate |
+| `unit` | Glucose unit to validate |
+
+**Returns** — True if value and unit are valid
+
+
+---
+
+### isValidInsulin
+
+```ts
+isValidInsulin(value: unknown): value
+```
+
+Validates a clinical fasting insulin value (µIU/mL).
+Ensures value is a positive finite number and within plausible physiological range.
+
+| Parameter | Description |
+| --- | --- |
+| `value` | Candidate insulin value |
+
+**Returns** — True if value is a valid fasting insulin (µIU/mL)
+
+See: https://www.ncbi.nlm.nih.gov/books/NBK279396/ (normal fasting insulin: ~2-25 µIU/mL, but allow wider plausible range for outliers)
+
+
+---
+
+### parseGlucoseString
+
+```ts
+parseGlucoseString(input: string): { … }
+```
+
+Parses a glucose string (e.g., "100 mg/dL", "5.5 mmol/L") into value and unit.
+Used for robust input validation and data ingestion.
+
+| Parameter | Description |
+| --- | --- |
+| `input` | String in the format "value unit" (e.g., "100 mg/dL") |
+
+**Returns** — Object with numeric value and validated unit
+
+**Throws** — If input string is invalid or not in expected format
+
+```ts
+parseGlucoseString("100 mg/dL") // { value: 100, unit: "mg/dL" }
+```
+
+See: https://www.diabetes.co.uk/diabetes_care/blood-sugar-conversion.html

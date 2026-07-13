@@ -8,7 +8,7 @@
 
 > **calculateTimeInRange**(`readings`, `lower`, `upper`): `number`
 
-Defined in: [tir.ts:77](https://github.com/marklearst/diabetic-utils/blob/0d03b5cd2e2b5edbf58275075cc81d8df31ac230/src/tir.ts#L77)
+Defined in: [tir.ts:77](https://github.com/marklearst/glucoseiq/blob/0d03b5cd2e2b5edbf58275075cc81d8df31ac230/src/tir.ts#L77)
 
 Calculates the percentage of glucose readings within a specified numeric range.
 Used for clinical TIR analytics and custom range assessments.

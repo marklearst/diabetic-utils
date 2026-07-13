@@ -1,0 +1,26 @@
+---
+title: Episodes
+description: Consensus ≥15-minute hypo/hyper event detection.
+---
+
+<Callout title="1 function">Generated from the source TSDoc — every signature, parameter, and example is the real thing.</Callout>
+
+### detectEpisodes
+
+```ts
+detectEpisodes(readings: GlucoseReading[], options?: EpisodeOptions): EpisodeResult
+```
+
+Detects hypo- and hyperglycemia episodes from a series of readings.
+
+| Parameter | Description |
+| --- | --- |
+| `readings` | Glucose readings with ISO 8601 timestamps |
+| `options` | Thresholds, minimum duration, and recovery duration |
+
+**Returns** — Hypo and hyper events plus a summary
+
+```ts
+const { hypoEvents, summary } = detectEpisodes(readings)
+// hypoEvents[0] = { level: 2, durationMinutes: 45, extremeValue: 48, ... }
+```

@@ -8,7 +8,7 @@
 
 > **clinicalMAGE**(`readings`, `options`): `number`
 
-Defined in: [mage.ts:25](https://github.com/marklearst/diabetic-utils/blob/0d03b5cd2e2b5edbf58275075cc81d8df31ac230/src/mage.ts#L25)
+Defined in: [mage.ts:25](https://github.com/marklearst/glucoseiq/blob/0d03b5cd2e2b5edbf58275075cc81d8df31ac230/src/mage.ts#L25)
 
 Calculates clinical-grade Mean Amplitude of Glycemic Excursions (MAGE).
 Implements gold-standard Service FJ et al. (1970) methodology with modern optimizations and clinical validation.

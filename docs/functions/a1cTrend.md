@@ -8,7 +8,7 @@
 
 > **a1cTrend**(`readings`): `"increasing"` \| `"decreasing"` \| `"stable"` \| `"insufficient data"`
 
-Defined in: [a1c.ts:88](https://github.com/marklearst/diabetic-utils/blob/0d03b5cd2e2b5edbf58275075cc81d8df31ac230/src/a1c.ts#L88)
+Defined in: [a1c.ts:88](https://github.com/marklearst/glucoseiq/blob/0d03b5cd2e2b5edbf58275075cc81d8df31ac230/src/a1c.ts#L88)
 
 Determines the trend of A1C values over time.
 

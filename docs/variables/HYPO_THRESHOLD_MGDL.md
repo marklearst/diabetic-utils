@@ -8,7 +8,7 @@
 
 > `const` **HYPO\_THRESHOLD\_MGDL**: `70` = `70`
 
-Defined in: [constants.ts:26](https://github.com/marklearst/diabetic-utils/blob/0d03b5cd2e2b5edbf58275075cc81d8df31ac230/src/constants.ts#L26)
+Defined in: [constants.ts:26](https://github.com/marklearst/glucoseiq/blob/0d03b5cd2e2b5edbf58275075cc81d8df31ac230/src/constants.ts#L26)
 
 Clinical hypoglycemia threshold (mg/dL).
 Used for detecting low glucose events in analytics and reporting.

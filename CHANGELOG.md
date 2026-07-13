@@ -5,6 +5,17 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [Unreleased]
+
+### Changed
+
+- Introduced GlucoseIQ 1.0 as the `@glucoseiq` package ecosystem, led by the
+  zero-dependency `@glucoseiq/core` engine.
+- Prepared `diabetic-utils` 2.0 as the compatibility bridge from the 1.5.x
+  package to `@glucoseiq/core` while preserving existing root imports.
+- Moved development, documentation, and releases to the
+  [GlucoseIQ repository](https://github.com/marklearst/glucoseiq).
+
 ## [1.5.0] - 2026-03-12
 
 ### Added

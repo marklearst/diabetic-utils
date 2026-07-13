@@ -1,0 +1,1521 @@
+---
+title: Types & Interfaces
+description: The public contracts that connect ingestion, analytics, rendering, and integrations.
+---
+
+<Callout title="87 exports">Generated from the public source TSDoc and TypeScript declarations.</Callout>
+
+### A1CReading
+
+```ts
+interface A1CReading
+```
+
+Single clinical A1C reading (value and ISO date).
+
+| Property | Type | Description |
+| --- | --- | --- |
+| `date` | `string` | — |
+| `value` | `number` | — |
+
+
+---
+
+### ActivePercentOptions
+
+```ts
+interface ActivePercentOptions
+```
+
+Options for active percent calculation.
+
+| Property | Type | Description |
+| --- | --- | --- |
+| `expectedIntervalMinutes?` | `number` | Expected interval between readings in minutes (default: 5 for CGM) |
+
+
+---
+
+### ActivePercentResult
+
+```ts
+interface ActivePercentResult
+```
+
+Result of the active percent calculation.
+
+| Property | Type | Description |
+| --- | --- | --- |
+| `activePercent` | `number` | Percentage of expected readings that were captured (0-100) |
+| `actualReadings` | `number` | Number of actual readings in the dataset |
+| `expectedReadings` | `number` | Number of expected readings based on time span and interval |
+| `meetsClinicalMinimum` | `boolean` | Whether the active percent meets the clinical minimum (>= 70%) |
+| `totalMinutes` | `number` | Total time span covered in minutes |
+
+
+---
+
+### AGPChartOptions
+
+```ts
+interface AGPChartOptions
+```
+
+Options for agpChartToSVG.
+
+| Property | Type | Description |
+| --- | --- | --- |
+| `binMinutes?` | `number` | Bin width in minutes for the underlying profile (default 5). |
+| `height?` | `number` | SVG height in px (default 320). |
+| `theme?` | `"light" \| "dark"` | Color theme (default 'dark'). |
+| `timeZone?` | `string` | IANA time zone for time-of-day bucketing (default 'UTC'). |
+| `title?` | `string` | Optional chart title. |
+| `width?` | `number` | SVG width in px (default 800). |
+
+
+---
+
+### AGPMetricsOptions
+
+```ts
+interface AGPMetricsOptions
+```
+
+Options for the aggregate AGP metrics calculation.
+
+| Property | Type | Description |
+| --- | --- | --- |
+| `activePercent?` | `ActivePercentOptions` | Active percent configuration (expected interval) |
+| `conga?` | `CONGAOptions` | CONGA configuration (hours, tolerance) |
+| `modd?` | `MODDOptions` | MODD tolerance configuration |
+
+
+---
+
+### AGPMetricsResult
+
+```ts
+interface AGPMetricsResult
+```
+
+Comprehensive AGP metrics result.
+
+| Property | Type | Description |
+| --- | --- | --- |
+| `activePercent` | `ActivePercentResult` | CGM active percent / wear time |
+| `adrr` | `number` | Average Daily Risk Range |
+| `conga` | `number` | Continuous Overall Net Glycemic Action (mg/dL) |
+| `cv` | `number` | Coefficient of variation (%) |
+| `grade` | `GRADEResult` | GRADE score and partitioned components |
+| `gri` | `GRIResult` | Glycemia Risk Index |
+| `hbgi` | `number` | High Blood Glucose Index |
+| `jIndex` | `number` | J-Index |
+| `lbgi` | `number` | Low Blood Glucose Index |
+| `meanGlucose` | `number` | Mean glucose in mg/dL |
+| `modd` | `number` | Mean of Daily Differences (mg/dL) |
+| `sd` | `number` | Standard deviation in mg/dL |
+| `totalReadings` | `number` | Number of valid readings used |
+
+
+---
+
+### AGPProfileBin
+
+```ts
+interface AGPProfileBin
+```
+
+A single time-of-day bin in the AGP profile.
+
+| Property | Type | Description |
+| --- | --- | --- |
+| `minuteOfDay` | `number` | Minute-of-day at the start of this bin (0–1439). |
+| `n` | `number` | Number of pooled readings in this bin. |
+| `percentiles` | `Record&lt;number, null \| number>` | Percentile value keyed by percentile; `null` when the bin has no readings. |
+
+
+---
+
+### AGPProfileOptions
+
+```ts
+interface AGPProfileOptions
+```
+
+Options for buildAGPProfile.
+
+| Property | Type | Description |
+| --- | --- | --- |
+| `binMinutes?` | `number` | Bin width in minutes (default 5). Integer in [1, 1440]. |
+| `method?` | `PercentileMethod` | Percentile method (default 'nearest-rank'). |
+| `percentiles?` | `number[]` | Percentiles to compute per bin (default [5, 25, 50, 75, 95]). Values outside [0, 100] are ignored. |
+| `timeZone?` | `string` | IANA time zone used to assign readings to a minute-of-day (default 'UTC'). |
+| `unit?` | `GlucoseUnit` | Output unit for percentile values (default 'mg/dL'). Input readings are normalized to this unit. |
+
+
+---
+
+### AGPProfileResult
+
+```ts
+interface AGPProfileResult
+```
+
+Result of buildAGPProfile.
+
+| Property | Type | Description |
+| --- | --- | --- |
+| `binMinutes` | `number` | Bin width used (minutes). |
+| `bins` | `AGPProfileBin[]` | All time-of-day bins across the full day (always present, empty bins included). |
+| `percentiles` | `number[]` | Percentiles computed (sanitized to [0, 100]). |
+| `timeZone` | `string` | IANA time zone used for bucketing. |
+| `totalReadings` | `number` | Count of valid readings pooled into the profile. |
+| `unit` | `GlucoseUnit` | Output unit of percentile values. |
+| `valid` | `boolean` | `false` when no valid readings were available. |
+
+
+---
+
+### AlignOptions
+
+```ts
+interface AlignOptions
+```
+
+Options for alignToGrid.
+
+| Property | Type | Description |
+| --- | --- | --- |
+| `intervalMin?` | `number` | Grid interval in minutes (default 5). |
+| `maxInterpolateGapMin?` | `number` | Interpolate only across gaps up to this many minutes (default 15). |
+| `unit?` | `GlucoseUnit` | Output unit (default 'mg/dL'). Input units are normalized. |
+
+
+---
+
+### AnalyzeGlucoseOptions
+
+```ts
+interface AnalyzeGlucoseOptions
+```
+
+Options for analyzeGlucose.
+
+| Property | Type | Description |
+| --- | --- | --- |
+| `includeProfile?` | `boolean` | Include the AGP percentile-band series (default true). |
+| `minActivePercent?` | `number` | Minimum active/wear percent for the consensus sufficiency flag (default 70). |
+| `minDays?` | `number` | Minimum days of data for the consensus sufficiency flag (default 14). |
+| `timeZone?` | `string` | IANA time zone for the AGP profile (default 'UTC'). |
+| `unit?` | `GlucoseUnit` | Unit for TIR validation/labeling (default 'mg/dL'). |
+
+
+---
+
+### AnalyzeGlucoseResult
+
+```ts
+interface AnalyzeGlucoseResult
+```
+
+Result of analyzeGlucose.
+
+| Property | Type | Description |
+| --- | --- | --- |
+| `agpProfile` | `null \| AGPProfileResult` | — |
+| `cv` | `number` | — |
+| `dataSufficiency` | `DataSufficiency` | — |
+| `episodes` | `null \| EpisodeResult` | — |
+| `gmi` | `number` | — |
+| `meanGlucose` | `number` | — |
+| `risk` | `null \| RiskMetrics` | — |
+| `sd` | `number` | — |
+| `tightRange` | `null \| TITRResult` | — |
+| `timeInRange` | `null \| EnhancedTIRResult` | — |
+| `valid` | `boolean` | — |
+
+
+---
+
+### AUCOptions
+
+```ts
+interface AUCOptions
+```
+
+Options for AUC helpers.
+
+| Property | Type | Description |
+| --- | --- | --- |
+| `unit?` | `GlucoseUnit` | Output unit for values (default 'mg/dL'); area is expressed in this unit × minutes. |
+
+
+---
+
+### CGMSource
+
+```ts
+type CGMSource = "dexcom" | "libre" | "nightscout" | "unknown"
+```
+
+Known CGM data source vendors.
+
+
+---
+
+### CGMTrend
+
+```ts
+type CGMTrend = "rapidRising" | "rising" | "slightlyRising" | "flat" | "slightlyFalling" | "falling" | "rapidFalling" | "unknown"
+```
+
+Trend direction reported by CGM devices.
+Normalized across vendors into a common set.
+
+
+---
+
+### ClockModel
+
+```ts
+type ClockModel = "direct" | "relay"
+```
+
+How a source's clock relates to the sensor's.
+
+
+---
+
+### CohortOptions
+
+```ts
+interface CohortOptions
+```
+
+Options for aggregateCohort.
+
+| Property | Type | Description |
+| --- | --- | --- |
+| `unit?` | `GlucoseUnit` | Unit for TIR validation (default 'mg/dL'). |
+
+
+---
+
+### CohortResult
+
+```ts
+interface CohortResult
+```
+
+Result of aggregateCohort.
+
+| Property | Type | Description |
+| --- | --- | --- |
+| `cv` | `DistributionStats` | Distribution of CV% across patients. |
+| `gmi` | `DistributionStats` | Distribution of GMI across patients. |
+| `meanGlucose` | `DistributionStats` | Distribution of mean glucose (mg/dL) across patients. |
+| `patientCount` | `number` | Number of patients with at least one valid reading. |
+| `tir` | `DistributionStats` | Distribution of in-range % across patients. |
+
+
+---
+
+### CONGAOptions
+
+```ts
+interface CONGAOptions
+```
+
+Options for CONGA calculation.
+
+| Property | Type | Description |
+| --- | --- | --- |
+| `hours?` | `number` | Number of hours for the time lag (default: 1) |
+| `toleranceMinutes?` | `number` | Tolerance window in minutes for matching readings (default: 15) |
+
+
+---
+
+### ConnectorCapabilities
+
+```ts
+interface ConnectorCapabilities
+```
+
+Declarative capabilities of a CGM data source.
+
+| Property | Type | Description |
+| --- | --- | --- |
+| `clockModel` | `ClockModel` | Whether timestamps come straight from the device or via a relay. |
+| `historyDepthDays` | `number` | Typical history depth available from the feed, in days. |
+| `maxFreshnessSec` | `number` | Readings older than this (seconds) should be considered stale. |
+| `source` | `CGMSource` | The source this describes. |
+| `tier` | `1 \| 2` | Connector tier: 1 = full-fidelity vendor feed, 2 = community/relay. |
+| `trendVocabulary` | `TrendVocabulary` | Trend-arrow vocabulary coverage. |
+| `updateIntervalSec` | `number` | Typical seconds between new readings. |
+
+
+---
+
+### ConversionResult
+
+```ts
+interface ConversionResult
+```
+
+Result of glucose unit conversion.
+Provides converted value and new unit for clinical interoperability.
+
+| Property | Type | Description |
+| --- | --- | --- |
+| `unit` | `GlucoseUnit` | New glucose unit after conversion |
+| `value` | `number` | Converted glucose value |
+
+
+---
+
+### CSVParseOptions
+
+```ts
+interface CSVParseOptions
+```
+
+Options for parseGlucoseCSV.
+
+| Property | Type | Description |
+| --- | --- | --- |
+| `delimiter?` | `string` | Field delimiter (default ','). |
+| `timestampColumn` | `string` | Header name of the timestamp column. |
+| `unit?` | `GlucoseUnit` | Unit of the values (default 'mg/dL'). |
+| `valueColumn` | `string` | Header name of the glucose value column. |
+
+
+---
+
+### DataSufficiency
+
+```ts
+interface DataSufficiency
+```
+
+Data-sufficiency assessment for a report.
+
+| Property | Type | Description |
+| --- | --- | --- |
+| `activePercent` | `number` | CGM active/wear percent. |
+| `daysOfData` | `number` | Span of the data in days (last − first). |
+| `meetsCGMStandard` | `boolean` | Whether the data meets the consensus recording standard. |
+| `totalReadings` | `number` | Number of valid readings analyzed. |
+
+
+---
+
+### DayNightOptions
+
+```ts
+interface DayNightOptions
+```
+
+Options for splitDayNight.
+
+| Property | Type | Description |
+| --- | --- | --- |
+| `nightEndHour?` | `number` | Hour the night window ends, exclusive (default 6). |
+| `nightStartHour?` | `number` | Hour the night window begins (default 0). |
+| `timeZone?` | `string` | IANA time zone used to classify each reading's local hour (default 'UTC'). |
+
+
+---
+
+### DayNightSplit
+
+```ts
+interface DayNightSplit
+```
+
+Result of splitDayNight.
+
+| Property | Type | Description |
+| --- | --- | --- |
+| `day` | `GlucoseReading[]` | — |
+| `night` | `GlucoseReading[]` | — |
+
+
+---
+
+### DexcomShareEntry
+
+```ts
+interface DexcomShareEntry
+```
+
+Raw glucose entry returned by the Dexcom Share service.
+Matches the shape of `@diakem/dexcom-api-client` and `dexcom-share-client` responses.
+
+| Property | Type | Description |
+| --- | --- | --- |
+| `DT?` | `string` | Optional: Dexcom device serial or record id |
+| `ST?` | `string` | Stable record identifier |
+| `Trend` | `DexcomTrendString` | Dexcom trend string |
+| `Value` | `number` | Glucose value in mg/dL |
+| `WT` | `string` | Dexcom date string, e.g. "Date(1700000000000)" or ISO 8601 |
+
+
+---
+
+### DexcomTrendString
+
+```ts
+type DexcomTrendString = "DoubleUp" | "SingleUp" | "FortyFiveUp" | "Flat" | "FortyFiveDown" | "SingleDown" | "DoubleDown" | "None" | "NotComputable" | "RateOutOfRange"
+```
+
+Trend strings returned by the Dexcom Share API.
+
+
+---
+
+### DistributionStats
+
+```ts
+interface DistributionStats
+```
+
+Distribution of a metric across a cohort.
+
+| Property | Type | Description |
+| --- | --- | --- |
+| `max` | `number` | — |
+| `mean` | `number` | — |
+| `median` | `number` | — |
+| `min` | `number` | — |
+| `p25` | `number` | — |
+| `p75` | `number` | — |
+
+
+---
+
+### EnhancedTIROptions
+
+```ts
+interface EnhancedTIROptions
+```
+
+Options for Enhanced TIR calculation.
+Allows customization for different clinical populations and use cases.
+
+| Property | Type | Description |
+| --- | --- | --- |
+| `highThreshold?` | `number` | Override for the high threshold (181-250 mg/dL). Value must be provided in mg/dL. |
+| `lowThreshold?` | `number` | Override for the low threshold (54-69 mg/dL). Value must be provided in mg/dL. |
+| `population?` | `TIRPopulation` | Population type for target assessment (default: 'standard') |
+| `unit?` | `GlucoseUnit` | Glucose unit for input validation (default: 'mg/dL') |
+| `veryHighThreshold?` | `number` | Override for the very high threshold (>250 mg/dL). Value must be provided in mg/dL. |
+| `veryLowThreshold?` | `number` | Override for the very low threshold (&lt;54 mg/dL). Value must be provided in mg/dL. |
+
+
+---
+
+### EnhancedTIRResult
+
+```ts
+interface EnhancedTIRResult
+```
+
+Complete Enhanced Time-in-Range result.
+Provides detailed breakdown across five clinical glucose ranges per International Consensus 2019.
+
+| Property | Type | Description |
+| --- | --- | --- |
+| `high` | `RangeMetrics` | High: 181-250 mg/dL (10.1-13.9 mmol/L) - Level 1 Hyperglycemia |
+| `inRange` | `RangeMetrics` | In Range: 70-180 mg/dL (3.9-10.0 mmol/L) - Target Range |
+| `low` | `RangeMetrics` | Low: 54-69 mg/dL (3.0-3.8 mmol/L) - Level 1 Hypoglycemia |
+| `meetsTargets` | `TargetAssessment` | Assessment against clinical targets |
+| `summary` | `TIRSummary` | Summary statistics |
+| `veryHigh` | `RangeMetrics` | Very High: >250 mg/dL (>13.9 mmol/L) - Level 2 Hyperglycemia |
+| `veryLow` | `RangeMetrics` | Very Low: &lt;54 mg/dL (3.0 mmol/L) - Level 2 Hypoglycemia |
+
+
+---
+
+### EpisodeOptions
+
+```ts
+interface EpisodeOptions
+```
+
+Options for detectEpisodes. Thresholds are in mg/dL.
+
+| Property | Type | Description |
+| --- | --- | --- |
+| `endDurationMin?` | `number` | Recovery duration that ends an episode, in minutes (default 15). |
+| `hyperLevel2?` | `number` | Level 2 hyperglycemia threshold (default 250). |
+| `hyperThreshold?` | `number` | Hyperglycemia threshold (default 180). |
+| `hypoLevel2?` | `number` | Level 2 hypoglycemia threshold (default 54). |
+| `hypoThreshold?` | `number` | Hypoglycemia threshold (default 70). |
+| `minDurationMin?` | `number` | Minimum episode duration in minutes (default 15). |
+| `unit?` | `GlucoseUnit` | Unit of input readings (default 'mg/dL'); mmol/L is converted to mg/dL. |
+
+
+---
+
+### EpisodeResult
+
+```ts
+interface EpisodeResult
+```
+
+Result of detectEpisodes.
+
+| Property | Type | Description |
+| --- | --- | --- |
+| `hyperEvents` | `GlucoseEpisode[]` | — |
+| `hypoEvents` | `GlucoseEpisode[]` | — |
+| `summary` | `EpisodeSummary` | — |
+
+
+---
+
+### EpisodeSummary
+
+```ts
+interface EpisodeSummary
+```
+
+Summary counts across detected episodes.
+
+| Property | Type | Description |
+| --- | --- | --- |
+| `hyperCount` | `number` | — |
+| `hyperLevel2Count` | `number` | — |
+| `hypoCount` | `number` | — |
+| `hypoLevel2Count` | `number` | — |
+| `totalHyperMinutes` | `number` | — |
+| `totalHypoMinutes` | `number` | — |
+
+
+---
+
+### EstimateGMIOptions
+
+```ts
+interface EstimateGMIOptions
+```
+
+Options for clinical GMI (Glucose Management Indicator) estimation.
+Used to standardize GMI calculation input.
+
+| Property | Type | Description |
+| --- | --- | --- |
+| `unit` | `GlucoseUnit` | — |
+| `value` | `number` | — |
+
+
+---
+
+### FHIRCGMComponent
+
+```ts
+interface FHIRCGMComponent
+```
+
+LOINC-coded CGM summary observation component.
+
+| Property | Type | Description |
+| --- | --- | --- |
+| `code` | `FHIRCodeableConcept` | Coded component descriptor |
+| `valueQuantity` | `FHIRQuantity` | Measured value in FHIR valueQuantity shape |
+
+
+---
+
+### FHIRCGMSensorReading
+
+```ts
+interface FHIRCGMSensorReading
+```
+
+Lightweight FHIR-aligned CGM sensor reading.
+Follows the structure of the HL7 CGM IG sensor reading profile.
+
+| Property | Type | Description |
+| --- | --- | --- |
+| `code` | `FHIRCodeableConcept` | — |
+| `effectiveDateTime` | `string` | — |
+| `resourceType` | `"Observation"` | — |
+| `status` | `"final"` | — |
+| `valueQuantity` | `FHIRQuantity` | — |
+
+
+---
+
+### FHIRCGMSummary
+
+```ts
+interface FHIRCGMSummary
+```
+
+Lightweight FHIR-aligned CGM summary observation.
+Follows the structure of the HL7 CGM IG `CGMSummaryObservation` profile
+without requiring a full FHIR library.
+
+| Property | Type | Description |
+| --- | --- | --- |
+| `code` | `FHIRCodeableConcept` | — |
+| `component` | `unknown` | — |
+| `effectivePeriod` | `&#123; … &#125;` | — |
+| `resourceType` | `"Observation"` | — |
+| `status` | `"final"` | — |
+
+
+---
+
+### GapDetectionOptions
+
+```ts
+interface GapDetectionOptions
+```
+
+Options for detectGaps.
+
+| Property | Type | Description |
+| --- | --- | --- |
+| `maxGapMinutes?` | `number` | A gap is any interval longer than this many minutes (default 15). |
+
+
+---
+
+### GlucoseEpisode
+
+```ts
+interface GlucoseEpisode
+```
+
+A detected glucose episode.
+
+| Property | Type | Description |
+| --- | --- | --- |
+| `durationMinutes` | `number` | Episode duration in minutes (span of flagged readings). |
+| `endTime` | `string` | ISO 8601 timestamp of the last reading in the episode. |
+| `extremeValue` | `number` | Nadir (hypo) or peak (hyper) glucose in mg/dL. |
+| `level` | `1 \| 2` | Clinical level: 1 (moderate) or 2 (clinically significant). |
+| `meanValue` | `number` | Mean glucose of the flagged readings (mg/dL). |
+| `readingCount` | `number` | Number of flagged readings in the episode. |
+| `startTime` | `string` | ISO 8601 timestamp of the first reading in the episode. |
+| `type` | `"hypo" \| "hyper"` | 'hypo' (below threshold) or 'hyper' (above threshold). |
+
+
+---
+
+### GlucoseGap
+
+```ts
+interface GlucoseGap
+```
+
+A detected gap between consecutive readings.
+
+| Property | Type | Description |
+| --- | --- | --- |
+| `durationMinutes` | `number` | Gap duration in minutes. |
+| `end` | `string` | ISO 8601 timestamp of the reading after the gap. |
+| `start` | `string` | ISO 8601 timestamp of the reading before the gap. |
+
+
+---
+
+### GlucoseIQErrorCode
+
+```ts
+type GlucoseIQErrorCode = "EMPTY_DATASET" | "INVALID_GLUCOSE_VALUE" | "INVALID_A1C_VALUE" | "INVALID_INSULIN_VALUE" | "INVALID_UNIT" | "INVALID_OPTION" | "INVALID_TIMEZONE" | "PARSE_FAILED" | "CSV_COLUMN_NOT_FOUND" | "TIMESTAMP_UNPARSEABLE"
+```
+
+Stable machine-readable error codes.
+
+
+---
+
+### GlucoseIQOptions
+
+```ts
+interface GlucoseIQOptions
+```
+
+Options for glucoseIQScore.
+
+| Property | Type | Description |
+| --- | --- | --- |
+| `unit?` | `GlucoseUnit` | Unit for TIR validation (default 'mg/dL'). |
+
+
+---
+
+### GlucoseIQRating
+
+```ts
+type GlucoseIQRating = "excellent" | "good" | "fair" | "needs attention" | "insufficient"
+```
+
+Qualitative rating derived from the Glucose IQ score.
+
+
+---
+
+### GlucoseIQScore
+
+```ts
+interface GlucoseIQScore
+```
+
+Result of glucoseIQScore.
+
+| Property | Type | Description |
+| --- | --- | --- |
+| `gri` | `number` | Underlying Glycemia Risk Index. |
+| `rating` | `GlucoseIQRating` | Qualitative rating. |
+| `score` | `number` | 0–100 score, higher is better (100 − GRI). |
+| `valid` | `boolean` | Whether the score could be computed. |
+| `zone` | `null \| "A" \| "B" \| "C" \| "D" \| "E"` | GRI risk zone (A best … E worst), or null if not computable. |
+
+
+---
+
+### GlucoseReading
+
+```ts
+interface GlucoseReading
+```
+
+Single clinical glucose reading.
+Includes value, unit, and ISO 8601 timestamp for clinical analytics.
+
+| Property | Type | Description |
+| --- | --- | --- |
+| `timestamp` | `string` | — |
+| `unit` | `GlucoseUnit` | — |
+| `value` | `number` | — |
+
+
+---
+
+### GlucoseStatsOptions
+
+```ts
+interface GlucoseStatsOptions
+```
+
+Options for clinical glucose statistics analytics.
+Controls which metrics are calculated and reported.
+
+| Property | Type | Description |
+| --- | --- | --- |
+| `a1c?` | `boolean` | — |
+| `gmi?` | `boolean` | — |
+| `range` | `[number, number]` | — |
+| `readings` | `GlucoseReading[]` | — |
+| `tir?` | `boolean` | — |
+| `tirPercent?` | `boolean` | — |
+| `tirPercentAbove?` | `boolean` | — |
+| `tirPercentAboveRounded?` | `boolean` | — |
+| `tirPercentBelow?` | `boolean` | — |
+| `tirPercentBelowRounded?` | `boolean` | — |
+| `tirPercentInRange?` | `boolean` | — |
+| `tirPercentInRangeRounded?` | `boolean` | — |
+| `tirRange?` | `[number, number]` | — |
+| `unit` | `GlucoseUnit` | — |
+
+
+---
+
+### GlucoseTrendOptions
+
+```ts
+interface GlucoseTrendOptions
+```
+
+Options for computeGlucoseTrend.
+
+| Property | Type | Description |
+| --- | --- | --- |
+| `windowMin?` | `number` | Trailing window in minutes over which rate-of-change is fit (default 15). |
+
+
+---
+
+### GlucoseTrendResult
+
+```ts
+interface GlucoseTrendResult
+```
+
+Result of computeGlucoseTrend.
+
+| Property | Type | Description |
+| --- | --- | --- |
+| `readingsUsed` | `number` | Number of readings used in the fit. |
+| `rocPerMin` | `number` | Rate-of-change in mg/dL per minute (NaN when not computable). |
+| `trend` | `CGMTrend` | Derived CGM trend (or 'unknown' when not computable). |
+| `windowMinutes` | `number` | Trailing window used (minutes). |
+
+
+---
+
+### GlucoseUnit
+
+```ts
+type GlucoseUnit = unknown | unknown
+```
+
+Supported clinical glucose units.
+Used for all clinical analytics and conversions.
+
+
+---
+
+### GRADEResult
+
+```ts
+interface GRADEResult
+```
+
+Result of the partitioned GRADE calculation.
+
+| Property | Type | Description |
+| --- | --- | --- |
+| `grade` | `number` | Mean GRADE score across all valid readings |
+| `gradeEuglycemia` | `number` | % of total GRADE contributed by euglycemic readings (70-140 mg/dL) |
+| `gradeHyperglycemia` | `number` | % of total GRADE contributed by hyperglycemic readings (>140 mg/dL) |
+| `gradeHypoglycemia` | `number` | % of total GRADE contributed by hypoglycemic readings (&lt;70 mg/dL) |
+
+
+---
+
+### GridPoint
+
+```ts
+interface GridPoint
+```
+
+A resampled grid point.
+
+| Property | Type | Description |
+| --- | --- | --- |
+| `interpolated` | `boolean` | True when the value was linearly interpolated rather than observed. |
+| `timestamp` | `string` | ISO 8601 timestamp of the grid slot. |
+| `value` | `number` | Glucose value in the output unit. |
+
+
+---
+
+### GRIInput
+
+```ts
+interface GRIInput
+```
+
+Input percentages for GRI calculation.
+
+| Property | Type | Description |
+| --- | --- | --- |
+| `highPercent` | `number` | % time 181-250 mg/dL |
+| `lowPercent` | `number` | % time 54-69 mg/dL |
+| `veryHighPercent` | `number` | % time > 250 mg/dL |
+| `veryLowPercent` | `number` | % time &lt; 54 mg/dL |
+
+
+---
+
+### GRIResult
+
+```ts
+interface GRIResult
+```
+
+GRI result with numeric score and risk zone.
+
+| Property | Type | Description |
+| --- | --- | --- |
+| `hyperComponent` | `number` | — |
+| `hypoComponent` | `number` | — |
+| `score` | `number` | — |
+| `zone` | `"A" \| "B" \| "C" \| "D" \| "E"` | — |
+
+
+---
+
+### GVIPGSOptions
+
+```ts
+interface GVIPGSOptions
+```
+
+Options for calculateGVIPGS.
+
+| Property | Type | Description |
+| --- | --- | --- |
+| `maxGapMinutes?` | `number` | Maximum minutes between readings to count a step (default ~5.17). |
+| `targetHigh?` | `number` | In-range upper bound, mg/dL, exclusive (default 180). |
+| `targetLow?` | `number` | In-range lower bound, mg/dL, inclusive (default 70). |
+| `unit?` | `GlucoseUnit` | Unit of input readings (default 'mg/dL'); 'mmol/L' is converted to mg/dL. |
+
+
+---
+
+### GVIPGSResult
+
+```ts
+interface GVIPGSResult
+```
+
+Result of calculateGVIPGS.
+
+| Property | Type | Description |
+| --- | --- | --- |
+| `gvi` | `number` | Glucose Variability Index (actual path length / ideal). |
+| `meanGlucose` | `number` | Mean glucose used (mg/dL, floored). |
+| `pgs` | `number` | Patient Glycemic Status. |
+| `timeInRangeFraction` | `number` | Time-in-range fraction used (PTIR). |
+
+
+---
+
+### IGCOptions
+
+```ts
+interface IGCOptions
+```
+
+Options for calculateIGC. All thresholds are in mg/dL.
+
+| Property | Type | Description |
+| --- | --- | --- |
+| `hyperExponent?` | `number` | Hyperglycemia exponent a (default 1.1). |
+| `hyperScale?` | `number` | Hyperglycemia scale factor c (default 30). |
+| `hypoExponent?` | `number` | Hypoglycemia exponent b (default 2.0). |
+| `hypoScale?` | `number` | Hypoglycemia scale factor d (default 30). |
+| `lltr?` | `number` | Lower limit of target range (default 80). |
+| `ultr?` | `number` | Upper limit of target range (default 140). |
+| `unit?` | `GlucoseUnit` | Unit of the input values (default 'mg/dL'); 'mmol/L' is converted to mg/dL. |
+
+
+---
+
+### IGCResult
+
+```ts
+interface IGCResult
+```
+
+Result of calculateIGC.
+
+| Property | Type | Description |
+| --- | --- | --- |
+| `hyperIndex` | `number` | — |
+| `hypoIndex` | `number` | — |
+| `igc` | `number` | — |
+
+
+---
+
+### LibreLinkUpEntry
+
+```ts
+interface LibreLinkUpEntry
+```
+
+Raw glucose entry from the Libre LinkUp API.
+Matches the shape of `librelinkup-api-client` and `libre-client` responses.
+
+| Property | Type | Description |
+| --- | --- | --- |
+| `FactoryTimestamp?` | `string` | Factory timestamp |
+| `GlucoseUnits?` | `0 \| 1` | Display unit flag: 1 = mg/dL, 0 = mmol/L |
+| `MeasurementColor?` | `number` | Measurement color (vendor-specific) |
+| `Timestamp` | `string` | ISO 8601 timestamp string |
+| `TrendArrow` | `LibreTrendValue` | Trend arrow (1=falling fast, 2=falling, 3=stable, 4=rising, 5=rising fast) |
+| `Value` | `number` | Glucose value in the account's display unit (see GlucoseUnits) |
+| `ValueInMgPerDl?` | `number` | Glucose value in mg/dL, when provided by the API (preferred) |
+
+
+---
+
+### LibreTrendValue
+
+```ts
+type LibreTrendValue = 1 | 2 | 3 | 4 | 5
+```
+
+Trend values returned by Libre LinkUp (numeric 1-5).
+
+
+---
+
+### MAGEOptions
+
+```ts
+interface MAGEOptions
+```
+
+Configuration options for MAGE calculation.
+
+| Property | Type | Description |
+| --- | --- | --- |
+| `direction?` | `"auto" \| "ascending" \| "descending"` | Excursion direction: 'auto', 'ascending', or 'descending' |
+| `longWindow?` | `number` | Long moving average window (default: 32) |
+| `shortWindow?` | `number` | Short moving average window (default: 5) |
+
+
+---
+
+### MealResponseOptions
+
+```ts
+interface MealResponseOptions
+```
+
+Options for analyzeMealResponse.
+
+| Property | Type | Description |
+| --- | --- | --- |
+| `unit?` | `GlucoseUnit` | Output unit for values (default 'mg/dL'). |
+| `windowMin?` | `number` | Minutes after the meal to analyze (default 120). |
+
+
+---
+
+### MealResponseResult
+
+```ts
+interface MealResponseResult
+```
+
+Result of analyzeMealResponse.
+
+| Property | Type | Description |
+| --- | --- | --- |
+| `baseline` | `number` | Pre-meal baseline value (output unit). |
+| `delta` | `number` | Peak minus baseline (output unit). |
+| `iAUC` | `number` | Incremental AUC above baseline (output unit × minutes). |
+| `peakValue` | `number` | Peak glucose value in the window (output unit). |
+| `readingCount` | `number` | Number of readings in the window. |
+| `returnToBaselineMin` | `null \| number` | Minutes from the meal until glucose first returns to baseline after the peak, or null. |
+| `timeToPeakMin` | `number` | Minutes from the meal to the peak. |
+| `valid` | `boolean` | Whether a response could be computed. |
+| `windowMinutes` | `number` | Window analyzed (minutes). |
+
+
+---
+
+### MODDOptions
+
+```ts
+interface MODDOptions
+```
+
+Options for MODD calculation.
+
+| Property | Type | Description |
+| --- | --- | --- |
+| `toleranceMinutes?` | `number` | Tolerance window in minutes for matching readings across days (default: 15) |
+
+
+---
+
+### MValueOptions
+
+```ts
+interface MValueOptions
+```
+
+Options for glucoseMValue.
+
+| Property | Type | Description |
+| --- | --- | --- |
+| `includeCorrection?` | `boolean` | Add the W = range/20 correction term (default true, per the 1965 manuscript). |
+| `index?` | `number` | Ideal reference glucose in mg/dL (default 120). |
+| `unit?` | `GlucoseUnit` | Unit of the input values (default 'mg/dL'); 'mmol/L' is converted to mg/dL. |
+
+
+---
+
+### NightscoutDirection
+
+```ts
+type NightscoutDirection = "DoubleUp" | "SingleUp" | "FortyFiveUp" | "Flat" | "FortyFiveDown" | "SingleDown" | "DoubleDown" | "NONE" | "NOT COMPUTABLE" | "RATE OUT OF RANGE" | string & { … }
+```
+
+Nightscout direction string for trend arrows.
+
+
+---
+
+### NightscoutEntry
+
+```ts
+interface NightscoutEntry
+```
+
+Nightscout SGV (Sensor Glucose Value) entry.
+Matches the `/api/v1/entries` response shape.
+
+| Property | Type | Description |
+| --- | --- | --- |
+| `_id?` | `string` | Nightscout record _id |
+| `date` | `number` | Epoch timestamp in milliseconds |
+| `dateString?` | `string` | ISO 8601 date string |
+| `direction?` | `NightscoutDirection` | Trend direction |
+| `sgv` | `number` | Sensor glucose value in mg/dL |
+| `type?` | `string` | Entry type (usually "sgv") |
+
+
+---
+
+### NormalizedCGMReading
+
+```ts
+interface NormalizedCGMReading extends GlucoseReading
+```
+
+Extended glucose reading that preserves vendor metadata.
+Superset of GlucoseReading — can be passed directly to all analytics functions.
+
+| Property | Type | Description |
+| --- | --- | --- |
+| `dedupKey?` | `string` | Deterministic key for cross-poll de-duplication. |
+| `nativeUnit?` | `GlucoseUnit` | Unit the vendor natively reported, when it differs from `unit`. |
+| `source` | `CGMSource` | Data source vendor |
+| `trend` | `CGMTrend` | Trend direction from the CGM device |
+| `vendorId?` | `string` | Original vendor-specific identifier, if available |
+
+
+---
+
+### NormalizeError
+
+```ts
+interface NormalizeError
+```
+
+A single entry that failed to normalize.
+
+| Property | Type | Description |
+| --- | --- | --- |
+| `index` | `number` | Index of the failing entry in the input array. |
+| `message` | `string` | The error message. |
+
+
+---
+
+### OMHBloodGlucose
+
+```ts
+interface OMHBloodGlucose
+```
+
+Open mHealth blood-glucose datapoint body.
+
+| Property | Type | Description |
+| --- | --- | --- |
+| `blood_glucose` | `&#123; … &#125;` | — |
+| `effective_time_frame` | `&#123; … &#125;` | — |
+| `specimen_source` | `"interstitial fluid" \| "capillary blood" \| "plasma"` | — |
+
+
+---
+
+### OMHDataPoint
+
+```ts
+interface OMHDataPoint
+```
+
+Wrapped OMH datapoint with header metadata.
+
+| Property | Type | Description |
+| --- | --- | --- |
+| `body` | `T` | — |
+| `header` | `&#123; … &#125;` | — |
+
+
+---
+
+### PercentileMethod
+
+```ts
+type PercentileMethod = "nearest-rank" | "linear"
+```
+
+Percentile estimation method.
+- `nearest-rank` (default): matches glucosePercentiles for reproducibility with existing library outputs.
+- `linear`: interpolated (type-7) percentiles, an opt-in for smoother bands.
+
+
+---
+
+### PregnancyTIROptions
+
+```ts
+interface PregnancyTIROptions
+```
+
+Options for Pregnancy TIR calculation.
+
+| Property | Type | Description |
+| --- | --- | --- |
+| `unit?` | `GlucoseUnit` | Glucose unit for input validation (default: 'mg/dL') |
+
+
+---
+
+### PregnancyTIRResult
+
+```ts
+interface PregnancyTIRResult
+```
+
+Pregnancy-specific Time-in-Range result.
+Uses tighter target range per ADA 2024 guidelines for pregnancy.
+
+| Property | Type | Description |
+| --- | --- | --- |
+| `aboveRange` | `RangeMetrics` | Above Range: >140 mg/dL (7.8 mmol/L) |
+| `belowRange` | `RangeMetrics` | Below Range: &lt;63 mg/dL (3.5 mmol/L) |
+| `inRange` | `RangeMetrics` | In Range: 63-140 mg/dL (3.5-7.8 mmol/L) |
+| `meetsPregnancyTargets` | `boolean` | Whether metrics meet pregnancy-specific targets (TIR >70%, TBR &lt;4%, TAR &lt;25%) |
+| `recommendations` | `unknown` | Clinical recommendations |
+| `summary` | `TIRSummary` | Summary statistics |
+
+
+---
+
+### RangeMetrics
+
+```ts
+interface RangeMetrics
+```
+
+Detailed metrics for a single glucose range.
+Provides percentage, duration, count, and average value for clinical analysis.
+
+| Property | Type | Description |
+| --- | --- | --- |
+| `averageValue` | `null \| number` | Average glucose value in this range (mg/dL or mmol/L) |
+| `duration` | `number` | Total duration in this range (minutes) |
+| `percentage` | `number` | Percentage of readings in this range (0-100) |
+| `readingCount` | `number` | Count of readings in this range |
+
+
+---
+
+### RiskMetrics
+
+```ts
+interface RiskMetrics
+```
+
+Risk-metric block of an AnalyzeGlucoseResult.
+
+| Property | Type | Description |
+| --- | --- | --- |
+| `adrr` | `number` | — |
+| `conga` | `number` | — |
+| `grade` | `GRADEResult` | — |
+| `gri` | `GRIResult` | — |
+| `hbgi` | `number` | — |
+| `jIndex` | `number` | — |
+| `lbgi` | `number` | — |
+| `modd` | `number` | — |
+
+
+---
+
+### SafeNormalizeResult
+
+```ts
+interface SafeNormalizeResult
+```
+
+Result of a safe normalization pass.
+
+| Property | Type | Description |
+| --- | --- | --- |
+| `errors` | `NormalizeError[]` | Per-entry failures (empty when everything parsed). |
+| `readings` | `NormalizedCGMReading[]` | Successfully normalized readings, sorted chronologically. |
+
+
+---
+
+### TargetAssessment
+
+```ts
+interface TargetAssessment
+```
+
+Assessment of whether TIR metrics meet clinical targets.
+Based on International Consensus on Time in Range (2019).
+
+| Property | Type | Description |
+| --- | --- | --- |
+| `overallAssessment` | `TIRAssessment` | Overall assessment of glycemic control |
+| `recommendations` | `unknown` | Clinical recommendations based on metrics |
+| `tarLevel1Acceptable` | `boolean` | TAR Level 1 &lt;25% (all populations) |
+| `tarLevel2Acceptable` | `boolean` | TAR Level 2 &lt;5% (all populations) |
+| `tbrLevel1Safe` | `boolean` | TBR Level 1 &lt;4% for standard, &lt;1% for older adults |
+| `tbrLevel2Safe` | `boolean` | TBR Level 2 &lt;1% for standard, &lt;0.5% for older adults |
+| `tirMeetsGoal` | `boolean` | TIR ≥70% for standard population, ≥50% for older adults |
+
+
+---
+
+### TIRAssessment
+
+```ts
+type TIRAssessment = "excellent" | "good" | "needs improvement" | "concerning"
+```
+
+Overall glycemic control assessment based on TIR metrics.
+
+
+---
+
+### TIRBarOptions
+
+```ts
+interface TIRBarOptions
+```
+
+Options for tirBarToSVG.
+
+| Property | Type | Description |
+| --- | --- | --- |
+| `height?` | `number` | SVG height in px (default 320). |
+| `theme?` | `"light" \| "dark"` | Color theme (default 'dark'). |
+| `width?` | `number` | SVG width in px (default 180). |
+
+
+---
+
+### TIROptions
+
+```ts
+interface TIROptions
+```
+
+Options for clinical Time-in-Range (TIR) analytics.
+
+| Property | Type | Description |
+| --- | --- | --- |
+| `range` | `[number, number]` | — |
+| `readings` | `GlucoseReading[]` | — |
+| `unit` | `GlucoseUnit` | — |
+
+
+---
+
+### TIRPopulation
+
+```ts
+type TIRPopulation = "standard" | "older-adults" | "high-risk"
+```
+
+Population type for TIR target assessment.
+Different populations have different clinical goals.
+
+
+---
+
+### TIRResult
+
+```ts
+interface TIRResult
+```
+
+Result object for clinical Time-in-Range (TIR) analytics.
+Percentages for in-range, below-range, and above-range readings.
+
+| Property | Type | Description |
+| --- | --- | --- |
+| `aboveRange` | `number` | — |
+| `belowRange` | `number` | — |
+| `inRange` | `number` | — |
+
+
+---
+
+### TIRSummary
+
+```ts
+interface TIRSummary
+```
+
+Summary statistics for TIR calculation.
+
+| Property | Type | Description |
+| --- | --- | --- |
+| `dataQuality` | `"excellent" \| "good" \| "fair" \| "poor"` | Data quality assessment |
+| `totalDuration` | `number` | Total duration of data analyzed (minutes) |
+| `totalReadings` | `number` | Total number of glucose readings analyzed |
+
+
+---
+
+### TITROptions
+
+```ts
+interface TITROptions
+```
+
+Options for calculateTITR. Thresholds are in mg/dL.
+
+| Property | Type | Description |
+| --- | --- | --- |
+| `highThreshold?` | `number` | Upper bound of the tight range (mg/dL, inclusive). Default 140. |
+| `lowThreshold?` | `number` | Lower bound of the tight range (mg/dL, inclusive). Default 70. |
+| `target?` | `number` | Target percentage of readings in the tight range. Default 50. |
+
+
+---
+
+### TITRResult
+
+```ts
+interface TITRResult
+```
+
+Result of calculateTITR.
+
+| Property | Type | Description |
+| --- | --- | --- |
+| `aboveRange` | `number` | Percentage of readings above the tight range. |
+| `belowRange` | `number` | Percentage of readings below the tight range. |
+| `inRange` | `number` | Percentage of readings within the tight range (0-100). |
+| `meetsTarget` | `boolean` | Whether inRange meets the target. |
+| `readingCount` | `number` | Number of readings analyzed. |
+| `target` | `number` | Target percentage used. |
+
+
+---
+
+### TrendTileOptions
+
+```ts
+interface TrendTileOptions
+```
+
+Options for trendTileToSVG.
+
+| Property | Type | Description |
+| --- | --- | --- |
+| `height?` | `number` | SVG height in px (default 140). |
+| `theme?` | `"light" \| "dark"` | Color theme (default 'dark'). |
+| `width?` | `number` | SVG width in px (default 240). |
+
+
+---
+
+### TrendVocabulary
+
+```ts
+type TrendVocabulary = "full" | "coarse" | "none"
+```
+
+How complete a source's trend vocabulary is.

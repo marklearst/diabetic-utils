@@ -6,7 +6,7 @@
 
 # Interface: EstimateGMIOptions
 
-Defined in: [types.ts:46](https://github.com/marklearst/diabetic-utils/blob/0d03b5cd2e2b5edbf58275075cc81d8df31ac230/src/types.ts#L46)
+Defined in: [types.ts:46](https://github.com/marklearst/glucoseiq/blob/0d03b5cd2e2b5edbf58275075cc81d8df31ac230/src/types.ts#L46)
 
 Options for clinical GMI (Glucose Management Indicator) estimation.
 Used to standardize GMI calculation input.
@@ -21,7 +21,7 @@ https://diatribe.org/glucose-management-indicator-gmi
 
 > **unit**: [`GlucoseUnit`](../type-aliases/GlucoseUnit.md)
 
-Defined in: [types.ts:48](https://github.com/marklearst/diabetic-utils/blob/0d03b5cd2e2b5edbf58275075cc81d8df31ac230/src/types.ts#L48)
+Defined in: [types.ts:48](https://github.com/marklearst/glucoseiq/blob/0d03b5cd2e2b5edbf58275075cc81d8df31ac230/src/types.ts#L48)
 
 ***
 
@@ -29,4 +29,4 @@ Defined in: [types.ts:48](https://github.com/marklearst/diabetic-utils/blob/0d03
 
 > **value**: `number`
 
-Defined in: [types.ts:47](https://github.com/marklearst/diabetic-utils/blob/0d03b5cd2e2b5edbf58275075cc81d8df31ac230/src/types.ts#L47)
+Defined in: [types.ts:47](https://github.com/marklearst/glucoseiq/blob/0d03b5cd2e2b5edbf58275075cc81d8df31ac230/src/types.ts#L47)

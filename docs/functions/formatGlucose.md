@@ -8,7 +8,7 @@
 
 > **formatGlucose**(`val`, `unit`, `options`): `string`
 
-Defined in: [formatters.ts:14](https://github.com/marklearst/diabetic-utils/blob/0d03b5cd2e2b5edbf58275075cc81d8df31ac230/src/formatters.ts#L14)
+Defined in: [formatters.ts:14](https://github.com/marklearst/glucoseiq/blob/0d03b5cd2e2b5edbf58275075cc81d8df31ac230/src/formatters.ts#L14)
 
 Formats a clinical glucose value with unit and optional rounding.
 Used for clinical reporting, charting, and data export.

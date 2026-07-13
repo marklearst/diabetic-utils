@@ -8,7 +8,7 @@
 
 > `const` **HOMA\_IR\_CUTOFFS**: `object`
 
-Defined in: [constants.ts:14](https://github.com/marklearst/diabetic-utils/blob/0d03b5cd2e2b5edbf58275075cc81d8df31ac230/src/constants.ts#L14)
+Defined in: [constants.ts:14](https://github.com/marklearst/glucoseiq/blob/0d03b5cd2e2b5edbf58275075cc81d8df31ac230/src/constants.ts#L14)
 
 Interpretation cutoffs for HOMA-IR (insulin resistance assessment).
 These are general clinical categories, not diagnostic.

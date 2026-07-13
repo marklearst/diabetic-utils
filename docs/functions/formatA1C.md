@@ -8,7 +8,7 @@
 
 > **formatA1C**(`val`): `string`
 
-Defined in: [a1c.ts:9](https://github.com/marklearst/diabetic-utils/blob/0d03b5cd2e2b5edbf58275075cc81d8df31ac230/src/a1c.ts#L9)
+Defined in: [a1c.ts:9](https://github.com/marklearst/glucoseiq/blob/0d03b5cd2e2b5edbf58275075cc81d8df31ac230/src/a1c.ts#L9)
 
 Formats a clinical A1C value as a percent string (e.g., "7.2%").
 Used for clinical reporting and display.
