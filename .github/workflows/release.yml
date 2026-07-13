@@ -1,7 +1,7 @@
 name: Release
 
-# Changesets-based publishing. On a push to main this opens or updates the
-# release PR; merging that PR publishes to npm with provenance.
+# On a push to main, release entries open or update the version PR. Merging
+# that PR publishes the approved packages to npm with provenance.
 
 on:
   push:
@@ -73,21 +73,55 @@ jobs:
       - name: Build documentation
         run: pnpm --filter docs build
 
-      - name: Create Release PR or publish to npm
+      - name: Detect release entries
+        id: release-mode
+        run: |
+          RELEASE_ENTRIES=$(git ls-files '.changeset/*.md' ':(exclude).changeset/README.md')
+
+          if [ -n "$RELEASE_ENTRIES" ]; then
+            echo "has_changesets=true" >> "$GITHUB_OUTPUT"
+          else
+            echo "has_changesets=false" >> "$GITHUB_OUTPUT"
+          fi
+
+      - name: Version packages
+        if: steps.release-mode.outputs.has_changesets == 'true'
+        run: pnpm changeset version
+
+      - name: Create or update release PR
+        if: steps.release-mode.outputs.has_changesets == 'true'
+        id: version-pr
+        uses: peter-evans/create-pull-request@5f6978faf089d4d20b00c7766989d076bb2fc7f1 # v8.1.1
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+          branch: release/glucoseiq-packages
+          delete-branch: true
+          base: main
+          commit-message: 'chore(release): version packages'
+          title: 'chore(release): version packages'
+          body-path: .github/release-pr-body.md
+          add-paths: |
+            .changeset/*.md
+            packages/*/package.json
+            packages/*/CHANGELOG.md
+            pnpm-lock.yaml
+          committer: 'github-actions[bot] <41898282+github-actions[bot]@users.noreply.github.com>'
+          author: 'github-actions[bot] <41898282+github-actions[bot]@users.noreply.github.com>'
+          sign-commits: true
+
+      - name: Publish packages
+        if: steps.release-mode.outputs.has_changesets == 'false'
         id: changesets
         uses: changesets/action@a45c4d594aa4e2c509dc14a9f2b3b67ba3780d0d # v1.9.0
         with:
           publish: pnpm changeset publish
-          version: pnpm changeset version
-          commit: 'chore(release): version packages'
-          title: 'chore(release): version packages'
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           NPM_TOKEN: ${{ secrets.NPM_TOKEN }}
           NPM_CONFIG_PROVENANCE: true
 
       - name: Preserve legacy npm release
-        if: always() && steps.changesets.outcome != 'skipped' && steps.changesets.outputs.hasChangesets != 'true'
+        if: always() && steps.release-mode.outputs.has_changesets == 'false' && steps.changesets.outcome != 'skipped'
         env:
           NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
         run: |
@@ -115,10 +149,10 @@ jobs:
           exit 1
 
       - name: Run CI for release PR
-        if: steps.changesets.outputs.hasChangesets == 'true' && steps.changesets.outputs.pullRequestNumber != ''
+        if: steps.version-pr.outputs.pull-request-number != ''
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          PR_NUMBER: ${{ steps.changesets.outputs.pullRequestNumber }}
+          PR_NUMBER: ${{ steps.version-pr.outputs.pull-request-number }}
         run: |
           HEAD_REF=$(gh pr view "$PR_NUMBER" --json headRefName --jq .headRefName)
           gh workflow run ci.yml --ref "$HEAD_REF"
