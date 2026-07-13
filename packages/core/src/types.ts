@@ -5,14 +5,14 @@ import { MG_DL, MMOL_L } from './constants'
 /**
  * Supported clinical glucose units.
  * Used for all clinical analytics and conversions.
- * @see https://www.diabetes.co.uk/diabetes_care/blood-sugar-conversion.html
+ * @see https://wwwn.cdc.gov/Nchs/Data/Nhanes/Public/2021/DataFiles/BIOPRO_L.htm
  */
 export type GlucoseUnit = typeof MG_DL | typeof MMOL_L
 
 /**
  * List of allowed clinical glucose units.
  * Used for input validation and unit conversion.
- * @see https://www.diabetes.co.uk/diabetes_care/blood-sugar-conversion.html
+ * @see https://wwwn.cdc.gov/Nchs/Data/Nhanes/Public/2021/DataFiles/BIOPRO_L.htm
  */
 export const AllowedGlucoseUnits: GlucoseUnit[] = [MG_DL, MMOL_L]
 
@@ -51,7 +51,7 @@ export interface EstimateGMIOptions {
 /**
  * Result of glucose unit conversion.
  * Provides converted value and new unit for clinical interoperability.
- * @see https://www.diabetes.co.uk/diabetes_care/blood-sugar-conversion.html
+ * @see https://wwwn.cdc.gov/Nchs/Data/Nhanes/Public/2021/DataFiles/BIOPRO_L.htm
  */
 export interface ConversionResult {
   /** Converted glucose value */

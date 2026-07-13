@@ -47,4 +47,4 @@ Formatted glucose string (e.g., '5.5 mmol/L', '120 mg/dL')
 
 ## See
 
-https://www.diabetes.co.uk/diabetes_care/blood-sugar-conversion.html
+https://wwwn.cdc.gov/Nchs/Data/Nhanes/Public/2021/DataFiles/BIOPRO_L.htm

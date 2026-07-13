@@ -83,20 +83,20 @@ export const GMI_COEFFICIENTS = {
 /**
  * Conversion factor between mg/dL and mmol/L.
  * Used for unit conversion.
- * @see https://www.diabetes.co.uk/diabetes_care/blood-sugar-conversion.html
+ * @see https://wwwn.cdc.gov/Nchs/Data/Nhanes/Public/2021/DataFiles/BIOPRO_L.htm
  */
 export const MGDL_MMOLL_CONVERSION = 18.0182
 
 /**
  * String literal for mg/dL glucose unit.
  * Used for data interoperability and formatting.
- * @see https://www.diabetes.co.uk/diabetes_care/blood-sugar-conversion.html
+ * @see https://wwwn.cdc.gov/Nchs/Data/Nhanes/Public/2021/DataFiles/BIOPRO_L.htm
  */
 export const MG_DL = 'mg/dL' as const
 
 /**
  * String literal for mmol/L unit.
- * @see https://www.diabetes.co.uk/diabetes_care/blood-sugar-conversion.html
+ * @see https://wwwn.cdc.gov/Nchs/Data/Nhanes/Public/2021/DataFiles/BIOPRO_L.htm
  */
 export const MMOL_L = 'mmol/L' as const
 

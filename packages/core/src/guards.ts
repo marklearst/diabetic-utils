@@ -23,7 +23,7 @@ export function isEstimateGMIOptions(
  * Ensures the string is in a recognized clinical format for glucose values, supporting safe parsing and conversion.
  * @param input - Value to check as a clinical glucose string.
  * @returns True if input is a valid glucose string for clinical use.
- * @see https://www.diabetes.co.uk/diabetes_care/blood-sugar-conversion.html
+ * @see https://wwwn.cdc.gov/Nchs/Data/Nhanes/Public/2021/DataFiles/BIOPRO_L.htm
  */
 export function isValidGlucoseString(input: unknown): input is string {
   if (typeof input !== 'string') return false
