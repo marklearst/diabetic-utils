@@ -1,6 +1,6 @@
 {
   "name": "@glucoseiq/core",
-  "version": "0.0.0",
+  "version": "1.0.0",
   "description": "Zero-dependency headless engine for glucose & CGM analytics: AGP, TIR, variability, risk indices, meal response, live trend, and interoperability.",
   "main": "dist/index.js",
   "module": "dist/index.mjs",

@@ -1,7 +1,7 @@
 {
   "name": "@glucoseiq/react",
-  "version": "0.0.0",
-  "description": "Thin React adapter for GlucoseIQ \u2014 memoized analysis hooks and headless AGP/TIR/trend components over the zero-dependency @glucoseiq/core engine.",
+  "version": "1.0.0",
+  "description": "Thin React adapter for GlucoseIQ — memoized analysis hooks and headless AGP/TIR/trend components over the zero-dependency @glucoseiq/core engine.",
   "main": "dist/index.js",
   "module": "dist/index.mjs",
   "types": "dist/index.d.ts",

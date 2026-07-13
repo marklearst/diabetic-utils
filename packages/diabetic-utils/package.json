@@ -1,6 +1,6 @@
 {
   "name": "diabetic-utils",
-  "version": "1.5.0",
+  "version": "2.0.0",
   "description": "Compatibility shim for GlucoseIQ — re-exports @glucoseiq/core so existing `diabetic-utils` imports keep working. New projects should use @glucoseiq/core.",
   "main": "dist/index.js",
   "module": "dist/index.mjs",
